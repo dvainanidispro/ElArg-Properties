@@ -137,7 +137,6 @@ let validateUser = (req, res, next) => {
             next();
             return;
         } else {    // Αν όχι, στέλνουμε τον χρήστη στο login
-            log.dev();
             res.render('login', { layout: false });
         }
     }
@@ -175,7 +174,7 @@ let validateUser = (req, res, next) => {
         );
     }
     else {  // Αν δεν υπάρχει Access Token
-        log.dev('No token provided');
+        // log.dev('No token provided');
         res.locals.error = 'Θα πρέπει να συνδεθείτε για να συνεχίσετε στην εφαρμογή.';
         handleLoggedOffUser();
     }

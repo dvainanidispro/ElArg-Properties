@@ -42,5 +42,4 @@ let databaseConnectionTest = (DbConnection) => {
     });
 };
 
-
 export { db , databaseConnectionTest } ;

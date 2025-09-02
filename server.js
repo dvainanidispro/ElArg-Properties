@@ -28,6 +28,8 @@ server.use(cookieParser());
 import { presentTime } from './controllers/utils.js';
 import { validateUser } from './controllers/auth.js';
 
+import { db, databaseConnectionTest } from './config/database.js';
+
 
 
 /////////////////        ΕΛΕΥΘΕΡΑ ROUTES      /////////////////
@@ -70,6 +72,7 @@ server.get('/dashboard', (req, res) => {
 ///////////////////////////////////         THE SERVER         /////////////////////////////////////
 
 async function startServer(){
+    await databaseConnectionTest(db);
     let port = process.env.PORT??80;
     let listeningURL = process.env.LISTENINGURL??'http://localhost';
     server.listen(port, () => {
