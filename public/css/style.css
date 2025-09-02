@@ -1,0 +1,116 @@
+:root{
+    --display-if-user: none;
+    --display-if-guest: none;
+}
+
+:root, [data-bs-theme=dark]{
+    --bs-body-bg: hsl(277, 50%, 12%);
+    --bs-body-color: lavender;
+    --bs-heading-color: hsl(277, 50%, 95%);
+
+    --nav-hover-color: purple;
+    --nav-active-color: hsl(277, 50%, 25%);
+    --divider-color: lavender;
+    --border-color: hsl(277, 50%, 30%);
+
+    --color-health: hsl(173, 58%, 39%);
+    --color-wealth: hsl(282, 44%, 47%);
+    --color-relationships: hsl(355, 59%, 43%);
+    --color-lifestyle: hsl(207, 99%, 35%);
+
+    --slider-thumb-color: hsl(305, 63%, 51%);
+    --slider-background-color: hsla(0, 0%, 100%, 0.5);
+}
+
+
+/*********     DIM      *********/
+
+/* Prevent all non-defined custom elements from displaying: */
+*:not(:defined) { display: none; }
+
+/* Hide cloaked elements for Alpine.js */
+[x-cloak] { display: none !important; }
+
+/* View transition between pages */
+@view-transition {
+    navigation: auto;
+}
+
+
+/*********     THEME CORRECTIONS     *********/
+
+body{
+    /* color-scheme: dark; */
+    background-color: var(--bs-body-bg);
+}
+
+main{
+    margin-inline: 0.5rem;   /* for mobile */
+    container-type: inline-size;
+    container-name: main;
+    /* border: var(--bs-border-width) var(--bs-border-style) white;
+    border-radius: var(--bs-border-radius); */
+}
+
+div {
+    /* background-color: var(--bs-body-bg); */
+    background-color: revert;
+    color: revert;
+}
+
+h3,h4,h5,p{margin-bottom: revert;}
+
+.table td{min-width: 18ch}
+
+/* h1{font-size: 2.5rem}
+h2{font-size: 2rem}
+h3{font-size: 1.5rem} */
+
+
+
+
+/*********    LAYOUT    **********/ 
+
+.sidebar{
+    background-color: var(--bs-body-bg);
+    border-right: 1px solid var(--border-color);
+}
+.sidebar-logo a .logo img {
+    width: 5rem;
+    height: auto;
+}
+
+
+.header, .sidebar-logo {        
+    height: 4.2rem;     /*These two should have the same height*/
+    background-color: var(--bs-body-bg);
+    border-bottom: 1px solid #ccc;
+}
+
+
+.sidebar-menu *, .dropdown-menu *,  .dropdown-menu li,  .dropdown-menu a, .dropdown-menu div, .dropdown-menu span {
+    transition: all 0.5s ease-in-out !important;
+}
+.sidebar-menu li a, .dropdown-menu li a {
+    color: var(--bs-body-color) !important;
+    &:hover, &.active {
+        background-color: var(--nav-hover-color) !important;
+        color: var(--bs-body-color) !important;
+    }
+}
+
+.icon-holder{
+    margin-inline: 0.2rem;
+}
+
+/* .sidebar-menu a.dropdown-toggle:has(+.dropdown-menu a:hover) {
+    background-color: var(--nav-hover-color) !important;
+} */
+
+.divider{
+    background-color: var(--divider-color);
+    opacity: 0.2;
+    height: 2px;
+}
+
+
