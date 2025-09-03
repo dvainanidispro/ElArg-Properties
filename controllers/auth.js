@@ -119,7 +119,10 @@ let validateCredentials = async (req, res, next) => {
 /** Δημιουργεί το Magic Link για τον χρήστη */
 let createMagicLink = async (email) => {
     let user = await Models.User.findOne({ where: { email: email } });
-    if (!user) return false;
+    if (!user) {
+        log.warn(`Magic Link requested for non-existing email: ${email}`);
+        return false
+    };
     let token = createAccessToken(user, true);
     return `${process.env.LISTENINGURL}/login?token=${token}`;
 };

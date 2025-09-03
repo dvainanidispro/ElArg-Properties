@@ -1,13 +1,13 @@
-<h1 class="text-center text-light">Εφαρμογή Ακινήτων Δήμου Ελληνικού-Αργυρούπολης</h1>
+        <h1 class="text-center text-light">Εφαρμογή Ακινήτων Δήμου Ελληνικού-Αργυρούπολης</h1>
 
-        <div class="error alert alert-danger d-none" role="alert">
+        <div class="alert alert-danger text-center d-none" role="alert" id="error">
             {{error}}
         </div>
-        <div class="with-token alert alert-info d-none">
+        <div class="with-token alert alert-info d-none" id="verifying">
             Επαληθεύουμε το λογαριασμό σας...
         </div>
 
-        <div class="container without-token d-none" style="margin-top: 5rem;">
+        <div class="container d-none" style="margin-top: 5rem;" id="login-modal">
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-4">
                     <div class="card shadow-sm">
@@ -38,16 +38,31 @@
 
 
         <script type="module">
+
             const error = {{check error 'true' 'false'}};
             const token = Q.url.get('token');
             if (error) {
-                Q('.error').show();
+                Q('#error').show();
             } else if (token) {
-                Q('.with-token').show();
-                Q.cookies.set('token', token, 30);
-                Q.url.goto('/dashboard');
+                Q('#verifying').show();
+                // Έλεγχος εγκυρότητας του JWT token
+                const tokenCheck = isValidJWT(token);   // To isValidJWT βρίσκεται στο script.js
+                if (tokenCheck.valid) {
+                    Q.cookies.set('token', token, 30);
+                    Q.url.goto('/dashboard');
+                } else {
+                    // Το token δεν είναι έγκυρο ή έχει λήξει
+                    Q('#verifying').show(false);
+                    if (tokenCheck.reason === 'expired') {
+                        Q('#error').set('Ο σύνδεσμος έχει λήξει!');
+                    } else {
+                        Q('#error').set('Ο σύνδεσμος δεν είναι έγκυρος!');
+                    }
+                    Q('#error').show();
+                    Q('#login-modal').show();
+                }
             } else {
-                Q('.without-token').show();
+                Q('#login-modal').show();
             }
         </script>
 

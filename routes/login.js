@@ -16,11 +16,11 @@ router.get('/userlogin', (req, res) => {
     res.render('login/userlogin', { layout: 'basic' });
 });
 
-router.post('/login', validateCredentials, (req, res) => {
+router.post('/userlogin', validateCredentials, (req, res) => {
     if (req.user) {
         res.redirect('/dashboard');
     } else {
-        res.render('login/login', { layout: 'basic', error: "Τα στοιχεία σας δεν είναι σωστά. Παρακαλώ προσπαθήστε ξανά." });
+        res.render('login/userlogin', { layout: 'basic', error: "Τα στοιχεία σας δεν είναι σωστά. Παρακαλώ προσπαθήστε ξανά." });
     }
 });
 
