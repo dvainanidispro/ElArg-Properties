@@ -36,7 +36,7 @@ let databaseConnectionTest = (DbConnection) => {
             log.system(`Database connection to ${process.env.DATABASEHOST}\\${process.env.DATABASENAME} (${process.env.DATABASEDIALECT}) has been established successfully.`);
             resolve();
         } catch (error) {
-            log.error(`Unable to connect to the database:`, error);
+            log.error(`Unable to connect to the database: ${error}`);
             reject();
         }
     });

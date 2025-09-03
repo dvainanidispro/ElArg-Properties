@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken';
-// import bcrypt from 'bcryptjs';
 // import crypto from 'crypto';
 import ms from 'ms';
 import log from './logger.js';
 
-// import Models from '../models/models.js';
+import Models from '../models/models.js';
 // import { Op } from 'sequelize';
 
 
@@ -17,7 +16,7 @@ const jwtsecret = process.env.JWTSECRET;
 /** Το όνομα του cookie που περιέχει το Access Token */
 const cookieName = process.env.TOKENCOOKIENAME;
 /** Tο path στο οποίο στέλνουμε τον μη πιστοποιημένο χρήστη ώστε να βάλει username & password. */
-const loginview = "login";
+const loginview = "login/login";
 /** Τα paths τα οποία δεν ΠΡΟαπαιτούν authentication για την χρήση τους από το χρήστη. Τα περιεχόμενα του φάκελου public δεν περιλαμβάνονται */
 const freepaths = ["/", "/login", "/autologin", "/userlogin", "/status", "/api/login", "/404", ];
 
@@ -57,30 +56,25 @@ const cookieOptions = {
 /////////////////////////////    FUNCTIONS & MIDDLEWARE    /////////////////////////////
 
 
-/** Ελέγχει το username και το password του χρήστη σύμφωνα με αυτά που υπάρχουν στη Βάση και επιστρέφει το χρήστη */
-let getUserFromDatabaseByCredentials = async (username, password) => {
-    return (username==process.env.USER && password==process.env.PASSWORD) ?
-        { id: 1, username: process.env.USER, name: process.env.NAME, role: "admin" } :
-        false;  // Επιστρέφει false αν τα στοιχεία δεν είναι σωστά
-    
-        /*
+/** Ελέγχει το email και το password του χρήστη σύμφωνα με αυτά που υπάρχουν στη Βάση και επιστρέφει το χρήστη */
+let getUserFromDatabaseByCredentials = async (email, password) => {
+
     let user = await Models.User.findOne({
-        where: {    // case insensitive! for strict (case sensitive) comparison use:  where: {username: username} 
-            username: { [Op.iLike]: username } 
-            // For PostgreSQL; for other DBs use:  username: { [Op.like]: username.toLowerCase() }
-        },
-        include: {model: Models.Speaker, as: 'speaker'},
+        where: {email: email},
+        // case sensitive! for case insensitive comparison use:
+        // where { username: { [Op.iLike]: username } }
+        // For PostgreSQL; for other DBs use:  username: { [Op.like]: username.toLowerCase() }
+        // include: {model: Models.Speaker, as: 'speaker'},
         raw: true,          // Επιστρέφει τα αποτελέσματα ως JSON
         nest : true,        // το Speaker να είναι αντικείμενο μέσα στο user 
     });
     if (!user) return false;
-    log.info(user);
+    log.dev({user});
 
     let passwordMatch = (password === user.password);   
     // let passwordMatch = (crypto.createHash('sha256').update(password).digest('hex') === user.password);  
     if (passwordMatch) {return user}
     else {return false}
-    */
 };
 
 /** Δημιουργεί το Access Token του χρήστη */
@@ -90,10 +84,11 @@ let createAccessToken = (user, forMagicLink=false) => {
         sub: user.id,   // The user id
         aud: aud,       // The URL of the API server (https://api.example.com/)
         username: user.username,
+        email: user?.email??null,
         name: user.name,
-        // scope: "read:messages write:messages",
         role: user?.role??null,
-        // customClaims: { },
+        // scope: "read:messages write:messages",
+        // customClaims: {  },  // name, email, username, roles, permissions
     }, jwtsecret, {expiresIn: forMagicLink ? linkExpirationTime : tokenExpirationTime});
 };
 
@@ -105,17 +100,17 @@ let renewAccessToken = (oldDecodedToken) => {
 
 
 
-/** Ελέγχει το username και το password που πληκτρολόγησε ο χρήστης στη φόρμα και του στέλει το Access Token σε Cookie */
+/** Ελέγχει το email και το password που πληκτρολόγησε ο χρήστης στη φόρμα και του στέλει το Access Token σε Cookie */
 let validateCredentials = async (req, res, next) => {
     let body = req.body;
-    let user = await getUserFromDatabaseByCredentials(body.username,body.password);
+    let user = await getUserFromDatabaseByCredentials(body.email,body.password);
     if (user) {
         /** To JWT Token που θα σταλεί στον χρήστη */
         let token = createAccessToken(user);
         res.cookie(cookieName, token, cookieOptions);
         req.user = user;
     } else {
-        log.warn(`Wrong username/password: ${body.username} ${body.password} `);
+        log.warn(`Wrong email/password: ${body.email} ${body.password} `);
     }
     next();
 };
@@ -137,7 +132,7 @@ let validateUser = (req, res, next) => {
             next();
             return;
         } else {    // Αν όχι, στέλνουμε τον χρήστη στο login
-            res.render('login', { layout: false });
+            res.render(loginview, { layout: 'basic' });
         }
     }
 

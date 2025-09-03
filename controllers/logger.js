@@ -29,23 +29,23 @@ log.dev = (message='- - - here - - -') => {
 }
 log.system = (message, icon=true) =>{
     const prefix = icon ? '☑️  ' : '';
-    console.log(styleText(['magenta','bold'], `${prefix}${message}`));
+    console.log(styleText(['magenta','bold'], `${prefix}${display(message)}`));
 }
 log.info = (message, icon=true) => {
     const prefix = icon ? 'ℹ️  ' : '';
-    console.log(styleText('blue', `${prefix}${message}`));
+    console.log(styleText('blue', `${prefix}${display(message)}`));
 }
 log.error = (message, icon=true) => {
     const prefix = icon ? '🔴 ' : '';
-    console.error(styleText(['red', 'bold'], `${prefix}${message}`));
+    console.error(styleText(['red', 'bold'], `${prefix}${display(message)}`));
 }
 log.warn = (message, icon=true) => {
     const prefix = icon ? '⚠️  ' : '';
-    console.warn(styleText('yellow', `${prefix}${message}`));
+    console.warn(styleText('yellow', `${prefix}${display(message)}`));
 }
 log.success = (message, icon=true) => {
     const prefix = icon ? '✅ ' : '';
-    console.log(styleText('green', `${prefix}${message}`));
+    console.log(styleText('green', `${prefix}${display(message)}`));
 }
 
 

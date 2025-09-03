@@ -1,0 +1,35 @@
+
+                        <h2>Είσοδος στην εφαρμογή</h2>
+
+                        <div class="error alert alert-danger d-none" role="alert">
+                            {{error}}
+                        </div>
+                        <div class="without-token d-none">
+                            <p>Πληκτρολογήστε το email σας ώστε να λάβετε το link</p>
+                        </div>
+                        <div class="with-token d-none">
+                            <p>Επαληθεύουμε το λογαριασμό σας...</p>
+                        </div>
+
+
+
+
+
+        <script type="module">
+            const error = {{check error 'true' 'false'}};
+            const token = Q.url.get('token');
+            if (error) {
+                Q('.error').show();
+            } else if (token) {
+                Q('.with-token').show();
+                Q.cookies.set('token', token, 30);
+                Q.url.goto('/dashboard');
+            } else {
+                Q('.without-token').show();
+            }
+        </script>
+
+
+
+
+

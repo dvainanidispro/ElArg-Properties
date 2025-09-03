@@ -29,6 +29,7 @@ import { presentTime } from './controllers/utils.js';
 import { validateUser } from './controllers/auth.js';
 
 import { db, databaseConnectionTest } from './config/database.js';
+import Models from './models/models.js';
 
 
 
@@ -59,7 +60,7 @@ server.get('/', (req, res) => {
     if (req.user){
         res.render('dashboard');
     } else {
-        res.render('login', { layout: false, error: null });
+        res.render('login/login', { layout: 'basic', error: null });
     }
 });
 
@@ -73,10 +74,11 @@ server.get('/dashboard', (req, res) => {
 
 async function startServer(){
     await databaseConnectionTest(db);
+    if (process.env.SYNCMODELS==='true') {await Models.syncModels()};
     let port = process.env.PORT??80;
     let listeningURL = process.env.LISTENINGURL??'http://localhost';
     server.listen(port, () => {
-        log.system(`Express server is listening at ${listeningURL}:${port}. Started at ${presentTime()}.`);
+        log.system(`Express server is listening at ${listeningURL}. Started at ${presentTime()}.`);
     });
 }
 startServer();

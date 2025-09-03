@@ -26,30 +26,40 @@
   </head>
 
 
+    <style>
+        body{
+            background-image: url("/resources/ell-exp-park.webp");
+            background-color: black;
+            overflow: hidden;
+        }
+        .page-container{
+            background-color: hsl(79, 48%, 80%, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0;
+            margin-left: 25vw;
+        }
+    </style>
 
-
-  <body>
 
 
     <body class="app" >
 
 
 
-        <div id="sidebar">
 
-            {{> sidebar }}
 
-        </div>
+        {{!-- <div id="sidebar"></div> --}}
 
-        <div class="page-container">
+        <div class="page-container text-dark">
 
                 <header id="app-header">
 
-                    {{> header }}
+                    
 
                 </header>
 
-                    <main class="main-content">
+                    <main class="main-content  pt-4">
 
                         {{{ body }}}
 
@@ -72,16 +82,5 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-    </div>
   </body>
 </html>

@@ -2,13 +2,13 @@ import { create as HandlebarsCreator } from 'express-handlebars';
 
 const handlebarsConfig = {
     extname: '.hbs',    // extension for layouts (not views)
-    layoutsDir: 'views',
+    layoutsDir: 'views/layouts',
     defaultLayout: 'main',
     helpers: 'views',
     partialsDir: 'views/partials',
     helpers: {
         /* example: {{#if (eq user.attend 'live')}} Δια ζώσης {{else if (eq user.attend 'internet')}} Διαδικτυακά {{/if}} */  
-        eq: (a, b) => a == b, // alias for eq, used in views
+        eq: (a, b) => a == b, 
         and: (...args) => args.slice(0, -1).every(Boolean), // Handlebars 'and' helper
         /* example: {{check variable.length variable 'empty'}} */
         check: (condition, valueIfTrue, valueIfFalse) => condition ? valueIfTrue : valueIfFalse,
