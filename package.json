@@ -1,7 +1,7 @@
 {
   "name": "elarg-estate",
   "version": "1.0.0",
-  "description": "Εφαρμογή Ακινήτων Δήμου Ελληνικού-Αργυρούπολης",
+  "description": "Εφαρμογή Ακινήτων Δήμου Ελληνικού - Αργυρούπολης",
   "main": "server.js",
   "engines": {
     "node": ">=22"

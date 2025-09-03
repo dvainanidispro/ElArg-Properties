@@ -1,4 +1,4 @@
-        <h1 class="text-center text-light">Εφαρμογή Ακινήτων Δήμου Ελληνικού-Αργυρούπολης</h1>
+        <h1 class="text-center text-light">Εφαρμογή Ακινήτων Δήμου Ελληνικού - Αργυρούπολης</h1>
 
         <div class="alert alert-danger text-center d-none" role="alert" id="error">
             {{error}}
@@ -16,7 +16,7 @@
                                 <p>Πληκτρολογήστε τη διεύθυνση e-mail σας και κάντε κλικ στο κουμπί "Αποστολή συνδέσμου". <br>
                                     Θα λάβετε ένα σύνδεσμο (link) στο e-mail σας, με τον οποίο θα συνδεθείτε στην εφαρμογή.
                                 </p>
-                            <form action="/magiclink" method="POST">
+                            <form action="/magiclink" method="POST" autocomplete="off">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">E-mail</label>
                                     <input type="email" class="form-control" id="email" name="email" required autofocus>

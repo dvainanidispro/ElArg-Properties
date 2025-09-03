@@ -1,25 +1,18 @@
+
 :root{
-    --display-if-user: none;
-    --display-if-guest: none;
-}
+    --bs-body-bg: lavender;
+    --bs-heading-color: hsl(277, 100%, 15%);
 
-:root, [data-bs-theme=dark]{
-    --bs-body-bg: hsl(277, 50%, 12%);
-    --bs-body-color: lavender;
-    --bs-heading-color: hsl(277, 50%, 95%);
-
+    --bs-nav-text-color: rgb(0, 0, 63%);
     --nav-hover-color: purple;
     --nav-active-color: hsl(277, 50%, 25%);
+    --nav-active-text-color: hsl(277, 100%, 94%);
     --divider-color: lavender;
     --border-color: hsl(277, 50%, 30%);
 
-    --color-health: hsl(173, 58%, 39%);
-    --color-wealth: hsl(282, 44%, 47%);
-    --color-relationships: hsl(355, 59%, 43%);
-    --color-lifestyle: hsl(207, 99%, 35%);
+    --bs-btn-bg: green;
 
-    --slider-thumb-color: hsl(305, 63%, 51%);
-    --slider-background-color: hsla(0, 0%, 100%, 0.5);
+
 }
 
 
@@ -55,7 +48,7 @@ main{
 div {
     /* background-color: var(--bs-body-bg); */
     background-color: revert;
-    color: revert;
+    /* color: revert; */
 }
 
 h3,h4,h5,p{margin-bottom: revert;}
@@ -66,7 +59,16 @@ h3,h4,h5,p{margin-bottom: revert;}
 h2{font-size: 2rem}
 h3{font-size: 1.5rem} */
 
+/* btn:is(.btn-success, .btn-primary, .btn-warning, .btn-info, .btn-danger, .btn-secondary){
+    --bs-btn-color: #fff;
+} */
+.btn, .btn:focus, .btn:active, .btn:hover{
+    color: var(--bs-light) !important;
+ }
 
+input.form-control{
+    border-color: hsl(240, 93%, 90%);
+}
 
 
 /*********    LAYOUT    **********/ 
@@ -92,10 +94,10 @@ h3{font-size: 1.5rem} */
     transition: all 0.5s ease-in-out !important;
 }
 .sidebar-menu li a, .dropdown-menu li a {
-    color: var(--bs-body-color) !important;
+    color: var(--bs-nav-text-color) !important;
     &:hover, &.active {
         background-color: var(--nav-hover-color) !important;
-        color: var(--bs-body-color) !important;
+        color: var(--nav-active-text-color) !important;
     }
 }
 
@@ -113,4 +115,10 @@ h3{font-size: 1.5rem} */
     height: 2px;
 }
 
+.card{
+    background-color: hsl(240, 67%, 96%);
+    & input, input:focus{
+        background-color: hsl(240, 67%, 98%);
+    }
+}
 
