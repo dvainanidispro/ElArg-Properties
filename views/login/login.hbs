@@ -1,15 +1,37 @@
+<h1 class="text-center text-light">Εφαρμογή Ακινήτων Δήμου Ελληνικού-Αργυρούπολης</h1>
 
-                        <h2>Είσοδος στην εφαρμογή</h2>
+        <div class="error alert alert-danger d-none" role="alert">
+            {{error}}
+        </div>
+        <div class="with-token alert alert-info d-none">
+            Επαληθεύουμε το λογαριασμό σας...
+        </div>
 
-                        <div class="error alert alert-danger d-none" role="alert">
-                            {{error}}
+        <div class="container without-token d-none" style="margin-top: 5rem;">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-center mb-4">Είσοδος</h2>
+                                <p>Πληκτρολογήστε τη διεύθυνση e-mail σας και κάντε κλικ στο κουμπί "Αποστολή συνδέσμου". <br>
+                                    Θα λάβετε ένα σύνδεσμο (link) στο e-mail σας, με τον οποίο θα συνδεθείτε στην εφαρμογή.
+                                </p>
+                            <form action="/magiclink" method="POST">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input type="email" class="form-control" id="email" name="email" required autofocus>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">Αποστολή συνδέσμου</button>
+                            </form>
                         </div>
-                        <div class="without-token d-none">
-                            <p>Πληκτρολογήστε το email σας ώστε να λάβετε το link</p>
-                        </div>
-                        <div class="with-token d-none">
-                            <p>Επαληθεύουμε το λογαριασμό σας...</p>
-                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
 
 
 

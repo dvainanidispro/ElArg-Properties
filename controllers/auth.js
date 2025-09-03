@@ -16,7 +16,7 @@ const jwtsecret = process.env.JWTSECRET;
 /** Το όνομα του cookie που περιέχει το Access Token */
 const cookieName = process.env.TOKENCOOKIENAME;
 /** Tο path στο οποίο στέλνουμε τον μη πιστοποιημένο χρήστη ώστε να βάλει username & password. */
-const loginview = "login/login";
+const loginpath = "/login";
 /** Τα paths τα οποία δεν ΠΡΟαπαιτούν authentication για την χρήση τους από το χρήστη. Τα περιεχόμενα του φάκελου public δεν περιλαμβάνονται */
 const freepaths = ["/", "/login", "/autologin", "/userlogin", "/status", "/api/login", "/404", ];
 
@@ -69,7 +69,7 @@ let getUserFromDatabaseByCredentials = async (email, password) => {
         nest : true,        // το Speaker να είναι αντικείμενο μέσα στο user 
     });
     if (!user) return false;
-    log.dev({user});
+    // log.dev({user});
 
     let passwordMatch = (password === user.password);   
     // let passwordMatch = (crypto.createHash('sha256').update(password).digest('hex') === user.password);  
@@ -116,6 +116,15 @@ let validateCredentials = async (req, res, next) => {
 };
 
 
+/** Δημιουργεί το Magic Link για τον χρήστη */
+let createMagicLink = async (email) => {
+    let user = await Models.User.findOne({ where: { email: email } });
+    if (!user) return false;
+    let token = createAccessToken(user, true);
+    return `${process.env.LISTENINGURL}/login?token=${token}`;
+};
+
+
 /** 
  * Middleware το οποίο ελέγχει ότι ο χρήστης είναι έγκυρος με βάση το Access Token που έστειλε. 
  * Δημουργεί τα req.user (για τα middleware) και res.locals.user (για το view).
@@ -132,7 +141,7 @@ let validateUser = (req, res, next) => {
             next();
             return;
         } else {    // Αν όχι, στέλνουμε τον χρήστη στο login
-            res.render(loginview, { layout: 'basic' });
+            res.redirect(loginpath);
         }
     }
 
@@ -178,4 +187,4 @@ let validateUser = (req, res, next) => {
 
 
 
-export { validateCredentials, validateUser };
+export { validateCredentials, validateUser, createMagicLink };
