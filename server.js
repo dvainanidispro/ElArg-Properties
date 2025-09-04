@@ -40,13 +40,12 @@ server.get('/status', (req, res) => {
    res.status(200).send('OK');
 });
 
-
 server.get('/404', (req, res) => {
    res.status(404).render('errors/404');
 });
 
 
-//* Login routes
+//* Login routes (ελεύθερες)
 import loginRouter from './routes/login.js';
 server.use(loginRouter);
 
@@ -56,23 +55,14 @@ server.use(loginRouter);
 
 server.use(validateUser);
 
+// Αρχική σελίδα (dashboard)
+server.get(['/', '/dashboard'], (req, res) => {
+    res.render('dashboard');
+});
+
 // Admin routes
 import admin from './routes/admin.js';
 server.use('/admin', admin);
-
-// Αρχική σελίδα
-server.get('/', (req, res) => {
-    if (req.user){
-        res.render('dashboard');
-    } else {
-        res.render('login/login', { layout: 'basic', error: null });
-    }
-});
-
-server.get('/dashboard', (req, res) => {
-   res.render('dashboard', { user: req.user });
-});
-
 
 
 ///////////////////////////////////         THE SERVER         /////////////////////////////////////

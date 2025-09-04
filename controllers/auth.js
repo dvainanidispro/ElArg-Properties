@@ -17,8 +17,8 @@ const jwtsecret = process.env.JWTSECRET;
 const cookieName = process.env.TOKENCOOKIENAME;
 /** Tο path στο οποίο στέλνουμε τον μη πιστοποιημένο χρήστη ώστε να βάλει email & password. */
 const loginpath = "/login";
-/** Τα paths τα οποία δεν ΠΡΟαπαιτούν authentication για την χρήση τους από το χρήστη. Τα περιεχόμενα του φάκελου public δεν περιλαμβάνονται */
-const freepaths = ["/", "/login", "/autologin", "/userlogin", "/status", "/api/login", "/404", ];
+/** Δεν εφαρμόζεται. Τα paths τα οποία δεν ΠΡΟαπαιτούν authentication για την χρήση τους από το χρήστη. Τα περιεχόμενα του φάκελου public δεν περιλαμβάνονται */
+const freepaths = ["/login", "/autologin", "/userlogin", '/magiclink', "/status", "/404", ];
 
 /**
  * Επιστρέφει true αν το path ταιριάζει με κάποιο pattern του freepaths (υποστηρίζει * στο τέλος)

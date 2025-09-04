@@ -39,10 +39,12 @@
                             <span class="title">Dashboard</span>
                         </a>
                     </li>
+
+                    {{#if (eq user.role "admin")}}
                     <li class="nav-item dropdown open">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
-                                <i class="c-orange-500 ti-check-box"></i>
+                                <i class="c-orange-500 ti-settings"></i>
                             </span>
                                 <span class="title">Διαχείριση</span>
                             <span class="arrow">
@@ -53,7 +55,7 @@
                             <li>
                                 <a class="sidebar-link" href="/admin/users">
                                     <span class="icon-holder">
-                                        <i class="c-blue-200 ti-list"></i>
+                                        <i class="c-blue-200 ti-user"></i>
                                     </span>
                                 <span>Χρήστες</span>
                                 </a>
@@ -63,7 +65,7 @@
                             <li>
                                 <a class="sidebar-link" href="/admin/roles">
                                     <span class="icon-holder">
-                                        <i class="c-blue-200 ti-list"></i>
+                                        <i class="c-blue-200 ti-shield"></i>
                                     </span>
                                 <span>Ρόλοι</span>
                                 </a>
@@ -72,11 +74,12 @@
                     </li>
 
                     <li role="separator" class="divider"></li>
+                    {{/if}}
 
                     <li class="nav-item dropdown open">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
-                                <i class="c-orange-500 ti-zoom-in"></i>
+                                <i class="c-orange-500 ti-shopping-cart"></i>
                             </span>
                                 <span class="title">Σχολικά κυλικεία</span>
                             <span class="arrow">
@@ -87,7 +90,7 @@
                             <li>
                                 <a class="sidebar-link" href="/canteens">
                                     <span class="icon-holder">
-                                        <i class="c-blue-200 ti-list"></i>
+                                        <i class="c-blue-200 ti-time"></i>
                                     </span>
                                 <span>Εκκρεμότητες</span>
                                 </a>
@@ -95,7 +98,7 @@
                             <li>
                                 <a class="sidebar-link" href="/canteens">
                                     <span class="icon-holder">
-                                        <i class="c-blue-200 ti-list"></i>
+                                        <i class="c-blue-200 ti-shopping-cart-full"></i>
                                     </span>
                                 <span>Κυλικεία</span>
                                 </a>
@@ -103,7 +106,7 @@
                             <li>
                                 <a class="sidebar-link" href="/tenants">
                                     <span class="icon-holder">
-                                        <i class="c-blue-200 ti-check-box"></i>
+                                        <i class="c-blue-200 ti-user"></i>
                                     </span>
                                     <span>Μισθωτές</span>
                                 </a>
@@ -111,7 +114,7 @@
                             <li>
                                 <a class="sidebar-link" href="/landlords">
                                     <span class="icon-holder">
-                                        <i class="c-blue-200 ti-direction"></i>
+                                        <i class="c-blue-200 ti-briefcase"></i>
                                     </span>
                                     <span>Εκμισθωτές</span>
                                 </a>
@@ -122,7 +125,7 @@
                     <li class="nav-item dropdown open">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
-                                <i class="c-orange-500 ti-zoom-in"></i>
+                                <i class="c-orange-500 ti-home"></i>
                             </span>
                                 <span class="title">Ακίνητα</span>
                             <span class="arrow">
@@ -133,7 +136,7 @@
                             <li>
                                 <a class="sidebar-link" href="/properties">
                                     <span class="icon-holder">
-                                        <i class="c-blue-200 ti-direction"></i>
+                                        <i class="c-blue-200 ti-location-pin"></i>
                                     </span>
                                     <span>Ακίνητα</span>
                                 </a>
