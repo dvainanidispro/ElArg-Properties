@@ -1,0 +1,196 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/dashboard">Αρχική</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Προφίλ</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <!-- Μηνύματα επιτυχίας/σφάλματος -->
+        {{#if success}}
+        <div class="col-12 mb-3">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="ti-check me-2"></i>
+                {{success}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if error}}
+        <div class="col-12 mb-3">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="ti-alert me-2"></i>
+                {{error}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        {{/if}}
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="ti-user me-2"></i>
+                        Προφίλ Χρήστη
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/account/profile" id="profileForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="userEmail" class="form-label fw-bold">Email:</label>
+                                <input type="email" class="form-control" id="userEmail" value="{{user.email}}" disabled>
+                                {{#if (eq @root.user.role "admin")}}
+                                    <div class="form-text text-muted">Το email σας μπορεί να αλλάξει από την διαχείριση χρηστών</div>
+                                {{else}}
+                                    <div class="form-text text-muted">Το email σας μπορεί να αλλάξει μόνο από τους διαχειριστές της εφαρμογής</div>
+                                {{/if}}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="userName" class="form-label fw-bold">Όνομα *</label>
+                                <input type="text" class="form-control" id="userName" name="name" value="{{user.name}}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="userPassword" class="form-label fw-bold">Νέο Password</label>
+                                <input type="password" class="form-control" id="userPassword" name="password" minlength="6">
+                                <div class="form-text text-muted">Να παραμείνει κενό αν δεν επιθυμείτε την αλλαγή του</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="confirmPassword" class="form-label fw-bold">Επιβεβαίωση Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" minlength="6">
+                                <div class="form-text text-muted">Επαναλάβετε το νέο password για επιβεβαίωση σε περίπτωση αλλαγής</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="ti-check me-1"></i>
+                                        Αποθήκευση Αλλαγών
+                                    </button>
+                                    <a href="/dashboard" class="btn btn-secondary">
+                                        <i class="ti-arrow-left me-1"></i>
+                                        Επιστροφή
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Λογαριασμού
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>Δημιουργία λογαριασμού:</strong><br>
+                        {{date user.createdAt}}</p>
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date user.updatedAt}}</p>
+                        
+                        <p><strong>Ρόλος:</strong><br>
+                        {{deepLookup @root.roles user.role 'description'}}</p>
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Οδηγίες ασφάλειας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-shield me-2"></i>
+                        Συμβουλές Ασφάλειας
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="ti-check text-success me-1"></i>
+                                Χρησιμοποιήστε ισχυρό password
+                            </li>
+                            <li class="mb-2">
+                                <i class="ti-check text-success me-1"></i>
+                                Τουλάχιστον 6 χαρακτήρες
+                            </li>
+                            <li class="mb-2">
+                                <i class="ti-check text-success me-1"></i>
+                                Συνδυασμός γραμμάτων και αριθμών
+                            </li>
+                            <li>
+                                <i class="ti-check text-success me-1"></i>
+                                Μην μοιράζεστε το password σας, ούτε με τους διαχειριστές της εφαρμογής
+                            </li>
+                        </ul>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('profileForm');
+    const passwordField = document.getElementById('userPassword');
+    const confirmPasswordField = document.getElementById('confirmPassword');
+    
+    // Έλεγχος ομοιότητας passwords πριν την υποβολή
+    form.addEventListener('submit', function(e) {
+        const password = passwordField.value;
+        const confirmPassword = confirmPasswordField.value;
+        
+        // Αν έχει οριστεί password, έλεγχος ομοιότητας
+        if (password || confirmPassword) {
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Τα passwords δεν ταιριάζουν. Παρακαλώ επιβεβαιώστε ότι τα δύο πεδία είναι όμοια.');
+                confirmPasswordField.focus();
+                return false;
+            }
+            
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('Το password πρέπει να έχει τουλάχιστον 6 χαρακτήρες.');
+                passwordField.focus();
+                return false;
+            }
+        }
+    });
+    
+    // Real-time έλεγχος ομοιότητας passwords
+    function checkPasswordMatch() {
+        const password = passwordField.value;
+        const confirmPassword = confirmPasswordField.value;
+        
+        if (password && confirmPassword) {
+            if (password === confirmPassword) {
+                confirmPasswordField.classList.remove('is-invalid');
+                confirmPasswordField.classList.add('is-valid');
+            } else {
+                confirmPasswordField.classList.remove('is-valid');
+                confirmPasswordField.classList.add('is-invalid');
+            }
+        } else {
+            confirmPasswordField.classList.remove('is-valid', 'is-invalid');
+        }
+    }
+    
+    passwordField.addEventListener('input', checkPasswordMatch);
+    confirmPasswordField.addEventListener('input', checkPasswordMatch);
+});
+</script>

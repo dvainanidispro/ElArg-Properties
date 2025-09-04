@@ -64,6 +64,10 @@ server.get(['/', '/dashboard'], (req, res) => {
 import admin from './routes/admin.js';
 server.use('/admin', admin);
 
+// Account routes
+import account from './routes/account.js';
+server.use('/account', account);
+
 
 ///////////////////////////////////         THE SERVER         /////////////////////////////////////
 
