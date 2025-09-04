@@ -167,7 +167,7 @@ window.customElements.define('bootstrap-progress', BootstrapProgress);
 class BootstrapSpinner extends HTMLElement {
     constructor(){
         super(); 
-        let text = this.getAttribute('text') ?? 'Loading';
+        let text = this.getAttribute('text') ?? '';
         this.classList.add("d-block");
         this.innerHTML = /*html*/`
         <div class="d-flex flex-column align-items-center">

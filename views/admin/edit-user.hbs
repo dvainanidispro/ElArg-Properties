@@ -66,6 +66,7 @@
                                         <i class="ti-arrow-left me-1"></i>
                                         Ακύρωση
                                     </a>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
                                 </div>
                             </div>
                         </div>
@@ -132,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('editUserForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        Q('bootstrap-spinner').show();
         const formData = new FormData(this);
         const data = Object.fromEntries(formData);
         const userId = data.id;

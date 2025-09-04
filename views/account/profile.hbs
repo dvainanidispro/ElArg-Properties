@@ -78,6 +78,7 @@
                                         <i class="ti-arrow-left me-1"></i>
                                         Επιστροφή
                                     </a>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
                                 </div>
                             </div>
                         </div>
@@ -151,6 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Έλεγχος ομοιότητας passwords πριν την υποβολή
     form.addEventListener('submit', function(e) {
+        Q('bootstrap-spinner').show();
         const password = passwordField.value;
         const confirmPassword = confirmPasswordField.value;
         
