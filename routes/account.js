@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import Models from '../models/models.js';
 import { roles } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
@@ -73,15 +74,14 @@ account.post('/profile', async (req, res) => {
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = { name };
         if (password) {
-            // Εδώ θα πρέπει να κάνετε hash το password
-            // Για τώρα το αποθηκεύω ως έχει, αλλά πρέπει να προστεθεί bcrypt
-            updateData.password = password;
+            // Hash του password με SHA-256
+            updateData.password = crypto.createHash('sha256').update(password).digest('hex');
         }
 
         // Ενημέρωση χρήστη
         await Models.User.update(updateData, { where: { id: userId } });
 
-        log.info(`Χρήστης ${userId} ενημέρωσε το προφίλ του`);
+        log.info(`O Χρήστης ${req.user.email} ενημέρωσε το προφίλ του`);
         
         // Ανάκτηση ενημερωμένων στοιχείων
         const updatedUser = await Models.User.findByPk(userId, {

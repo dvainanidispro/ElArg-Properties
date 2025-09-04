@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-// import crypto from 'crypto';
+import crypto from 'crypto';
 import ms from 'ms';
 import log from './logger.js';
 
@@ -71,8 +71,8 @@ let getUserFromDatabaseByCredentials = async (email, password) => {
     if (!user) return false;
     // log.dev({user});
 
-    let passwordMatch = (password === user.password);   
-    // let passwordMatch = (crypto.createHash('sha256').update(password).digest('hex') === user.password);  
+    // let passwordMatch = (password === user.password);   
+    let passwordMatch = (crypto.createHash('sha256').update(password).digest('hex') === user.password);  
     if (passwordMatch) {return user}
     else {return false}
 };
