@@ -24,7 +24,7 @@ admin.get('/users', async (req, res) => {
         
         res.render('admin/users', { 
             users,
-            roles: Object.keys(roles), // array
+            roles: roles,
             user: req.user,
             title: 'Διαχείριση Χρηστών'
         });
@@ -51,7 +51,7 @@ admin.get('/users/:id', async (req, res) => {
         
         res.render('admin/edit-user', { 
             userDetails: user,
-            roles: Object.keys(roles), // array
+            roles: roles,
             user: req.user,
             title: `Επεξεργασία Χρήστη: ${user.name || user.email}`
         });
@@ -122,7 +122,7 @@ admin.post('/users', async (req, res) => {
 admin.put('/users/:id', async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
-        const { email, name, role } = req.body;
+        const { email, name, role, password } = req.body;
         
         const user = await Models.User.findByPk(userId);
         if (!user) {
@@ -149,11 +149,19 @@ admin.put('/users/:id', async (req, res) => {
             }
         }
         
-        await user.update({
+        // Δημιουργία αντικειμένου ενημέρωσης
+        const updateData = {
             email: email || user.email,
             name: name || user.name,
             role: role || user.role
-        });
+        };
+        
+        // Προσθήκη κωδικού μόνο αν έχει δοθεί νέος
+        if (password && password.trim() !== '') {
+            updateData.password = password;
+        }
+        
+        await user.update(updateData);
         
         log.info(`Χρήστης ενημερώθηκε: ${user.email} (ID: ${user.id})`);
         
@@ -214,6 +222,15 @@ admin.delete('/users/:id', async (req, res) => {
             message: 'Σφάλμα κατά τη διαγραφή χρήστη' 
         });
     }
+});
+
+
+admin.get('/roles', (req, res) => {
+    res.render('admin/roles', { 
+        roles: roles,
+        user: req.user,
+        title: 'Διαχείριση Ρόλων'
+    });
 });
 
 export default admin;

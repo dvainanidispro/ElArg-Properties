@@ -62,6 +62,12 @@ h3{font-size: 1.5rem} */
 /* btn:is(.btn-success, .btn-primary, .btn-warning, .btn-info, .btn-danger, .btn-secondary){
     --bs-btn-color: #fff;
 } */
+
+.btn{
+    padding: 0.6rem 1.2rem !important;
+    min-width: 3rem;
+}
+
 .btn, .btn:focus, .btn:active, .btn:hover{
     color: var(--bs-light) !important;
  }

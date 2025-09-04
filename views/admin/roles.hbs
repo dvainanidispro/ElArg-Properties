@@ -1,0 +1,67 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="ti-shield me-2"></i>
+                        Διαχείριση Ρόλων και Δικαιωμάτων
+                    </h4>
+                    <div class="card-subtitle text-muted">
+                        Ενημερωτική σελίδα για την προβολή των ρόλων και των δικαιωμάτων του συστήματος
+                    </div>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Πίνακας Ρόλων -->
+                    <div class="table-responsive mb-4">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Ρόλος</th>
+                                    <th>Περιγραφή</th>
+                                    <th>Δικαιώματα</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each roles}}
+                                <tr>
+                                    <td>
+                                        <span class="badge bg-{{this.color}} fs-6">
+                                            {{this.name}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{this.description}}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            {{#each this.permissions}}
+                                            <span class="badge bg-light text-dark border">
+                                                {{#if (eq this 'edit:users')}}Προβολή και επεξεργασία χρηστών{{/if}}
+                                                {{#if (eq this 'view:content')}}Προβολή περιεχομένου{{/if}}
+                                                {{#if (eq this 'edit:content')}}Επεξεργασία περιεχομένου{{/if}}
+                                                {{#if (eq this 'edit:school')}}Προβολή και επεξεργασία στοιχείων κυλικείου{{/if}}
+                                            </span>
+                                            {{/each}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Πληροφορίες -->
+                    <div class="alert alert-info">
+                        <i class="ti-info-alt me-2"></i>
+                        <strong>Σημείωση:</strong> 
+                        Αυτή η σελίδα είναι μόνο για ενημέρωση. Για επεξεργασία ρόλων και δικαιωμάτων, 
+                        επικοινωνήστε με τον διαχειριστή του συστήματος.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

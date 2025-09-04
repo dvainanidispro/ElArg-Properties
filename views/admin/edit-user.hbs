@@ -32,16 +32,22 @@
                                 <input type="email" class="form-control" id="editUserEmail" name="email" value="{{userDetails.email}}" required>
                             </div>
                             <div class="col-md-6 mb-3">
+                                <label for="editUserName" class="form-label fw-bold">Όνομα</label>
+                                <input type="text" class="form-control" id="editUserName" name="name" value="{{userDetails.name}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editUserPassword" class="form-label fw-bold">Νέο Password</label>
+                                <input type="password" class="form-control" id="editUserPassword" name="password" >
+                                <div class="form-text text-muted">Να παραμείνει κενό αν δεν επιθυμείτε την αλλαγή του</div>
+                            </div>
+                            <div class="col-md-6 mb-3"></div>
+                            <div class="col-md-6 mb-3">
                                 <label for="editUserRole" class="form-label fw-bold">Ρόλος *</label>
                                 <select class="form-select" id="editUserRole" name="role" required>
                                     {{#each roles}}
                                         <option value="{{this}}" {{#if (eq this ../userDetails.role)}}selected{{/if}}>{{this}}</option>
                                     {{/each}}
                                 </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editUserName" class="form-label fw-bold">Όνομα</label>
-                                <input type="text" class="form-control" id="editUserName" name="name" value="{{userDetails.name}}">
                             </div>
                         </div>
                         
@@ -73,7 +79,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-grid gap-2">
+                    <div class="d-grid">
                         <button type="button" class="btn btn-danger delete-user-btn"
                                 data-user-id="{{userDetails.id}}" 
                                 data-user-name="{{userDetails.name}}">
@@ -85,7 +91,7 @@
                         
                         <a href="/admin/users" class="btn btn-secondary">
                             <i class="ti-arrow-left me-1"></i>
-                            Επιστροφή στη Λίστα
+                            Επιστροφή στη Λίστα Χρηστών
                         </a>
                     </div>
                 </div>

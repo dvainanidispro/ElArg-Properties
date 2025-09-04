@@ -34,13 +34,13 @@
                                     <td>{{this.name}}</td>
                                     <td>{{this.email}}</td>
                                     <td>
-                                        <span class="badge {{#if (eq this.role 'admin')}}bg-danger{{else}}bg-secondary{{/if}}">
+                                        <span class="badge bg-{{lookup roles this.role 'color'}}">
                                             {{this.role}}
                                         </span>
                                     </td>
                                     <td>{{date this.createdAt}}</td>
                                     <td>
-                                        <a href="/admin/users/{{this.id}}" class="btn btn-sm btn-outline-success" title="Επεξεργασία">
+                                        <a href="/admin/users/{{this.id}}" class="btn btn-outline-success" title="Επεξεργασία">
                                             <i class="ti-pencil text-success"></i>
                                         </a>
                                     </td>
@@ -81,7 +81,7 @@
                         <label for="addUserRole" class="form-label">Ρόλος</label>
                         <select class="form-select" id="addUserRole" name="role">
                             {{#each roles}}
-                                <option value="{{this}}">{{this}}</option>
+                                <option value="{{this.name}}">{{this.name}}</option>
                             {{/each}}
                         </select>
                     </div>
