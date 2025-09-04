@@ -67,14 +67,17 @@ h3{font-size: 1.5rem} */
     padding: 0.6rem 1.2rem !important;
     min-width: 3rem;
 }
-
 .btn, .btn:focus, .btn:active, .btn:hover{
     color: var(--bs-light) !important;
  }
+.btn:hover i {
+    color: var(--bs-light) !important;
+}
 
 input.form-control{
     border-color: hsl(240, 93%, 90%);
 }
+
 
 
 /*********    LAYOUT    **********/ 

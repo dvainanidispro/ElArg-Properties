@@ -22,7 +22,7 @@ let roles = {
     },
     viewer: {
         name: 'viewer',
-        description: 'Χρήστης με δυνατότητες μόνο προβολής',
+        description: 'Χρήστης με δικαιώματα μόνο προβολής',
         permissions: ['view:content'],
         color: 'secondary'
     },

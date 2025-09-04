@@ -34,7 +34,7 @@
                                     <td>{{this.name}}</td>
                                     <td>{{this.email}}</td>
                                     <td>
-                                        <span class="badge bg-{{lookup roles this.role 'color'}}">
+                                        <span class="badge bg-{{deepLookup @root.roles this.role 'color'}} fs-6">
                                             {{this.role}}
                                         </span>
                                     </td>
@@ -126,7 +126,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Αφαίρεση των event listeners για edit και delete buttons αφού πλέον
-    // η επεξεργασία γίνεται στη σελίδα user-details
 });
 </script>

@@ -45,7 +45,7 @@
                                 <label for="editUserRole" class="form-label fw-bold">Ρόλος *</label>
                                 <select class="form-select" id="editUserRole" name="role" required>
                                     {{#each roles}}
-                                        <option value="{{this}}" {{#if (eq this ../userDetails.role)}}selected{{/if}}>{{this}}</option>
+                                        <option value="{{this.name}}" {{#if (eq this.name ../userDetails.role)}}selected{{/if}}>{{this.name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
@@ -80,6 +80,7 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid">
+                        {{#unless (eq userDetails.email @root.user.email)}}
                         <button type="button" class="btn btn-danger delete-user-btn"
                                 data-user-id="{{userDetails.id}}" 
                                 data-user-name="{{userDetails.name}}">
@@ -88,6 +89,7 @@
                         </button>
                         
                         <hr>
+                        {{/unless}}
                         
                         <a href="/admin/users" class="btn btn-secondary">
                             <i class="ti-arrow-left me-1"></i>

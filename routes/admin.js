@@ -1,15 +1,18 @@
 import express from 'express';
 import Models from '../models/models.js';
-import { can, roles } from '../controllers/roles.js';
+import { can, roles, permissions } from '../controllers/roles.js';
 import { Op } from 'sequelize';
 import log from '../controllers/logger.js';
 
 const admin = express.Router();
 
+
+////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ ΧΡΗΣΤΩΝ   ////////////////////
+
 // Middleware για έλεγχο admin δικαιωμάτων
 admin.use(can('edit:users'));
 
-////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ ΧΡΗΣΤΩΝ   ////////////////////
+
 
 /**
  * GET /admin/users - Εμφάνιση λίστας όλων των χρηστών
@@ -228,6 +231,7 @@ admin.delete('/users/:id', async (req, res) => {
 admin.get('/roles', (req, res) => {
     res.render('admin/roles', { 
         roles: roles,
+        permissions: permissions,
         user: req.user,
         title: 'Διαχείριση Ρόλων'
     });

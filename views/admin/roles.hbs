@@ -5,10 +5,11 @@
                 <div class="card-header">
                     <h4 class="card-title">
                         <i class="ti-shield me-2"></i>
-                        Διαχείριση Ρόλων και Δικαιωμάτων
+                        Ρόλοι και Δικαιώματα
                     </h4>
                     <div class="card-subtitle text-muted">
-                        Ενημερωτική σελίδα για την προβολή των ρόλων και των δικαιωμάτων του συστήματος
+                        Ενημερωτική σελίδα για τους ρόλους και τα δικαιώματα της εφαρμογής.
+                        
                     </div>
                 </div>
                 <div class="card-body">
@@ -35,13 +36,10 @@
                                         {{this.description}}
                                     </td>
                                     <td>
-                                        <div class="d-flex flex-wrap gap-1">
+                                        <div class="">
                                             {{#each this.permissions}}
-                                            <span class="badge bg-light text-dark border">
-                                                {{#if (eq this 'edit:users')}}Προβολή και επεξεργασία χρηστών{{/if}}
-                                                {{#if (eq this 'view:content')}}Προβολή περιεχομένου{{/if}}
-                                                {{#if (eq this 'edit:content')}}Επεξεργασία περιεχομένου{{/if}}
-                                                {{#if (eq this 'edit:school')}}Προβολή και επεξεργασία στοιχείων κυλικείου{{/if}}
+                                            <span class="">
+                                                {{lookup @root.permissions this}}<br>
                                             </span>
                                             {{/each}}
                                         </div>
