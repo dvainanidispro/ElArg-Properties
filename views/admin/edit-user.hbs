@@ -1,0 +1,179 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/users">Χρήστες</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{userDetails.name}}</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="ti-pencil me-2"></i>
+                        Επεξεργασία Χρήστη
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId" name="id" value="{{userDetails.id}}">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">ID:</label>
+                                <p class="form-control-plaintext text-muted">{{userDetails.id}}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editUserEmail" class="form-label fw-bold">Email *</label>
+                                <input type="email" class="form-control" id="editUserEmail" name="email" value="{{userDetails.email}}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editUserRole" class="form-label fw-bold">Ρόλος *</label>
+                                <select class="form-select" id="editUserRole" name="role" required>
+                                    {{#each roles}}
+                                        <option value="{{this}}" {{#if (eq this ../userDetails.role)}}selected{{/if}}>{{this}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editUserName" class="form-label fw-bold">Όνομα</label>
+                                <input type="text" class="form-control" id="editUserName" name="name" value="{{userDetails.name}}">
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="ti-check me-1"></i>
+                                        Αποθήκευση
+                                    </button>
+                                    <a href="/admin/users" class="btn btn-secondary">
+                                        <i class="ti-arrow-left me-1"></i>
+                                        Ακύρωση
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-danger delete-user-btn"
+                                data-user-id="{{userDetails.id}}" 
+                                data-user-name="{{userDetails.name}}">
+                            <i class="ti-trash me-1"></i>
+                            Διαγραφή Χρήστη
+                        </button>
+                        
+                        <hr>
+                        
+                        <a href="/admin/users" class="btn btn-secondary">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στη Λίστα
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Πληροφορίες δραστηριότητας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Λογαριασμού
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>Λογαριασμός δημιουργήθηκε:</strong><br>
+                        {{date userDetails.createdAt}}</p>
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date userDetails.updatedAt}}</p>
+                        
+                        <p><strong>Στατιστικά:</strong><br>
+                        Ενεργός {{#if (eq userDetails.role 'admin')}}διαχειριστής{{else}}χρήστης{{/if}}</p>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form για επεξεργασία χρήστη
+    document.getElementById('editUserForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        const userId = data.id;
+        delete data.id;
+        
+        try {
+            const response = await fetch(`/admin/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Ο χρήστης ενημερώθηκε επιτυχώς!');
+                location.reload();
+            } else {
+                alert('Σφάλμα: ' + result.message);
+            }
+        } catch (error) {
+            alert('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+    
+    // Button για διαγραφή χρήστη
+    document.querySelectorAll('.delete-user-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const userId = this.dataset.userId;
+            const userName = this.dataset.userName;
+            
+            if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε τον χρήστη "${userName}";`)) {
+                try {
+                    const response = await fetch(`/admin/users/${userId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Ο χρήστης διαγράφηκε επιτυχώς!');
+                        window.location.href = '/admin/users';
+                    } else {
+                        alert('Σφάλμα: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Σφάλμα δικτύου: ' + error.message);
+                }
+            }
+        });
+    });
+});
+</script>

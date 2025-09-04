@@ -8,20 +8,23 @@ let permissions = {
 };
 
 let roles = {
-    admin: ['edit:users'],
+    admin: ['edit:users', 'view:content', 'edit:content'],
     user: ['view:content', 'edit:content'],
     viewer: ['view:content'],
-    director: ['edit:school'],
+    principal: ['edit:school'],
 };
 
 /** Middleware to check permissions for routes */
-let can = (requiredPermission) => {
+let can = (permission) => {
     return (req, res, next) => {
-        const userRole = req.user.role;
-        const userPermissions = roles[userRole] || [];
-        if (userPermissions.includes(requiredPermission)) {
+        const userRole = req.user?.role;
+        const userPermissions = roles?.[userRole] || [];
+        if (userPermissions.includes(permission)) {
             return next();
         }
         return res.status(403).json({ message: 'Forbidden' });
     };
 };
+
+
+export { can, roles, permissions };

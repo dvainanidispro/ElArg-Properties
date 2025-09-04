@@ -15,7 +15,7 @@ import Models from '../models/models.js';
 const jwtsecret = process.env.JWTSECRET;
 /** Το όνομα του cookie που περιέχει το Access Token */
 const cookieName = process.env.TOKENCOOKIENAME;
-/** Tο path στο οποίο στέλνουμε τον μη πιστοποιημένο χρήστη ώστε να βάλει username & password. */
+/** Tο path στο οποίο στέλνουμε τον μη πιστοποιημένο χρήστη ώστε να βάλει email & password. */
 const loginpath = "/login";
 /** Τα paths τα οποία δεν ΠΡΟαπαιτούν authentication για την χρήση τους από το χρήστη. Τα περιεχόμενα του φάκελου public δεν περιλαμβάνονται */
 const freepaths = ["/", "/login", "/autologin", "/userlogin", "/status", "/api/login", "/404", ];

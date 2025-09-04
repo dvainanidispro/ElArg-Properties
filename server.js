@@ -51,9 +51,14 @@ import loginRouter from './routes/login.js';
 server.use(loginRouter);
 
 
+
 ///////////////// ROUTES ΜΟΝΟ ΓΙΑ ΠΙΣΤΟΠΟΙΗΜΕΝΟΥΣ ΧΡΗΣΤΕΣ /////////////////
 
 server.use(validateUser);
+
+// Admin routes
+import admin from './routes/admin.js';
+server.use('/admin', admin);
 
 // Αρχική σελίδα
 server.get('/', (req, res) => {

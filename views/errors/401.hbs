@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6 text-center">
+            <div class="error-template">
+                <h1 class="display-1 text-danger">401</h1>
+                <h2 class="mb-3">Μη εξουσιοδοτημένη πρόσβαση</h2>
+                <div class="error-details mb-4">
+                    <p class="lead">{{#if message}}{{message}}{{else}}Πρέπει να συνδεθείτε για να αποκτήσετε πρόσβαση σε αυτή τη σελίδα.{{/if}}</p>
+                </div>
+                <div class="error-actions">
+                    <a href="/login" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Σύνδεση
+                    </a>
+                    <a href="/" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-home me-2"></i>
+                        Αρχική Σελίδα
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+.error-template {
+    padding: 2rem;
+}
+
+.display-1 {
+    font-size: 8rem;
+    font-weight: bold;
+}
+</style>

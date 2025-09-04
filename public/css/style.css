@@ -77,6 +77,10 @@ input.form-control{
     background-color: var(--bs-body-bg);
     border-right: 1px solid var(--border-color);
 }
+
+.sidebar .logo{
+    align-content: center;  /* center vertically */
+}
 .sidebar-logo a .logo img {
     width: 5rem;
     height: auto;

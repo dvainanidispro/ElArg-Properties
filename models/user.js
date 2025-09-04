@@ -9,7 +9,6 @@ const User = db.define('user',
             autoIncrement: true
         },
         email: DataTypes.STRING,
-        username: DataTypes.STRING,
         name: DataTypes.STRING,
         password: DataTypes.STRING,
         role: DataTypes.STRING,
