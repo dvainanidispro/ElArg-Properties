@@ -77,7 +77,7 @@ let dimstrap = {       // bootstrap is reserved for... Bootstrap!
 class BootstrapIcon extends HTMLElement {
     constructor(){
         super();
-        let size = this.getAttribute('size')||"1rem";
+        let size = this.getAttribute('size')||"1.2rem";
         let icon = this.getAttribute('icon')||"";
         switch (icon) {
             case 'cart':

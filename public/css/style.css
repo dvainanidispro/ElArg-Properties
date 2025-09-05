@@ -74,6 +74,13 @@ h3{font-size: 1.5rem} */
     color: var(--bs-light) !important;
 }
 
+.btn-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
 input.form-control{
     border-color: hsl(240, 93%, 90%);
 }
