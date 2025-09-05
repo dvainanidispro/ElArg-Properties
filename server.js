@@ -40,10 +40,6 @@ server.get('/status', (req, res) => {
    res.status(200).send('OK');
 });
 
-server.get('/404', (req, res) => {
-   res.status(404).render('errors/404');
-});
-
 
 //* Login routes (ελεύθερες)
 import loginRouter from './routes/login.js';
@@ -69,6 +65,9 @@ import account from './routes/account.js';
 server.use('/account', account);
 
 
+
+
+
 ///////////////////////////////////         THE SERVER         /////////////////////////////////////
 
 async function startServer(){
@@ -81,3 +80,8 @@ async function startServer(){
     });
 }
 startServer();
+
+// Catch-all route for 404 errors (must be last)
+server.use((req, res) => {
+    res.status(404).render('errors/404');
+});

@@ -9,7 +9,7 @@ import log from '../controllers/logger.js';
 
 
 router.get('/login', (req, res) => {
-    res.render('login/login', { layout: 'basic' });
+    res.render('login/login', { layout: 'basic', tokenCookieName: process.env.TOKENCOOKIENAME});
 });
 
 router.get('/userlogin', (req, res) => {
@@ -54,10 +54,16 @@ router.get('/autologin',
             res.redirect('/dashboard');
         }
         else {
-            res.render("login", {layout: false, error: "Τα στοιχεία σας δεν είναι σωστά. Παρακαλώ προσπαθήστε ξανά."});
+            res.render("login/login", {layout: 'basic', error: "Τα στοιχεία σας δεν είναι σωστά. Παρακαλώ προσπαθήστε ξανά."});
         }
     }
 );
+
+router.get('/logout', (req, res) => {
+    // delete cookie
+    res.clearCookie(process.env.TOKENCOOKIENAME);
+    res.redirect('/login');
+});
 
 
 export default router;

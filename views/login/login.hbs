@@ -40,10 +40,9 @@
         <script type="module">
 
             const error = {{check error 'true' 'false'}};
-            const token = Q.url.get('token');
-            if (error) {
-                Q('#error').show();
-            } else if (token) {
+            const token = Q.url.get('{{tokenCookieName}}');
+            if (error) { Q('#error').show() } 
+            if (token) {
                 Q('#verifying').show();
                 // Έλεγχος εγκυρότητας του JWT token
                 const tokenCheck = isValidJWT(token);   // To isValidJWT βρίσκεται στο script.js
