@@ -160,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (password || confirmPassword) {
             if (password !== confirmPassword) {
                 e.preventDefault();
+                Q('bootstrap-spinner').show(false);
                 alert('Τα passwords δεν ταιριάζουν. Παρακαλώ επιβεβαιώστε ότι τα δύο πεδία είναι όμοια.');
                 confirmPasswordField.focus();
                 return false;
@@ -167,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (password.length < 6) {
                 e.preventDefault();
+                Q('bootstrap-spinner').show(false);
                 alert('Το password πρέπει να έχει τουλάχιστον 6 χαρακτήρες.');
                 passwordField.focus();
                 return false;
@@ -174,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Real-time έλεγχος ομοιότητας passwords
+    // Έλεγχος ομοιότητας passwords κατά την πληκτρολόγηση
     function checkPasswordMatch() {
         const password = passwordField.value;
         const confirmPassword = confirmPasswordField.value;

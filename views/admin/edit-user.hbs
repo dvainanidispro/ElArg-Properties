@@ -149,12 +149,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);    // Μικρή καθυστέρηση για να κρύψει το spinner
             
             if (result.success) {
                 alert('Ο χρήστης ενημερώθηκε επιτυχώς!');
                 location.reload();
             } else {
-                alert('Σφάλμα: ' + result.message);
+                alert('Σφάλμα κατά την ενημέρωση χρήστη. Προσπαθήστε ξανά.');
             }
         } catch (error) {
             alert('Σφάλμα δικτύου: ' + error.message);
@@ -168,18 +170,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const userName = this.dataset.userName;
             
             if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε τον χρήστη "${userName}";`)) {
+
+                Q('bootstrap-spinner').show();
                 try {
                     const response = await fetch(`/admin/users/${userId}`, {
                         method: 'DELETE'
                     });
                     
                     const result = await response.json();
-                    
+                    Q('bootstrap-spinner').show(false);
+
                     if (result.success) {
                         alert('Ο χρήστης διαγράφηκε επιτυχώς!');
                         window.location.href = '/admin/users';
                     } else {
-                        alert('Σφάλμα: ' + result.message);
+                        alert(result.message);
                     }
                 } catch (error) {
                     alert('Σφάλμα δικτύου: ' + error.message);

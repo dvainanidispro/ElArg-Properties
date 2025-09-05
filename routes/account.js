@@ -97,8 +97,11 @@ account.post('/profile', async (req, res) => {
 
     } catch (error) {
         log.error('Σφάλμα κατά την ενημέρωση προφίλ χρήστη:', error);
-        res.status(500).render('errors/500', { 
-            message: 'Σφάλμα κατά την ενημέρωση του προφίλ' 
+        res.status(500).render('account/profile', { 
+            user: req.user,
+            title: 'Προφίλ Χρήστη',
+            roles,
+            error: 'Σφάλμα κατά την ενημέρωση του προφίλ. Προσπαθήστε ξανά.' 
         });
     }
 });

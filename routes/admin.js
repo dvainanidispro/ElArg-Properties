@@ -176,7 +176,7 @@ admin.put('/users/:id', async (req, res) => {
         
         await user.update(updateData);
         
-        log.info(`Χρήστης ενημερώθηκε: ${user.email} (ID: ${user.id})`);
+        log.info(`Ο Χρήστης ${user.email} ενημερώθηκε (ID: ${user.id})`);
         
         res.json({ 
             success: true, 

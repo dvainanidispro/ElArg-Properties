@@ -24,7 +24,7 @@
                                     <th>Email</th>
                                     <th>Ρόλος</th>
                                     <th>Ημερομηνία Δημιουργίας</th>
-                                    <th>Ενέργειες</th>
+                                    <th>Επεξεργασία</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,6 +87,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ακύρωση</button>
                     <button type="submit" class="btn btn-primary">Δημιουργία</button>
                 </div>
@@ -101,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('addUserForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        Q('bootstrap-spinner').show();
         const formData = new FormData(this);
         const data = Object.fromEntries(formData);
         
@@ -114,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             const result = await response.json();
+            Q('bootstrap-spinner').show(false);
             
             if (result.success) {
                 alert('Ο χρήστης δημιουργήθηκε επιτυχώς!');
@@ -122,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Σφάλμα: ' + result.message);
             }
         } catch (error) {
+            Q('bootstrap-spinner').show(false);
             alert('Σφάλμα δικτύου: ' + error.message);
         }
     });
