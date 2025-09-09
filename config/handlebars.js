@@ -20,7 +20,7 @@ const handlebarsConfig = {
         check: (condition, valueIfTrue, valueIfFalse) => condition ? valueIfTrue : valueIfFalse,
         /* example: {{or a b c}}, it needs c (Handlebars doesn't pass undefined). Use ''. */
         or: (a, b, c) => a ?? b ?? c, 
-        /** example: {{nestedLookup obj 'key1' 'key2'}}. Το handlebars έχει ήδη την {{lookup object 'key'}} */
+        /** example: {{deepLookup obj 'key1' 'key2'}}. Το handlebars έχει ήδη την {{lookup object 'key'}} */
         deepLookup: (obj, key1, key2) => obj?.[key1]?.[key2],
         /* example: <script> let obj = {{{objectify obj}}}; </script> */      
         objectify: (object) => JSON.stringify(object),  
