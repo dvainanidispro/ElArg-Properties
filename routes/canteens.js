@@ -313,7 +313,7 @@ canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
         const principals = await Models.Principal.findAll({
             attributes: ['id', 'name', 'email'],
             where: { active: true },
-            order: [['name', 'ASC']],
+            order: [['id', 'DESC']],
             raw: true
         });
         

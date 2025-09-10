@@ -8,10 +8,7 @@ const Principal = db.define('principal',
             primaryKey: true,
             autoIncrement: true
         },
-        email: {
-            type: DataTypes.STRING,
-            unique: true
-        },
+        email: DataTypes.STRING,
         name: DataTypes.STRING,
         contact: DataTypes.STRING,
         role: {
@@ -22,7 +19,17 @@ const Principal = db.define('principal',
     },
     {
         tableName: 'principals',
-        timestamps: true
+        timestamps: true,
+        indexes: [
+            { 
+                fields: ['email'],
+                unique: true,
+                name: 'principals_email',
+                where: {
+                    email: { [db.Sequelize.Op.ne]: null }
+                }
+            }
+        ],
     }
 );
 

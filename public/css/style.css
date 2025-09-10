@@ -92,6 +92,9 @@ input[readonly]{
 .form-select{
     background-color: var(--input-bg-color);
 }
+.dropdown-search{
+    max-width: 30ch;
+}
 
 
 

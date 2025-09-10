@@ -32,45 +32,47 @@
                             <div class="col-md-6 mb-3"></div>
                             {{/if}}
                             <div class="col-md-6 mb-3">
-                                <label for="canteenName" class="form-label fw-bold">Όνομα Κυλικείου *</label>
+                                <label for="canteenName" class="form-label fw-bold">Όνομα Σχολείου ή Κυλικείου *</label>
                                 <input type="text" class="form-control" id="canteenName" name="name" value="{{or canteenDetails.name '' ''}}" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canteenArea" class="form-label fw-bold">Επιφάνεια (τ.μ.)</label>
                                 <input type="number" class="form-control" id="canteenArea" name="area" value="{{or canteenDetails.area '' ''}}" min="0" step="0.01">
-                                <div class="form-text text-muted">Επιφάνεια του κυλικείου σε τετραγωνικά μέτρα</div>
                             </div>
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-12 mb-3" x-data="{principalId: '{{canteenDetails.principal_id}}', searchQuery: ''}">
                                 <label for="canteenPrincipal" class="form-label fw-bold">Διευθυντής Σχολείου</label>
-                                <select class="form-select" id="canteenPrincipal" name="principal_id">
-                                    <option value="">-- Χωρίς Διευθυντή --</option>
-                                    {{#each principals}}
-                                    <option value="{{this.id}}" {{#if (eq this.id ../canteenDetails.principal_id)}}selected{{/if}}>
-                                        {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
-                                    </option>
-                                    {{/each}}
-                                </select>
-                                <div class="form-text text-muted">Επιλέξτε τον Διευθυντή που είναι υπεύθυνος για αυτό το κυλικείο</div>
+                                <div class="input-group">
+                                        <select x-model="principalId" class="form-select" id="canteenPrincipal" name="principal_id">
+                                            <option value="">-- Χωρίς Διευθυντή --</option>
+                                            {{#each principals}}
+                                            <option value="{{this.id}}" x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
+                                                {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
+                                            </option>
+                                            {{/each}}
+                                        </select>
+                                    <input x-model="searchQuery" type="text" class="form-control dropdown-search" placeholder="Φίλτρο">
+                                    {{#if canteenDetails}}
+                                        <a x-show="!principalId" href="/canteens/principals/new" class="btn btn-primary" type="button">Προσθήκη</a>
+                                        <a x-show="principalId" :href="`/canteens/principals/${principalId}`" class="btn btn-primary" type="button" >Προβολή</a>
+                                    {{/if}}
+                                </div>
+                                <div class="form-text text-muted">Ο Διευθυντής που είναι υπεύθυνος για αυτό το κυλικείο</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canteenLeaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης</label>
                                 <input type="date" class="form-control" id="canteenLeaseStart" name="lease_start" value="{{dateInput canteenDetails.lease_start}}">
-                                <div class="form-text text-muted">Ημερομηνία έναρξης της μίσθωσης</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canteenLeaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
                                 <input type="date" class="form-control" id="canteenLeaseEnd" name="lease_end" value="{{dateInput canteenDetails.lease_end}}">
-                                <div class="form-text text-muted">Ημερομηνία λήξης της μίσθωσης</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canteenRevisionNumber" class="form-label fw-bold">Αριθμός Γνωστοποίησης</label>
                                 <input type="text" class="form-control" id="canteenRevisionNumber" name="revision_number" value="{{or canteenDetails.revision_number '' ''}}">
-                                <div class="form-text text-muted">Επίσημος αριθμός γνωστοποίησης</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canteenLandlordOffer" class="form-label fw-bold">Οικονομική Προσφορά Εκμισθωτή (€)</label>
                                 <input type="number" class="form-control" id="canteenLandlordOffer" name="landlord_offer" value="{{or canteenDetails.landlord_offer '' ''}}" min="0" step="0.01">
-                                <div class="form-text text-muted">Μηνιαίο μίσθωμα σε ευρώ</div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="canteenActive" class="form-label fw-bold">Κατάσταση</label>
@@ -78,7 +80,6 @@
                                     <option value="true" {{#unless (eq canteenDetails.active false)}}selected{{/unless}}>Ενεργό</option>
                                     <option value="false" {{#if (eq canteenDetails.active false)}}selected{{/if}}>Ανενεργό</option>
                                 </select>
-                                <div class="form-text text-muted">Καθορίζει αν το κυλικείο είναι ενεργό στο σύστημα</div>
                             </div>
                         </div>
                         
@@ -89,10 +90,10 @@
                                         <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
                                         <div>{{check canteenDetails "Αποθήκευση" "Δημιουργία"}}</div>
                                     </button>
-                                    <a href="/canteens/canteens" class="btn btn-secondary btn-icon">
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
                                         <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
                                         <div>Ακύρωση</div>
-                                    </a>
+                                    </button>
                                     <bootstrap-spinner class="d-none"></bootstrap-spinner>
                                 </div>
                             </div>

@@ -19,7 +19,17 @@ const User = db.define('user',
     },
     {
         tableName: 'users',
-        timestamps: true
+        timestamps: true,
+        indexes: [
+            { 
+                fields: ['email'],
+                unique: true,
+                name: 'users_email',
+                where: {
+                    email: { [db.Sequelize.Op.ne]: null }
+                }
+            }
+        ],
     }
 );
 
