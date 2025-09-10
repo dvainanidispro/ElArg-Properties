@@ -166,10 +166,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Εμφάνιση success modal με callback για navigation
                 showSuccessModal(message, 3000, () => {
-                    if (isEdit) {
-                        location.reload();
-                    } else {
-                        window.location.href = `/canteens/principals/${result.principal.id}`;
+                    if (isEdit) {   // if updating
+                        redirectOnSuccess(null); // refresh current page
+                    } else {        // if creating new
+                        redirectOnSuccess(`/canteens/principals/${result.principal.id}`);
                     }
                 });
                 

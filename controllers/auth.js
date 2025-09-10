@@ -126,7 +126,7 @@ let createMagicLink = async (email) => {
     // Ψάχνουμε διαδοχικά σε όλα τα models
     for (const Model of userModels) {
         user = await Model.findOne({ 
-            where: { email: email },
+            where: { email: email, active: true },
             raw: true,
             nest: true
         });

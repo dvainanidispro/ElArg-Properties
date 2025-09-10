@@ -52,8 +52,8 @@
                                         </select>
                                     <input x-model="searchQuery" type="text" class="form-control dropdown-search" placeholder="Φίλτρο">
                                     {{#if canteenDetails}}
-                                        <a x-show="!principalId" href="/canteens/principals/new" class="btn btn-primary" type="button">Προσθήκη</a>
-                                        <a x-show="principalId" :href="`/canteens/principals/${principalId}`" class="btn btn-primary" type="button" >Προβολή</a>
+                                        <a x-cloak x-show="!principalId" :href="`/canteens/principals/new?redirect=${window.location.pathname}`" class="btn btn-primary" type="button">Προσθήκη νέου</a>
+                                        <a x-cloak x-show="principalId" :href="`/canteens/principals/${principalId}`" class="btn btn-primary" type="button" >Προβολή</a>
                                     {{/if}}
                                 </div>
                                 <div class="form-text text-muted">Ο Διευθυντής που είναι υπεύθυνος για αυτό το κυλικείο</div>
@@ -205,10 +205,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Εμφάνιση success modal με callback για navigation
                 showSuccessModal(message, 3000, () => {
-                    if (isEdit) {
-                        location.reload();
-                    } else {
-                        window.location.href = `/canteens/canteens/${result.canteen.id}`;
+                    if (isEdit) {   // if updating
+                        redirectOnSuccess(null); // refresh current page
+                    } else {    // if creating new
+                        redirectOnSuccess(`/canteens/canteens/${result.canteen.id}`);
                     }
                 });
                 

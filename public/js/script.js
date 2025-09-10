@@ -110,6 +110,25 @@ function closeModal(modalId) {
     }
 }
 
+/**
+ * Σε περίπτωση επιτυχίας, ανακατευθύνει το χρήστη σε μια προεπιλεγμένη διαδρομή.
+ * Αν τυχόν υπάρχει get request παράμετρος 'redirect', πχ ?redirect=/canteens/canteens/1
+ * τότε ανακατευθύνει εκεί (αγνοώντας την προεπιλεγμένη διαδρομή).
+ * Αν defaultPath = null, κάνει απλή ανανέωση της τρέχουσας σελίδας.
+ */
+function redirectOnSuccess(defaultPath = null) {
+    const redirectPath = Q.url.get('redirect');
+    
+    if (redirectPath) {
+        window.location.href = redirectPath;
+    } else if (defaultPath) {
+        window.location.href = defaultPath;
+    } else {
+        window.location.reload();
+    }
+}
+
+
 // Αρχικοποίηση event listeners για τα modals όταν φορτώσει η σελίδα
 document.addEventListener('DOMContentLoaded', function() {
     // Event listeners για κλείσιμο modals
