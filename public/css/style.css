@@ -9,6 +9,7 @@
     --nav-active-text-color: hsl(277, 100%, 94%);
     --divider-color: lavender;
     --border-color: hsl(277, 50%, 30%);
+    --input-bg-color: hsl(240, 67%, 98%);
 
     --bs-btn-bg: green;
 
@@ -84,6 +85,13 @@ h3{font-size: 1.5rem} */
 input.form-control{
     border-color: hsl(240, 93%, 90%);
 }
+input[readonly]{
+    background-color: hsl(240, 50%, 92%) !important;
+    
+}
+.form-select{
+    background-color: var(--input-bg-color);
+}
 
 
 
@@ -138,7 +146,7 @@ input.form-control{
 .card{
     background-color: hsl(240, 67%, 96%);
     & input, input:focus{
-        background-color: hsl(240, 67%, 98%);
+        background-color: var(--input-bg-color);
     }
 }
 

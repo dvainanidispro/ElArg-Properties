@@ -8,13 +8,17 @@ const Principal = db.define('principal',
             primaryKey: true,
             autoIncrement: true
         },
-        email: DataTypes.STRING,
+        email: {
+            type: DataTypes.STRING,
+            unique: true
+        },
         name: DataTypes.STRING,
         contact: DataTypes.STRING,
         role: {
             type: DataTypes.STRING,
             defaultValue: 'principal'
         },
+        active: DataTypes.BOOLEAN,
     },
     {
         tableName: 'principals',

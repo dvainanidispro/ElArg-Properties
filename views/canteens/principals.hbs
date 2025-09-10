@@ -1,0 +1,60 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title h3">
+                        <i class="ti-user me-2"></i>
+                        Διευθυντές Σχολείων
+                    </h1>
+                    <div class="card-actions">
+                        <a href="/canteens/principals/new" class="btn btn-primary">
+                            <i class="ti-plus me-1"></i>
+                            Νέος Διευθυντής
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Όνομα</th>
+                                    <th>Email</th>
+                                    <th>Επικοινωνία</th>
+                                    <th>Κατάσταση</th>
+                                    <th>Ημερομηνία Δημιουργίας</th>
+                                    <th>Επεξεργασία</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each principals}}
+                                <tr>
+                                    <td>{{this.id}}</td>
+                                    <td>{{this.name}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>{{this.contact}}</td>
+                                    <td>
+                                        {{#if this.active}}
+                                            <span class="badge bg-success fs-6">Ενεργός</span>
+                                        {{else}}
+                                            <span class="badge bg-secondary fs-6">Ανενεργός</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>{{date this.createdAt}}</td>
+                                    <td>
+                                        <a href="/canteens/principals/{{this.id}}" class="btn btn-outline-success" title="Επεξεργασία">
+                                            <i class="ti-pencil text-success" style="font-size: 1.2rem;"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

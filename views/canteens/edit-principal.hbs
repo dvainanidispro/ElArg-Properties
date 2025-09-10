@@ -1,0 +1,216 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/canteens/principals">Διευθυντές Σχολείων</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{or principalDetails.name "Νέος Διευθυντής Σχολείου" ""}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="{{or principalDetails 'ti-pencil' 'ti-plus'}} me-2"></i>
+                        {{or principalDetails.name "Νέος Διευθυντής Σχολείου" ""}}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="principalForm">
+                        <div class="row">
+                            {{#if principalDetails}}
+                            <div class="col-md-6 mb-3">
+                                <label for="principalId" class="form-label fw-bold">ID Διευθυντή</label>
+                                <input type="text" class="form-control" id="principalId" name="id" value="{{principalDetails.id}}" readonly>
+                                <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
+                            </div>
+                            <div class="col-md-6 mb-3"></div>
+                            {{/if}}
+                            <div class="col-md-6 mb-3">
+                                <label for="principalName" class="form-label fw-bold">Όνομα</label>
+                                <input type="text" class="form-control" id="principalName" name="name" value="{{or principalDetails.name '' ''}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="principalEmail" class="form-label fw-bold">Email *</label>
+                                <input type="email" class="form-control" id="principalEmail" name="email" value="{{or principalDetails.email '' ''}}" required>
+                                <div class="form-text text-muted">To email πρέπει να είναι μοναδικό για τον Διευθυντή</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="principalContact" class="form-label fw-bold">Επικοινωνία</label>
+                                <input type="text" class="form-control" id="principalContact" name="contact" value="{{or principalDetails.contact '' ''}}" placeholder="Τηλέφωνο ή άλλη επικοινωνία">
+                                <div class="form-text text-muted">Τηλέφωνο, διεύθυνση ή άλλες πληροφορίες επικοινωνίας</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="principalActive" class="form-label fw-bold">Κατάσταση</label>
+                                <select class="form-select" id="principalActive" name="active">
+                                    <option value="true" {{#if principalDetails.active}}selected{{else}}{{#unless principalDetails}}selected{{/unless}}{{/if}}>Ενεργός</option>
+                                    <option value="false" {{#unless principalDetails.active}}{{#if principalDetails}}selected{{/if}}{{/unless}}>Ανενεργός</option>
+                                </select>
+                                <div class="form-text text-muted">Καθορίζει αν ο Διευθυντής μπορεί να πραγματοποιήσει είσοδο στην Εφαρμογή με το email του</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
+                                        <div>{{check principalDetails "Αποθήκευση" "Δημιουργία"}}</div>
+                                    </button>
+                                    <a href="/canteens/principals" class="btn btn-secondary btn-icon">
+                                        <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
+                                        <div>Ακύρωση</div>
+                                    </a>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid">
+                        {{#if principalDetails}}
+                        <button type="button" class="btn btn-danger delete-principal-btn"
+                                data-principal-id="{{principalDetails.id}}" 
+                                data-principal-name="{{principalDetails.name}}">
+                            <i class="ti-trash me-1"></i>
+                            Διαγραφή Διευθυντή
+                        </button>
+                        
+                        <hr>
+                        {{/if}}
+                        
+                        <a href="/canteens/principals" class="btn btn-secondary">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στη Λίστα Διευθυντών
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            {{#if principalDetails}}
+            <!-- Πληροφορίες δραστηριότητας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Λογαριασμού
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>Δημιουργία λογαριασμού:</strong><br>
+                        {{date principalDetails.createdAt}}</p>
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date principalDetails.updatedAt}}</p>
+                        
+                    </small>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form για επεξεργασία/δημιουργία principal
+    document.getElementById('principalForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        const principalId = data.id;
+        const isEdit = !!principalId; // true αν υπάρχει ID (επεξεργασία)
+        
+        if (isEdit) {
+            delete data.id; // Αφαιρούμε το ID από τα data για PUT request
+        }
+        
+        try {
+            const url = isEdit ? `/canteens/principals/${principalId}` : '/canteens/principals';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                const message = isEdit ? 'Ο Διευθυντής ενημερώθηκε επιτυχώς!' : 'Ο Διευθυντής δημιουργήθηκε επιτυχώς!';
+
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal(message, 3000, () => {
+                    if (isEdit) {
+                        location.reload();
+                    } else {
+                        window.location.href = `/canteens/principals/${result.principal.id}`;
+                    }
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+    
+    // Button για διαγραφή principal (μόνο σε επεξεργασία)
+    document.querySelectorAll('.delete-principal-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const principalId = this.dataset.principalId;
+            const principalName = this.dataset.principalName;
+
+            if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε τον Διευθυντή "${principalName}";`)) {
+
+                Q('bootstrap-spinner').show();
+                try {
+                    const response = await fetch(`/canteens/principals/${principalId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    Q('bootstrap-spinner').show(false);
+
+                    if (result.success) {
+                        alert('Ο Διευθυντής διαγράφηκε επιτυχώς!');
+                        window.location.href = '/canteens/principals';
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    Q('bootstrap-spinner').show(false);
+                    showErrorModal('Σφάλμα δικτύου: ' + error.message);
+                }
+            }
+        });
+    });
+});
+</script>

@@ -60,6 +60,10 @@ server.get(['/', '/dashboard'], (req, res) => {
 import admin from './routes/admin.js';
 server.use('/admin', admin);
 
+// Canteens routes
+import canteens from './routes/canteens.js';
+server.use('/canteens', canteens);
+
 // Own account routes
 import account from './routes/account.js';
 server.use('/account', account);

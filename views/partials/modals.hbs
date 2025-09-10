@@ -1,0 +1,63 @@
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title text-white" id="successModalLabel">
+                    <i class="ti-check-box me-2"></i>
+                    Επιτυχής Αποθήκευση
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center">
+                    <div class="text-success me-3">
+                        <i class="ti-check-box" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <p class="mb-0" id="successMessage">Η ενέργεια ολοκληρώθηκε επιτυχώς!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                    <i class="ti-check me-1"></i>
+                    Εντάξει
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title text-white" id="errorModalLabel">
+                    <i class="ti-close me-2"></i>
+                    Σφάλμα!
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center">
+                    <div class="text-danger me-3">
+                        <i class="ti-close" style="font-size: 2rem;"></i>
+                    </div>
+                    <div>
+                        <p class="mb-2 fw-bold">Παρακαλώ, προσπαθήστε ξανά.</p>
+                        <p class="mb-0 text-muted" id="errorMessage">Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                    <i class="ti-close me-1"></i>
+                    Κλείσιμο
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

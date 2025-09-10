@@ -12,6 +12,10 @@ const User = db.define('user',
         name: DataTypes.STRING,
         password: DataTypes.STRING,
         role: DataTypes.STRING,
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        },
     },
     {
         tableName: 'users',
