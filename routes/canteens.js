@@ -10,6 +10,9 @@ import { Op } from 'sequelize';
  */
 const canteens = Router();
 
+
+
+
 ////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PRINCIPALS   ////////////////////
 
 /**
@@ -232,17 +235,266 @@ canteens.delete('/principals/:id', can('edit:content'), async (req, res) => {
     }
 });
 
+
+
+
 ////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ CANTEENS   ////////////////////
 
+/**
+ * GET /canteens - Εμφάνιση λίστας όλων των canteens (redirect)
+ */
+canteens.get('/', can('view:content'), async (req, res) => {
+    res.redirect('/canteens/canteens');
+});
+
+/**
+ * GET /canteens/canteens - Εμφάνιση λίστας όλων των canteens
+ */
 canteens.get('/canteens', can('view:content'), async (req, res) => {
     try {
         const canteensList = await Models.Canteen.findAll({
-            include: [{ model: Models.Principal, as: 'principal' }]
+            include: [{ 
+                model: Models.Principal, 
+                as: 'principal',
+                attributes: ['id', 'name', 'email']
+            }],
+            order: [['createdAt', 'DESC']]
         });
-        res.render('canteens/canteens', { canteens: canteensList });
+        
+        res.render('canteens/canteens', { 
+            canteens: canteensList,
+            user: req.user,
+            title: 'Διαχείριση Κυλικείων'
+        });
     } catch (error) {
-        log.error(`Error fetching canteens: ${error.message}`);
-        res.status(500).render('errors/500');
+        log.error('Σφάλμα κατά την ανάκτηση κυλικείων:', error);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση κυλικείων' });
+    }
+});
+
+/**
+ * GET /canteens/canteens/new - Φόρμα για νέο canteen
+ */
+canteens.get('/canteens/new', can('edit:content'), async (req, res) => {
+    try {
+        // Ανάκτηση όλων των principals για το dropdown
+        const principals = await Models.Principal.findAll({
+            attributes: ['id', 'name', 'email'],
+            where: { active: true },
+            order: [['name', 'ASC']],
+            raw: true
+        });
+        
+        res.render('canteens/edit-canteen', { 
+            canteenDetails: null, // null για νέο canteen ώστε το view να ξέρει
+            principals,
+            user: req.user,
+            title: 'Νέο Κυλικείο'
+        });
+    } catch (error) {
+        log.error('Σφάλμα κατά την εμφάνιση φόρμας νέου canteen:', error);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την εμφάνιση φόρμας' });
+    }
+});
+
+/**
+ * GET /canteens/canteens/:id - Εμφάνιση στοιχείων συγκεκριμένου canteen
+ */
+canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
+    try {
+        const canteenId = parseInt(req.params.id);
+        const canteen = await Models.Canteen.findByPk(canteenId);
+        
+        if (!canteen) {
+            return res.status(404).render('errors/404', { message: 'Το Κυλικείο δεν βρέθηκε' });
+        }
+        
+        // Ανάκτηση όλων των principals για το dropdown
+        const principals = await Models.Principal.findAll({
+            attributes: ['id', 'name', 'email'],
+            where: { active: true },
+            order: [['name', 'ASC']],
+            raw: true
+        });
+        
+        res.render('canteens/edit-canteen', { 
+            canteenDetails: canteen.toJSON(),
+            principals,
+            user: req.user,
+            title: `Επεξεργασία Κυλικείου: ${canteen.name}`
+        });
+    } catch (error) {
+        log.error('Σφάλμα κατά την ανάκτηση canteen:', error);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση του κυλικείου' });
+    }
+});
+
+/**
+ * POST /canteens/canteens - Δημιουργία νέου canteen
+ */
+canteens.post('/canteens', can('edit:content'), async (req, res) => {
+    try {
+        const { name, area, principal_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
+        
+        // Βασικός έλεγχος δεδομένων
+        if (!name) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Το πεδίο όνομα είναι υποχρεωτικό' 
+            });
+        }
+        
+        // Έλεγχος αν υπάρχει ήδη canteen με το ίδιο όνομα
+        const existingCanteen = await Models.Canteen.findOne({
+            where: { name }
+        });
+        
+        if (existingCanteen) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Υπάρχει ήδη Κυλικείο με αυτό το όνομα' 
+            });
+        }
+        
+        const newCanteen = await Models.Canteen.create({
+            name,
+            area: area || null,
+            principal_id: principal_id || null,
+            lease_start: lease_start || null,
+            lease_end: lease_end || null,
+            revision_number: revision_number || null,
+            landlord_offer: landlord_offer || null,
+            active: active !== undefined ? active : true
+        });
+        
+        log.info(`Νέο canteen δημιουργήθηκε: ${newCanteen.name} (ID: ${newCanteen.id})`);
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'Το Κυλικείο δημιουργήθηκε επιτυχώς',
+            canteen: {
+                id: newCanteen.id,
+                name: newCanteen.name,
+                area: newCanteen.area,
+                principal_id: newCanteen.principal_id,
+                lease_start: newCanteen.lease_start,
+                lease_end: newCanteen.lease_end,
+                revision_number: newCanteen.revision_number,
+                landlord_offer: newCanteen.landlord_offer,
+                active: newCanteen.active
+            }
+        });
+    } catch (error) {
+        log.error('Σφάλμα κατά τη δημιουργία canteen:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη δημιουργία του Κυλικείου' 
+        });
+    }
+});
+
+/**
+ * PUT /canteens/canteens/:id - Ενημέρωση στοιχείων canteen
+ */
+canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
+    try {
+        const canteenId = parseInt(req.params.id);
+        const { name, area, principal_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
+        
+        const canteen = await Models.Canteen.findByPk(canteenId);
+        if (!canteen) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Το Κυλικείο δεν βρέθηκε' 
+            });
+        }
+        
+        // Έλεγχος αν το νέο όνομα υπάρχει ήδη σε άλλο canteen
+        if (name !== canteen.name) {
+            const existingCanteen = await Models.Canteen.findOne({
+                where: {
+                    id: { [Op.ne]: canteenId },
+                    name
+                }
+            });
+            
+            if (existingCanteen) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Υπάρχει ήδη άλλο Κυλικείο με αυτό το όνομα' 
+                });
+            }
+        }
+        
+        // Δημιουργία αντικειμένου ενημέρωσης
+        const updateData = {
+            name: name || canteen.name,
+            area: area !== undefined ? area : canteen.area,
+            principal_id: principal_id !== undefined ? principal_id : canteen.principal_id,
+            lease_start: lease_start !== undefined ? lease_start : canteen.lease_start,
+            lease_end: lease_end !== undefined ? lease_end : canteen.lease_end,
+            revision_number: revision_number !== undefined ? revision_number : canteen.revision_number,
+            landlord_offer: landlord_offer !== undefined ? landlord_offer : canteen.landlord_offer,
+            active: active !== undefined ? active : canteen.active
+        };
+        
+        await canteen.update(updateData);
+        
+        log.info(`Το Canteen ${canteen.name} ενημερώθηκε (ID: ${canteen.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Το Κυλικείο ενημερώθηκε επιτυχώς',
+            canteen: {
+                id: canteen.id,
+                name: canteen.name,
+                area: canteen.area,
+                principal_id: canteen.principal_id,
+                lease_start: canteen.lease_start,
+                lease_end: canteen.lease_end,
+                revision_number: canteen.revision_number,
+                landlord_offer: canteen.landlord_offer,
+                active: canteen.active
+            }
+        });
+    } catch (error) {
+        log.error('Σφάλμα κατά την ενημέρωση canteen:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά την ενημέρωση του Κυλικείου' 
+        });
+    }
+});
+
+/**
+ * DELETE /canteens/canteens/:id - Διαγραφή canteen
+ */
+canteens.delete('/canteens/:id', can('edit:content'), async (req, res) => {
+    try {
+        const canteenId = parseInt(req.params.id);
+        
+        const canteen = await Models.Canteen.findByPk(canteenId);
+        if (!canteen) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Το Κυλικείο δεν βρέθηκε' 
+            });
+        }
+        
+        await canteen.destroy();
+        
+        log.info(`Canteen διαγράφηκε: ${canteen.name} (ID: ${canteen.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Το Κυλικείο διαγράφηκε επιτυχώς' 
+        });
+    } catch (error) {
+        log.error('Σφάλμα κατά τη διαγραφή canteen:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη διαγραφή του Κυλικείου' 
+        });
     }
 });
 

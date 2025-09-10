@@ -48,8 +48,8 @@
                             <div class="col-md-12 mb-3">
                                 <label for="principalActive" class="form-label fw-bold">Κατάσταση</label>
                                 <select class="form-select" id="principalActive" name="active">
-                                    <option value="true" {{#if principalDetails.active}}selected{{else}}{{#unless principalDetails}}selected{{/unless}}{{/if}}>Ενεργός</option>
-                                    <option value="false" {{#unless principalDetails.active}}{{#if principalDetails}}selected{{/if}}{{/unless}}>Ανενεργός</option>
+                                    <option value="true" {{#unless (eq principalDetails.active false)}}selected{{/unless}}>Ενεργός</option>
+                                    <option value="false" {{#if (eq principalDetails.active false)}}selected{{/if}}>Ανενεργός</option>
                                 </select>
                                 <div class="form-text text-muted">Καθορίζει αν ο Διευθυντής μπορεί να πραγματοποιήσει είσοδο στην Εφαρμογή με το email του</div>
                             </div>

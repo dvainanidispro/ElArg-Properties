@@ -77,6 +77,18 @@ const handlebarsConfig = {
                 return '';
             }
         },
+        dateInput: (date) => {
+            if (!date) return '';
+            try {
+                const dateObj = date instanceof Date ? date : new Date(date);
+                if (isNaN(dateObj.getTime())) return '';
+                // Μετατροπή σε YYYY-MM-DD format για HTML date input
+                return dateObj.toISOString().split('T')[0];
+            } catch (error) {
+                console.error('DateInput formatting error:', error, 'for date:', date);
+                return '';
+            }
+        },
     }
 };
 

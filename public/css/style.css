@@ -1,6 +1,6 @@
 
 :root{
-    --bs-body-bg: lavender;
+    --bs-body-bg: hsl(240, 67%, 97%);
     --bs-heading-color: hsl(277, 100%, 15%);
 
     --bs-nav-text-color: rgb(0, 0, 63%);

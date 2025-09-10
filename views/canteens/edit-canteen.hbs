@@ -1,0 +1,254 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/canteens/canteens">Σχολικά Κυλικεία</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{or canteenDetails.name "Νέο Κυλικείο" ""}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="{{or canteenDetails 'ti-pencil' 'ti-plus'}} me-2"></i>
+                        {{or canteenDetails.name "Νέο Κυλικείο" ""}}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="canteenForm">
+                        <div class="row">
+                            {{#if canteenDetails}}
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenId" class="form-label fw-bold">ID Κυλικείου</label>
+                                <input type="text" class="form-control" id="canteenId" name="id" value="{{canteenDetails.id}}" readonly>
+                                <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
+                            </div>
+                            <div class="col-md-6 mb-3"></div>
+                            {{/if}}
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenName" class="form-label fw-bold">Όνομα Κυλικείου *</label>
+                                <input type="text" class="form-control" id="canteenName" name="name" value="{{or canteenDetails.name '' ''}}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenArea" class="form-label fw-bold">Επιφάνεια (τ.μ.)</label>
+                                <input type="number" class="form-control" id="canteenArea" name="area" value="{{or canteenDetails.area '' ''}}" min="0" step="0.01">
+                                <div class="form-text text-muted">Επιφάνεια του κυλικείου σε τετραγωνικά μέτρα</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="canteenPrincipal" class="form-label fw-bold">Διευθυντής Σχολείου</label>
+                                <select class="form-select" id="canteenPrincipal" name="principal_id">
+                                    <option value="">-- Χωρίς Διευθυντή --</option>
+                                    {{#each principals}}
+                                    <option value="{{this.id}}" {{#if (eq this.id ../canteenDetails.principal_id)}}selected{{/if}}>
+                                        {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
+                                    </option>
+                                    {{/each}}
+                                </select>
+                                <div class="form-text text-muted">Επιλέξτε τον Διευθυντή που είναι υπεύθυνος για αυτό το κυλικείο</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenLeaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης</label>
+                                <input type="date" class="form-control" id="canteenLeaseStart" name="lease_start" value="{{dateInput canteenDetails.lease_start}}">
+                                <div class="form-text text-muted">Ημερομηνία έναρξης της μίσθωσης</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenLeaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
+                                <input type="date" class="form-control" id="canteenLeaseEnd" name="lease_end" value="{{dateInput canteenDetails.lease_end}}">
+                                <div class="form-text text-muted">Ημερομηνία λήξης της μίσθωσης</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenRevisionNumber" class="form-label fw-bold">Αριθμός Γνωστοποίησης</label>
+                                <input type="text" class="form-control" id="canteenRevisionNumber" name="revision_number" value="{{or canteenDetails.revision_number '' ''}}">
+                                <div class="form-text text-muted">Επίσημος αριθμός γνωστοποίησης</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenLandlordOffer" class="form-label fw-bold">Οικονομική Προσφορά Εκμισθωτή (€)</label>
+                                <input type="number" class="form-control" id="canteenLandlordOffer" name="landlord_offer" value="{{or canteenDetails.landlord_offer '' ''}}" min="0" step="0.01">
+                                <div class="form-text text-muted">Μηνιαίο μίσθωμα σε ευρώ</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="canteenActive" class="form-label fw-bold">Κατάσταση</label>
+                                <select class="form-select" id="canteenActive" name="active">
+                                    <option value="true" {{#unless (eq canteenDetails.active false)}}selected{{/unless}}>Ενεργό</option>
+                                    <option value="false" {{#if (eq canteenDetails.active false)}}selected{{/if}}>Ανενεργό</option>
+                                </select>
+                                <div class="form-text text-muted">Καθορίζει αν το κυλικείο είναι ενεργό στο σύστημα</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
+                                        <div>{{check canteenDetails "Αποθήκευση" "Δημιουργία"}}</div>
+                                    </button>
+                                    <a href="/canteens/canteens" class="btn btn-secondary btn-icon">
+                                        <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
+                                        <div>Ακύρωση</div>
+                                    </a>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid">
+                        {{#if canteenDetails}}
+                        <button type="button" class="btn btn-danger delete-canteen-btn"
+                                data-canteen-id="{{canteenDetails.id}}" 
+                                data-canteen-name="{{canteenDetails.name}}">
+                            <i class="ti-trash me-1"></i>
+                            Διαγραφή Κυλικείου
+                        </button>
+                        
+                        <hr>
+                        {{/if}}
+                        
+                        <a href="/canteens/canteens" class="btn btn-secondary">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στη Λίστα Κυλικείων
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            {{#if canteenDetails}}
+            <!-- Πληροφορίες δραστηριότητας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Κυλικείου
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>Δημιουργία:</strong><br>
+                        {{date canteenDetails.createdAt}}</p>
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date canteenDetails.updatedAt}}</p>
+                        
+                    </small>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form για επεξεργασία/δημιουργία canteen
+    document.getElementById('canteenForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        const canteenId = data.id;
+        const isEdit = !!canteenId; // true αν υπάρχει ID (επεξεργασία)
+        
+        if (isEdit) {
+            delete data.id; // Αφαιρούμε το ID από τα data για PUT request
+        }
+        
+        // Μετατροπή κενών strings σε null για numbers και dates
+        if (data.area === '') data.area = null;
+        if (data.landlord_offer === '') data.landlord_offer = null;
+        if (data.lease_start === '') data.lease_start = null;
+        if (data.lease_end === '') data.lease_end = null;
+        if (data.principal_id === '') data.principal_id = null;
+        if (data.revision_number === '') data.revision_number = null;
+        
+        // Μετατροπή string boolean σε boolean
+        data.active = data.active === 'true';
+        
+        try {
+            const url = isEdit ? `/canteens/canteens/${canteenId}` : '/canteens/canteens';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                const message = isEdit ? 'Το Κυλικείο ενημερώθηκε επιτυχώς!' : 'Το Κυλικείο δημιουργήθηκε επιτυχώς!';
+
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal(message, 3000, () => {
+                    if (isEdit) {
+                        location.reload();
+                    } else {
+                        window.location.href = `/canteens/canteens/${result.canteen.id}`;
+                    }
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+    
+    // Button για διαγραφή canteen (μόνο σε επεξεργασία)
+    document.querySelectorAll('.delete-canteen-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const canteenId = this.dataset.canteenId;
+            const canteenName = this.dataset.canteenName;
+
+            if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε το Κυλικείο "${canteenName}";`)) {
+
+                Q('bootstrap-spinner').show();
+                try {
+                    const response = await fetch(`/canteens/canteens/${canteenId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    Q('bootstrap-spinner').show(false);
+
+                    if (result.success) {
+                        alert('Το Κυλικείο διαγράφηκε επιτυχώς!');
+                        window.location.href = '/canteens/canteens';
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    Q('bootstrap-spinner').show(false);
+                    showErrorModal('Σφάλμα δικτύου: ' + error.message);
+                }
+            }
+        });
+    });
+});
+</script>

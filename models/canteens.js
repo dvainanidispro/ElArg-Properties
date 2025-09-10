@@ -8,12 +8,16 @@ const Canteen = db.define('canteen',
             primaryKey: true,
             autoIncrement: true
         },
-        name: DataTypes.STRING,
-        area: DataTypes.SMALLINT,
-        lease_start: DataTypes.DATE,
-        lease_end: DataTypes.DATE,
-        revision_number: DataTypes.STRING,
-        landlord_offer: DataTypes.SMALLINT,
+        name: DataTypes.STRING,                  // Όνομα κυλικείου   
+        area: DataTypes.SMALLINT,                // Επιφάνεια σε τ.μ.
+        lease_start: DataTypes.DATE,             // Έναρξη μίσθωσης
+        lease_end: DataTypes.DATE,               // Λήξη μίσθωσης
+        revision_number: DataTypes.STRING,       // Αριθμός γνωστοποίησης
+        landlord_offer: DataTypes.SMALLINT,      // Οικονομική προσφορά εκμισθωτή 
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        }
     },
     {
         tableName: 'canteens',

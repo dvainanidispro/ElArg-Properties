@@ -14,9 +14,9 @@ Canteen.belongsTo(Principal, {
     foreignKey: 'principal_id',
     as: 'principal'
 });
-Principal.hasOne(Canteen, {
+Principal.hasMany(Canteen, {
     foreignKey: 'principal_id',
-    as: 'canteen'
+    as: 'canteens'
 });
 
 ////////////////    MODELS SYNC    ////////////////
