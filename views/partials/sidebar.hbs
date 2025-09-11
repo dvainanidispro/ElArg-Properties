@@ -40,7 +40,7 @@
                         </a>
                     </li>
 
-                    {{#if (eq user.role "admin")}}
+                    {{#if (can "edit:users")}}
                     <li class="nav-item dropdown open">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
@@ -76,6 +76,7 @@
                     <li role="separator" class="divider"></li>
                     {{/if}}
 
+                    {{#if (can "view:content")}}
                     <li class="nav-item dropdown open">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
@@ -173,9 +174,51 @@
                             </li>
                         </ul>
                     </li>
+                    {{/if}}
    
 
-                    <li role="separator" class="divider my-4"></li>
+                    <li role="separator" class="divider"></li>
+
+                    {{#if (can "edit:ownschool")}}
+                    <li class="nav-item dropdown open">
+                        <a class="dropdown-toggle" href="javascript:void(0);">
+                            <span class="icon-holder">
+                                <i class="c-orange-500 ti-shopping-cart"></i>
+                            </span>
+                                <span class="title">Το κυλικείο μου</span>
+                            <span class="arrow">
+                                <i class="ti-angle-right"></i>
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="sidebar-link" href="/canteens/mycanteen">
+                                    <span class="icon-holder">
+                                        <i class="c-blue-200 ti-info-alt"></i>
+                                    </span>
+                                    <span>Στοιχεία κυλικείου</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="/canteens/mycanteen/current">
+                                    <span class="icon-holder">
+                                        <i class="c-blue-200 ti-time"></i>
+                                    </span>
+                                    <span>Τρέχουσα περίοδος</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="sidebar-link" href="/canteens/mycanteen/history">
+                                    <span class="icon-holder">
+                                        <i class="c-blue-200 ti-reload"></i>
+                                    </span>
+                                    <span>Προηγούμενες περίοδοι</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {{/if}}
+
 
                     </ul>
                     </li>

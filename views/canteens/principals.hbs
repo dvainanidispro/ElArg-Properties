@@ -8,10 +8,12 @@
                         Διευθυντές Σχολείων
                     </h1>
                     <div class="card-actions">
+                        {{#if (can 'edit:content')}}
                         <a href="/canteens/principals/new" class="btn btn-primary">
                             <i class="ti-plus me-1"></i>
                             Νέος Διευθυντής
                         </a>
+                        {{/if}}
                     </div>
                 </div>
                 <div class="card-body">
@@ -24,15 +26,17 @@
                                     <th>Email</th>
                                     <th>Επικοινωνία</th>
                                     <th>Κατάσταση</th>
-                                    <th>Ημερομηνία Δημιουργίας</th>
-                                    <th>Επεξεργασία</th>
+                                    {{!-- <th>Ημερομηνία Δημιουργίας</th> --}}
+                                    <th>Λεπτομέρειες</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each principals}}
                                 <tr>
                                     <td>{{this.id}}</td>
-                                    <td>{{this.name}}</td>
+                                    <td>
+                                        <a href="/canteens/principals/{{this.id}}" class="text-primary text-decoration-none">{{this.name}}</a>
+                                    </td>
                                     <td>{{this.email}}</td>
                                     <td>{{this.contact}}</td>
                                     <td>
@@ -42,10 +46,10 @@
                                             <span class="badge bg-secondary fs-6">Ανενεργός</span>
                                         {{/if}}
                                     </td>
-                                    <td>{{date this.createdAt}}</td>
+                                    {{!-- <td>{{date this.createdAt}}</td> --}}
                                     <td>
-                                        <a href="/canteens/principals/{{this.id}}" class="btn btn-outline-success" title="Επεξεργασία">
-                                            <i class="ti-pencil text-success" style="font-size: 1.2rem;"></i>
+                                        <a href="/canteens/principals/{{this.id}}" class="btn btn-outline-primary" title="Προβολή/Επεξεργασία">
+                                            <i class="ti-eye text-primary" style="font-size: 1.2rem;"></i>
                                         </a>
                                     </td>
                                 </tr>

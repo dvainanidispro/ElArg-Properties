@@ -1,4 +1,5 @@
 import { create as HandlebarsCreator } from 'express-handlebars';
+import { userHasPermission } from '../controllers/roles.js';
 
 const handlebarsConfig = {
     extname: '.hbs',    // extension for layouts (not views)
@@ -88,6 +89,12 @@ const handlebarsConfig = {
                 console.error('DateInput formatting error:', error, 'for date:', date);
                 return '';
             }
+        },
+        /* example: {{#if (can 'edit:users')}} */
+        can: function(permission) {
+            // Το 'this' είναι το context (το αντικείμενο δεδομένων) που περνιέται στο handlebars
+            const user = this.user;
+            return userHasPermission(user, permission);
         },
     }
 };

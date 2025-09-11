@@ -8,10 +8,12 @@
                         Σχολικά Κυλικεία
                     </h1>
                     <div class="card-actions">
+                        {{#if (can 'edit:content')}}
                         <a href="/canteens/canteens/new" class="btn btn-primary">
                             <i class="ti-plus me-1"></i>
                             Νέο Κυλικείο
                         </a>
+                        {{/if}}
                     </div>
                 </div>
                 <div class="card-body">
@@ -23,10 +25,10 @@
                                     <th>Όνομα Κυλικείου</th>
                                     <th>Επιφάνεια (τ.μ.)</th>
                                     <th>Διευθυντής</th>
-                                    <th>Έναρξη Μίσθωσης</th>
+                                    {{!-- <th>Έναρξη Μίσθωσης</th> --}}
                                     <th>Λήξη Μίσθωσης</th>
                                     <th>Κατάσταση</th>
-                                    <th>Επεξεργασία</th>
+                                    <th>Λεπτομέρειες</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,7 +46,7 @@
                                             <span class="text-muted">-</span>
                                         {{/if}}
                                     </td>
-                                    <td>{{date this.lease_start}}</td>
+                                    {{!-- <td>{{date this.lease_start}}</td> --}}
                                     <td>{{date this.lease_end}}</td>
                                     <td>
                                         {{#if this.active}}
@@ -54,8 +56,8 @@
                                         {{/if}}
                                     </td>
                                     <td>
-                                        <a href="/canteens/canteens/{{this.id}}" class="btn btn-outline-success" title="Επεξεργασία">
-                                            <i class="ti-pencil text-success" style="font-size: 1.2rem;"></i>
+                                        <a href="/canteens/canteens/{{this.id}}" class="btn btn-outline-primary" title="Προβολή/Επεξεργασία">
+                                            <i class="ti-eye text-primary" style="font-size: 1.2rem;"></i>
                                         </a>
                                     </td>
                                 </tr>
