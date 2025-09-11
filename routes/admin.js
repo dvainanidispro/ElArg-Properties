@@ -30,7 +30,7 @@ admin.use(can('edit:users'));
 admin.get('/users', async (req, res) => {
     try {
         const users = await Models.User.findAll({
-            attributes: ['id', 'email', 'name', 'role', 'createdAt'],
+            attributes: ['id', 'email', 'name', 'role', 'createdAt','active'],
             order: [['createdAt', 'DESC']],
             raw: true
         });
@@ -54,7 +54,7 @@ admin.get('/users/:id', async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
         const user = await Models.User.findByPk(userId, {
-            attributes: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
+            attributes: ['id', 'email', 'name', 'role', 'active', 'createdAt', 'updatedAt'],
             raw: true       // JavaScript object χωρίς μεθόδους Sequelize
         });
         
@@ -117,7 +117,8 @@ admin.post('/users', async (req, res) => {
                 id: newUser.id,
                 email: newUser.email,
                 name: newUser.name,
-                role: newUser.role
+                role: newUser.role,
+                active: newUser.active
             }
         });
     } catch (error) {
@@ -135,7 +136,7 @@ admin.post('/users', async (req, res) => {
 admin.put('/users/:id', async (req, res) => {
     try {
         const userId = parseInt(req.params.id);
-        const { email, name, role, password } = req.body;
+        const { email, name, role, password, active } = req.body;
         
         const user = await Models.User.findByPk(userId);
         if (!user) {
@@ -166,7 +167,8 @@ admin.put('/users/:id', async (req, res) => {
         const updateData = {
             email: email || user.email,
             name: name || user.name,
-            role: role || user.role
+            role: role || user.role,
+            active: active === 'true' || active === true
         };
         
         // Προσθήκη κωδικού μόνο αν έχει δοθεί νέος
@@ -185,7 +187,8 @@ admin.put('/users/:id', async (req, res) => {
                 id: user.id,
                 email: user.email,
                 name: user.name,
-                role: user.role
+                role: user.role,
+                active: user.active
             }
         });
     } catch (error) {

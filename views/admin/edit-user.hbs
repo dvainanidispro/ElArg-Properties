@@ -53,6 +53,18 @@
                                 <div class="form-text text-muted">Δεν μπορείτε να αλλάξετε τον δικό σας ρόλο</div>
                                 {{/if}}
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editUserActive" class="form-label fw-bold">Κατάσταση *</label>
+                                <select class="form-select" id="editUserActive" name="active" {{#if (eq userDetails.email @root.user.email)}}disabled{{/if}}>
+                                    <option value="true" {{#unless (eq userDetails.active false)}}selected{{/unless}}>Ενεργός</option>
+                                    <option value="false" {{#if (eq userDetails.active false)}}selected{{/if}}>Ανενεργός</option>
+                                </select>
+                                {{#if (eq userDetails.email @root.user.email)}}
+                                <div class="form-text text-muted">Δεν μπορείτε να αλλάξετε την κατάσταση του δικού σας λογαριασμού</div>
+                                {{else}}
+                                <div class="form-text text-muted">Καθορίζει αν ο χρήστης μπορεί να πραγματοποιήσει είσοδο στην Εφαρμογή</div>
+                                {{/if}}
+                            </div>
                         </div>
                         
                         <div class="row mt-4">

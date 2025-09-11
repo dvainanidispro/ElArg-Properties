@@ -29,7 +29,7 @@ canteens.get('/principals', can('view:content'), async (req, res) => {
         res.render('canteens/principals', { 
             principals,
             user: req.user,
-            title: 'Διαχείριση Διευθυντών'
+            title: 'Διευθυντές Σχολείων'
         });
     } catch (error) {
         log.error('Σφάλμα κατά την ανάκτηση διευθυντών:', error);
@@ -264,7 +264,7 @@ canteens.get('/canteens', can('view:content'), async (req, res) => {
         res.render('canteens/canteens', { 
             canteens: canteensList,
             user: req.user,
-            title: 'Διαχείριση Κυλικείων'
+            title: 'Κυλικεία'
         });
     } catch (error) {
         log.error('Σφάλμα κατά την ανάκτηση κυλικείων:', error);

@@ -23,7 +23,8 @@
                                     <th>Όνομα</th>
                                     <th>Email</th>
                                     <th>Ρόλος</th>
-                                    <th>Ημερομηνία Δημιουργίας</th>
+                                    <th>Κατάσταση</th>
+                                    <th>Δημιουργία</th>
                                     <th>Επεξεργασία</th>
                                 </tr>
                             </thead>
@@ -37,6 +38,13 @@
                                         <span class="badge bg-{{deepLookup @root.roles this.role 'color'}} fs-6">
                                             {{this.role}}
                                         </span>
+                                    </td>
+                                    <td>
+                                        {{#if this.active}}
+                                            <i class="ti-check text-success" title="Ενεργός"></i>
+                                        {{else}}
+                                            <i class="ti-close text-danger" title="Ανενεργός"></i>
+                                        {{/if}}
                                     </td>
                                     <td>{{date this.createdAt}}</td>
                                     <td>

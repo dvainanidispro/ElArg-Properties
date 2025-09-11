@@ -1,7 +1,7 @@
 import express from 'express';
 import crypto from 'crypto';
 import Models from '../models/models.js';
-import { roles } from '../controllers/roles.js';
+import { roles, can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 
 const account = express.Router();
@@ -11,6 +11,8 @@ const account = express.Router();
  */
 account.get('/profile', async (req, res) => {
     try {
+        //# ΠΡΟΣΟΧΗ! Αν επεκταθεί η αναζήτηση σε άλλα models, πχ Models.Principals, θα υπάρχουν Users και Principals με το ίδιο ID!
+        // Σε αυτή την περίπτωση θα πρέπει να γίνει αναζήτηση και με το role, όχι μόνο με το ID.
         const user = await Models.User.findByPk(req.user.sub, {
             attributes: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
             raw: true
@@ -44,6 +46,7 @@ account.post('/profile', async (req, res) => {
 
         // Βασικός έλεγχος εισόδου
         if (!name) {
+             //# ΠΡΟΣΟΧΗ! Αν επεκταθεί η αναζήτηση σε άλλα models, ισχύουν τα σχόλια πιο πάνω.
             const user = await Models.User.findByPk(userId, {
                 attributes: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
                 raw: true
