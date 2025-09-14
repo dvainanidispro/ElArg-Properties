@@ -17,11 +17,11 @@ const Canteen = db.define('canteen',
             comment: 'Επιφάνεια σε τ.μ.'
         },
         lease_start: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             comment: 'Έναρξη μίσθωσης'
         },
         lease_end: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             comment: 'Λήξη μίσθωσης'
         },
         revision_number: {

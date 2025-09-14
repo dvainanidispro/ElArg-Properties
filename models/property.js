@@ -41,12 +41,6 @@ const Property = db.define('property',
             comment: 'Τύπος ακινήτου - Επιτρεπόμενες τιμές: owned (ιδιόκτητο), leased_out (εκμισθωμένο από δήμο), rented (μισθωμένο από δήμο)'
         },
         
-        // Στοιχεία μίσθωσης/εκμίσθωσης (όταν υπάρχουν)
-        // party_id: {
-        //     type: DataTypes.INTEGER,
-        //     allowNull: true,
-        //     comment: 'ID του μισθωτή/εκμισθωτή από τον πίνακα parties'
-        // },
         lease_start: {
             type: DataTypes.DATEONLY,
             comment: 'Ημερομηνία έναρξης μίσθωσης/εκμίσθωσης'
@@ -68,12 +62,15 @@ const Property = db.define('property',
             type: DataTypes.TEXT,
             comment: 'Πληροφορίες αναπροσαρμογής μισθώματος'
         },
-        
-        // Επιπλέον στοιχεία για μισθωμένα από δήμο
         guarantee_letter: {
             type: DataTypes.STRING,
             comment: 'Εγγυητική Επιστολή (για μισθωμένα από δήμο)'
         },
+
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        }
         
     },
     {
