@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { db } from "../config/database.js"; 
 
-const Tenant = db.define('tenant', 
+const Party = db.define('party', 
     {
         id: {
             type: DataTypes.INTEGER,
@@ -10,10 +10,7 @@ const Tenant = db.define('tenant',
         },
         name: DataTypes.STRING,
         afm: DataTypes.STRING,
-        email: {
-            type: DataTypes.STRING,
-            unique: true
-        },
+        email: DataTypes.STRING,
         contact: DataTypes.STRING,
         contracts: DataTypes.JSON,
         role: {
@@ -22,9 +19,9 @@ const Tenant = db.define('tenant',
         },
     },
     {
-        tableName: 'tenants',
+        tableName: 'parties',
         timestamps: true
     }
 );
 
-export { Tenant };
+export { Party };

@@ -8,7 +8,7 @@ const Canteen = db.define('canteen',
             primaryKey: true,
             autoIncrement: true
         },
-        name: DataTypes.STRING,                  // Όνομα κυλικείου   
+        name: DataTypes.STRING,                  // Όνομα κυλικείου ή σχολείου
         area: DataTypes.SMALLINT,                // Επιφάνεια σε τ.μ.
         lease_start: DataTypes.DATE,             // Έναρξη μίσθωσης
         lease_end: DataTypes.DATE,               // Λήξη μίσθωσης
