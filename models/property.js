@@ -79,20 +79,17 @@ const Property = db.define('property',
     {
         tableName: 'properties',
         timestamps: true,
-        // indexes: [
-        //     {
-        //         fields: ['kaek']
-        //     },
-        //     {
-        //         fields: ['property_type']
-        //     },
-        //     {
-        //         fields: ['party_id']
-        //     },
-        //     {
-        //         fields: ['lease_end']
-        //     }
-        // ]
+        indexes: [
+            {
+                fields: ['property_type']
+            },
+            {
+                fields: ['party_id']
+            },
+            {
+                fields: ['lease_end']
+            }
+        ]
     }
 );
 

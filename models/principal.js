@@ -15,7 +15,11 @@ const Principal = db.define('principal',
             type: DataTypes.STRING,
             defaultValue: 'principal'
         },
-        active: DataTypes.BOOLEAN,
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+            comment: 'Καθορίζει αν μπορεί να πραγματοποιήσει είσοδο στην Εφαρμογή με το email του',
+        },
     },
     {
         tableName: 'principals',

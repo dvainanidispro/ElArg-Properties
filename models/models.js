@@ -24,14 +24,14 @@ Principal.hasMany(Canteen, {
 // One-to-many relationship: Party -> Properties
 // Ένα party (μισθωτής/εκμισθωτής) μπορεί να έχει πολλά properties, ένα property έχει το πολύ ένα party.
 // Η σχέση αποτυπώνεται στον πίνακα properties με το πεδίο party_id.
-// Property.belongsTo(Party, {
-//     foreignKey: 'party_id',
-//     as: 'party'
-// });
-// Party.hasMany(Property, {
-//     foreignKey: 'party_id',
-//     as: 'properties'
-// });
+Property.belongsTo(Party, {
+    foreignKey: 'party_id',
+    as: 'party'
+});
+Party.hasMany(Property, {
+    foreignKey: 'party_id',
+    as: 'properties'
+});
 
 
 
