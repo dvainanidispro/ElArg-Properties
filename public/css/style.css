@@ -113,12 +113,13 @@ input[readonly]{
     border-right: 1px solid var(--border-color);
 }
 
-.sidebar .logo{
+.sidebar-logo a .logo{
     align-content: center;  /* center vertically */
+    width: auto;
 }
 .sidebar-logo a .logo img {
-    width: 5rem;
-    height: auto;
+    height: 60px;
+    width: auto;
 }
 
 
