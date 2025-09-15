@@ -23,7 +23,7 @@ const Property = db.define('property',
         },
         area: {
             type: DataTypes.SMALLINT,
-            comment: 'Εμβαδό ακινήτου (τ.μ.)'
+            comment: 'Επιφάνεια ακινήτου (τ.μ.)'
         },
         construction_year: {
             type: DataTypes.INTEGER,

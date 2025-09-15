@@ -39,6 +39,25 @@
                                 <label for="canteenArea" class="form-label fw-bold">Επιφάνεια (τ.μ.)</label>
                                 <input type="number" class="form-control" id="canteenArea" name="area" value="{{or canteenDetails.area '' ''}}" min="0" step="0.01">
                             </div>
+                            <div class="col-md-12 mb-3" x-data="{partyId: '{{canteenDetails.party_id}}', searchQuery: ''}">
+                                <label for="canteenParty" class="form-label fw-bold">Μισθωτής</label>
+                                <div class="input-group">
+                                        <select x-model="partyId" class="form-select" id="canteenParty" name="party_id">
+                                            <option value="">-- Χωρίς Μισθωτή --</option>
+                                            {{#each parties}}
+                                            <option value="{{this.id}}" x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
+                                                {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
+                                            </option>
+                                            {{/each}}
+                                        </select>
+                                    <input x-model="searchQuery" type="text" class="form-control dropdown-search" placeholder="Φίλτρο">
+                                    {{#if canteenDetails}}
+                                        <a x-cloak x-show="!partyId" :href="`/properties/parties/new?redirect=${window.location.pathname}`" class="btn btn-primary" type="button">Προσθήκη νέου</a>
+                                        <a x-cloak x-show="partyId" :href="`/properties/parties/${partyId}`" class="btn btn-primary" type="button" >Προβολή</a>
+                                    {{/if}}
+                                </div>
+                                <div class="form-text text-muted">Ο Μισθωτής που είναι υπεύθυνος για αυτό το κυλικείο</div>
+                            </div>
                             <div class="col-md-12 mb-3" x-data="{principalId: '{{canteenDetails.principal_id}}', searchQuery: ''}">
                                 <label for="canteenPrincipal" class="form-label fw-bold">Διευθυντής Σχολείου</label>
                                 <div class="input-group">
@@ -181,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data.lease_start === '') data.lease_start = null;
         if (data.lease_end === '') data.lease_end = null;
         if (data.principal_id === '') data.principal_id = null;
+        if (data.party_id === '') data.party_id = null;
         if (data.revision_number === '') data.revision_number = null;
         
         // Μετατροπή string boolean σε boolean

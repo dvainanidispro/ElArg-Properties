@@ -253,11 +253,18 @@ canteens.get('/', can('view:content'), async (req, res) => {
 canteens.get('/canteens', can('view:content'), async (req, res) => {
     try {
         const canteensList = await Models.Canteen.findAll({
-            include: [{ 
-                model: Models.Principal, 
-                as: 'principal',
-                attributes: ['id', 'name', 'email']
-            }],
+            include: [
+                { 
+                    model: Models.Principal, 
+                    as: 'principal',
+                    attributes: ['id', 'name', 'email']
+                },
+                { 
+                    model: Models.Party, 
+                    as: 'party',
+                    attributes: ['id', 'name', 'email']
+                }
+            ],
             order: [['createdAt', 'DESC']]
         });
         
@@ -281,13 +288,21 @@ canteens.get('/canteens/new', can('edit:content'), async (req, res) => {
         const principals = await Models.Principal.findAll({
             attributes: ['id', 'name', 'email'],
             where: { active: true },
-            order: [['name', 'ASC']],
+            order: [['id', 'DESC']],
+            raw: true
+        });
+        
+        // Ανάκτηση όλων των parties για το dropdown
+        const parties = await Models.Party.findAll({
+            attributes: ['id', 'name', 'email'],
+            order: [['id', 'DESC']],
             raw: true
         });
         
         res.render('canteens/edit-canteen', { 
             canteenDetails: null, // null για νέο canteen ώστε το view να ξέρει
             principals,
+            parties,
             user: req.user,
             title: 'Νέο Κυλικείο'
         });
@@ -317,9 +332,17 @@ canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
             raw: true
         });
         
+        // Ανάκτηση όλων των parties για το dropdown
+        const parties = await Models.Party.findAll({
+            attributes: ['id', 'name', 'email'],
+            order: [['id', 'DESC']],
+            raw: true
+        });
+        
         res.render('canteens/edit-canteen', { 
             canteenDetails: canteen.toJSON(),
             principals,
+            parties,
             user: req.user,
             title: `Κυλικείο: ${canteen.name}`
         });
@@ -334,7 +357,7 @@ canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
  */
 canteens.post('/canteens', can('edit:content'), async (req, res) => {
     try {
-        const { name, area, principal_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
+        const { name, area, principal_id, party_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
         
         // Βασικός έλεγχος δεδομένων
         if (!name) {
@@ -360,6 +383,7 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
             name,
             area: area || null,
             principal_id: principal_id || null,
+            party_id: party_id || null,
             lease_start: lease_start || null,
             lease_end: lease_end || null,
             revision_number: revision_number || null,
@@ -377,6 +401,7 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
                 name: newCanteen.name,
                 area: newCanteen.area,
                 principal_id: newCanteen.principal_id,
+                party_id: newCanteen.party_id,
                 lease_start: newCanteen.lease_start,
                 lease_end: newCanteen.lease_end,
                 revision_number: newCanteen.revision_number,
@@ -399,7 +424,7 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
 canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
     try {
         const canteenId = parseInt(req.params.id);
-        const { name, area, principal_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
+        const { name, area, principal_id, party_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
         
         const canteen = await Models.Canteen.findByPk(canteenId);
         if (!canteen) {
@@ -431,6 +456,7 @@ canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
             name: name || canteen.name,
             area: area !== undefined ? area : canteen.area,
             principal_id: principal_id !== undefined ? principal_id : canteen.principal_id,
+            party_id: party_id !== undefined ? party_id : canteen.party_id,
             lease_start: lease_start !== undefined ? lease_start : canteen.lease_start,
             lease_end: lease_end !== undefined ? lease_end : canteen.lease_end,
             revision_number: revision_number !== undefined ? revision_number : canteen.revision_number,
@@ -450,6 +476,7 @@ canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
                 name: canteen.name,
                 area: canteen.area,
                 principal_id: canteen.principal_id,
+                party_id: canteen.party_id,
                 lease_start: canteen.lease_start,
                 lease_end: canteen.lease_end,
                 revision_number: canteen.revision_number,

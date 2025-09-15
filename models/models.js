@@ -33,6 +33,18 @@ Party.hasMany(Property, {
     as: 'properties'
 });
 
+// One-to-many relationship: Party -> Canteens
+// Ένα party (μισθωτής/εκμισθωτής) μπορεί να έχει πολλά canteens, ένα canteen έχει το πολύ ένα party.
+// Η σχέση αποτυπώνεται στον πίνακα canteens με το πεδίο party_id.
+Canteen.belongsTo(Party, {
+    foreignKey: 'party_id',
+    as: 'party'
+});
+Party.hasMany(Canteen, {
+    foreignKey: 'party_id',
+    as: 'canteens'
+});
+
 
 
 ////////////////    MODELS SYNC    ////////////////

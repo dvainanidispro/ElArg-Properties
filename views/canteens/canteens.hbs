@@ -23,7 +23,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Όνομα Κυλικείου</th>
-                                    <th>Επιφάνεια (τ.μ.)</th>
+                                    <th>Μισθωτής</th>
                                     <th>Διευθυντής</th>
                                     {{!-- <th>Έναρξη Μίσθωσης</th> --}}
                                     <th>Λήξη Μίσθωσης</th>
@@ -38,7 +38,13 @@
                                     <td>
                                         <a href="/canteens/canteens/{{this.id}}" class="text-primary text-decoration-none">{{this.name}}</a>
                                     </td>
-                                    <td>{{this.area}}</td>
+                                    <td>
+                                        {{#if this.party}}
+                                            <a href="/properties/parties/{{this.party.id}}" class="text-primary text-decoration-none">{{this.party.name}}</a>
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
                                     <td>
                                         {{#if this.principal}}
                                             <a href="/canteens/principals/{{this.principal.id}}" class="text-primary text-decoration-none">{{this.principal.name}}</a>
