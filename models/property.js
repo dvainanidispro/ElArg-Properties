@@ -38,7 +38,7 @@ const Property = db.define('property',
         property_type: {
             type: DataTypes.STRING,
             defaultValue: 'owned',
-            comment: 'Τύπος ακινήτου - Επιτρεπόμενες τιμές: owned (ιδιόκτητο), leased_out (εκμισθωμένο από δήμο), rented (μισθωμένο από δήμο)'
+            comment: 'Τύπος ακινήτου - Επιτρεπόμενες τιμές: leased_out (εκμισθωμένο από δήμο), rented (μισθωμένο από δήμο)'
         },
         
         lease_start: {

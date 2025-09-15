@@ -41,7 +41,7 @@ server.get('/status', (req, res) => {
 });
 
 
-//* Login routes (ελεύθερες)
+//* Login routes (ελεύθερα)
 import loginRouter from './routes/login.js';
 server.use(loginRouter);
 
@@ -60,16 +60,26 @@ server.get(['/', '/dashboard'], (req, res) => {
 import admin from './routes/admin.js';
 server.use('/admin', admin);
 
-// Canteens routes
-import canteens from './routes/canteens.js';
-server.use('/canteens', canteens);
-
 // Own account routes
 import account from './routes/account.js';
 server.use('/account', account);
 
+// Canteens routes
+import canteens from './routes/canteens.js';
+server.use('/canteens', canteens);
+
+// Properties routes
+import properties from './routes/properties.js';
+server.use('/properties', properties);
 
 
+
+
+
+// Catch-all route for 404 errors (must be last)
+server.use((req, res) => {
+    res.status(404).render('errors/404');
+});
 
 
 ///////////////////////////////////         THE SERVER         /////////////////////////////////////
@@ -85,7 +95,3 @@ async function startServer(){
 }
 startServer();
 
-// Catch-all route for 404 errors (must be last)
-server.use((req, res) => {
-    res.status(404).render('errors/404');
-});
