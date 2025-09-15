@@ -68,7 +68,7 @@
                                     <td>{{date this.lease_end}}</td>
                                     <td>
                                         {{#if this.active}}
-                                            <span class="badge bg-success fs-6">Ενεργό</span>
+                                            <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease_end}}">Ενεργό</span>
                                         {{else}}
                                             <span class="badge bg-secondary fs-6">Ανενεργό</span>
                                         {{/if}}
@@ -88,3 +88,21 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ελέγχει όλα τα ενεργά ακίνητα για ληγμένες μισθώσεις
+    const statusBadges = document.querySelectorAll('.status-badge');
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+    
+    statusBadges.forEach(badge => {
+        const leaseEndStr = badge.getAttribute('data-lease-end');
+        
+        if (leaseEndStr && leaseEndStr < today) {
+            badge.textContent = 'Ληγμένο';
+            badge.classList.remove('bg-success');
+            badge.classList.add('bg-danger', 'text-light');
+        }
+    });
+});
+</script>

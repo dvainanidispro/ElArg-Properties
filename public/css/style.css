@@ -46,6 +46,10 @@ main{
     border-radius: var(--bs-border-radius); */
 }
 
+.main-content {
+    min-height: calc(100vh - 45px);
+}
+
 div {
     /* background-color: var(--bs-body-bg); */
     background-color: revert;
