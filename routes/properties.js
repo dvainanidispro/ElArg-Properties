@@ -69,7 +69,7 @@ properties.get('/parties/:id', can('view:content'), async (req, res) => {
         res.render('properties/edit-party', { 
             partyDetails: party,
             user: req.user,
-            title: `Επεξεργασία Συμβαλλομένου: ${party.name || party.email}`
+            title: `Συμβαλλόμενος: ${party.name || party.email}`
         });
     } catch (error) {
         log.error(`Σφάλμα κατά την ανάκτηση party: ${error}`);
@@ -244,8 +244,272 @@ properties.delete('/parties/:id', can('edit:content'), async (req, res) => {
 });
 
 
+////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PROPERTIES   ////////////////////
+
+/**
+ * GET /properties - Εμφάνιση λίστας όλων των properties (redirect)
+ */
+properties.get('/', can('view:content'), async (req, res) => {
+    res.redirect('/properties/properties');
+});
+
+/**
+ * GET /properties/properties - Εμφάνιση λίστας όλων των properties
+ */
 properties.get('/properties', can('view:content'), async (req, res) => {
-    res.render('properties/properties');
+    try {
+        const propertiesList = await Models.Property.findAll({
+            include: [{ 
+                model: Models.Party, 
+                as: 'party',
+                attributes: ['id', 'name', 'email']
+            }],
+            order: [['createdAt', 'DESC']]
+        });
+        
+        res.render('properties/properties', { 
+            properties: propertiesList,
+            user: req.user,
+            title: 'Ακίνητα'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση ακινήτων: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση ακινήτων' });
+    }
+});
+
+/**
+ * GET /properties/properties/new - Φόρμα για νέο property
+ */
+properties.get('/properties/new', can('edit:content'), async (req, res) => {
+    try {
+        // Ανάκτηση όλων των parties για το dropdown
+        const parties = await Models.Party.findAll({
+            attributes: ['id', 'name', 'email'],
+            order: [['id', 'DESC']],
+            raw: true
+        });
+        
+        res.render('properties/edit-property', { 
+            propertyDetails: null, // null για νέο property ώστε το view να ξέρει
+            parties,
+            user: req.user,
+            title: 'Νέο Ακίνητο'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την εμφάνιση φόρμας νέου property: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την εμφάνιση φόρμας' });
+    }
+});
+
+/**
+ * GET /properties/properties/:id - Εμφάνιση στοιχείων συγκεκριμένου property
+ */
+properties.get('/properties/:id', can('view:content'), async (req, res) => {
+    try {
+        const propertyId = parseInt(req.params.id);
+        const property = await Models.Property.findByPk(propertyId, {
+            include: [{ 
+                model: Models.Party, 
+                as: 'party',
+                attributes: ['id', 'name', 'email']
+            }]
+        });
+        
+        if (!property) {
+            return res.status(404).render('errors/404', { message: 'Το Ακίνητο δεν βρέθηκε' });
+        }
+        
+        // Ανάκτηση όλων των parties για το dropdown
+        const parties = await Models.Party.findAll({
+            attributes: ['id', 'name', 'email'],
+            order: [['id', 'DESC']],
+            raw: true
+        });
+        
+        res.render('properties/edit-property', { 
+            propertyDetails: property,
+            parties,
+            user: req.user,
+            title: `Ακίνητο: ${property.address || property.kaek || property.id}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση property: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση του ακινήτου' });
+    }
+});
+
+/**
+ * POST /properties/properties - Δημιουργία νέου property
+ */
+properties.post('/properties', can('edit:content'), async (req, res) => {
+    try {
+        const { 
+            kaek, address, description, area, construction_year, file_server_link,
+            property_type, lease_start, lease_end, monthly_rent, rent_frequency,
+            rent_adjustment_info, guarantee_letter, party_id, active 
+        } = req.body;
+        
+        // Βασικός έλεγχος δεδομένων
+        if (!address && !kaek) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Τουλάχιστον ένα από τα πεδία ΚΑΕΚ ή διεύθυνση είναι υποχρεωτικό' 
+            });
+        }
+        
+        // Έλεγχος αν υπάρχει ήδη property με το ίδιο ΚΑΕΚ
+        if (kaek) {
+            const existingProperty = await Models.Property.findOne({
+                where: { kaek }
+            });
+            
+            if (existingProperty) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Υπάρχει ήδη Ακίνητο με αυτό το ΚΑΕΚ' 
+                });
+            }
+        }
+        
+        const newProperty = await Models.Property.create({
+            kaek: kaek || '',
+            address: address || '',
+            description: description || '',
+            area: area ? parseInt(area) : null,
+            construction_year: construction_year ? parseInt(construction_year) : null,
+            file_server_link: file_server_link || '',
+            property_type: property_type || 'owned',
+            lease_start: lease_start || null,
+            lease_end: lease_end || null,
+            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : null,
+            rent_frequency: rent_frequency || 'monthly',
+            rent_adjustment_info: rent_adjustment_info || '',
+            guarantee_letter: guarantee_letter || '',
+            party_id: party_id ? parseInt(party_id) : null,
+            active: active !== undefined ? active : true
+        });
+        
+        log.info(`Νέο property δημιουργήθηκε: ${newProperty.kaek || newProperty.address} (ID: ${newProperty.id})`);
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'Το Ακίνητο δημιουργήθηκε επιτυχώς',
+            property: newProperty
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη δημιουργία property: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη δημιουργία του Ακινήτου' 
+        });
+    }
+});
+
+/**
+ * PUT /properties/properties/:id - Ενημέρωση στοιχείων property
+ */
+properties.put('/properties/:id', can('edit:content'), async (req, res) => {
+    try {
+        const propertyId = parseInt(req.params.id);
+        const { 
+            kaek, address, description, area, construction_year, file_server_link,
+            property_type, lease_start, lease_end, monthly_rent, rent_frequency,
+            rent_adjustment_info, guarantee_letter, party_id, active 
+        } = req.body;
+        
+        const property = await Models.Property.findByPk(propertyId);
+        if (!property) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Το Ακίνητο δεν βρέθηκε' 
+            });
+        }
+        
+        // Έλεγχος αν το νέο ΚΑΕΚ υπάρχει ήδη σε άλλο property
+        if (kaek && kaek !== property.kaek) {
+            const existingProperty = await Models.Property.findOne({
+                where: {
+                    id: { [Op.ne]: propertyId },
+                    kaek: kaek
+                }
+            });
+            
+            if (existingProperty) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Υπάρχει ήδη άλλο Ακίνητο με αυτό το ΚΑΕΚ' 
+                });
+            }
+        }
+        
+        // Δημιουργία αντικειμένου ενημέρωσης
+        const updateData = {
+            kaek: kaek || property.kaek,
+            address: address || property.address,
+            description: description || property.description,
+            area: area ? parseInt(area) : property.area,
+            construction_year: construction_year ? parseInt(construction_year) : property.construction_year,
+            file_server_link: file_server_link || property.file_server_link,
+            property_type: property_type || property.property_type,
+            lease_start: lease_start || property.lease_start,
+            lease_end: lease_end || property.lease_end,
+            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : property.monthly_rent,
+            rent_frequency: rent_frequency || property.rent_frequency,
+            rent_adjustment_info: rent_adjustment_info || property.rent_adjustment_info,
+            guarantee_letter: guarantee_letter || property.guarantee_letter,
+            party_id: party_id ? parseInt(party_id) : null, // Αλλαγή: αν δεν υπάρχει party_id, βάλε null
+            active: active !== undefined ? active : property.active
+        };
+        
+        await property.update(updateData);
+        
+        log.info(`Το Property ${property.kaek || property.address} ενημερώθηκε (ID: ${property.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Το Ακίνητο ενημερώθηκε επιτυχώς',
+            property: property
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ενημέρωση property: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά την ενημέρωση του Ακινήτου' 
+        });
+    }
+});
+
+/**
+ * DELETE /properties/properties/:id - Διαγραφή property
+ */
+properties.delete('/properties/:id', can('edit:content'), async (req, res) => {
+    try {
+        const propertyId = parseInt(req.params.id);
+        
+        const property = await Models.Property.findByPk(propertyId);
+        if (!property) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Το Ακίνητο δεν βρέθηκε' 
+            });
+        }
+        
+        await property.destroy();
+        
+        log.info(`Property διαγράφηκε: ${property.kaek || property.address} (ID: ${property.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Το Ακίνητο διαγράφηκε επιτυχώς' 
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη διαγραφή property: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη διαγραφή του Ακινήτου' 
+        });
+    }
 });
 
 

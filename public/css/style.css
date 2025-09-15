@@ -96,6 +96,10 @@ input[readonly]{
     max-width: 30ch;
 }
 
+.bg-orange{
+    background-color: orange !important;
+    color: var(--bs-light) !important;
+}
 
 
 /*********    LAYOUT    **********/ 

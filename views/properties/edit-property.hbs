@@ -1,0 +1,303 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/properties/properties">Ακίνητα</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{or propertyDetails.address propertyDetails.kaek "Νέο Ακίνητο" ""}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="{{or propertyDetails 'ti-pencil' 'ti-plus'}} me-2"></i>
+                        {{or propertyDetails.address propertyDetails.kaek "Νέο Ακίνητο" ""}}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="propertyForm">
+                        <div class="row">
+                            {{#if propertyDetails}}
+                            <div class="col-md-6 mb-3">
+                                <label for="propertyId" class="form-label fw-bold">ID Ακινήτου</label>
+                                <input type="text" class="form-control" id="propertyId" name="id" value="{{propertyDetails.id}}" readonly>
+                                <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
+                            </div>
+                            <div class="col-md-6 mb-3"></div>
+                            {{/if}}
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="propertyKaek" class="form-label fw-bold">ΚΑΕΚ</label>
+                                <input type="text" class="form-control" id="propertyKaek" name="kaek" value="{{or propertyDetails.kaek '' ''}}">
+                                <div class="form-text text-muted">Κωδικός Αναγνώρισης Ειδικής Κατασκευής</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="propertyArea" class="form-label fw-bold">Εμβαδό (τ.μ.)</label>
+                                <input type="number" class="form-control" id="propertyArea" name="area" value="{{or propertyDetails.area '' ''}}">
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="propertyAddress" class="form-label fw-bold">Διεύθυνση *</label>
+                                <textarea class="form-control" id="propertyAddress" name="address" rows="2" required>{{or propertyDetails.address '' ''}}</textarea>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="propertyDescription" class="form-label fw-bold">Περιγραφή</label>
+                                <textarea class="form-control" id="propertyDescription" name="description" rows="3">{{or propertyDetails.description '' ''}}</textarea>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="constructionYear" class="form-label fw-bold">Έτος Κατασκευής</label>
+                                <input type="number" class="form-control" id="constructionYear" name="construction_year" value="{{or propertyDetails.construction_year '' ''}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="propertyType" class="form-label fw-bold">Τύπος Ακινήτου</label>
+                                <select class="form-select" id="propertyType" name="property_type">
+                                    <option value="owned" {{#if (eq propertyDetails.property_type 'owned')}}selected{{/if}}>Ιδιόκτητο</option>
+                                    <option value="leased_out" {{#if (eq propertyDetails.property_type 'leased_out')}}selected{{/if}}>Εκμισθωμένο</option>
+                                    <option value="rented" {{#if (eq propertyDetails.property_type 'rented')}}selected{{/if}}>Μισθωμένο</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3" x-data="{partyId: '{{propertyDetails.party_id}}', searchQuery: ''}">
+                                <label for="propertyParty" class="form-label fw-bold">Συμβαλλόμενος</label>
+                                <div class="input-group">
+                                        <select x-model="partyId" class="form-select" id="propertyParty" name="party_id">
+                                            <option value="">-- Χωρίς Συμβαλλόμενο --</option>
+                                            {{#each parties}}
+                                            <option value="{{this.id}}" x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
+                                                {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
+                                            </option>
+                                            {{/each}}
+                                        </select>
+                                    <input x-model="searchQuery" type="text" class="form-control dropdown-search" placeholder="Φίλτρο">
+                                    {{#if propertyDetails}}
+                                        <a x-cloak x-show="!partyId" :href="`/properties/parties/new?redirect=${window.location.pathname}`" class="btn btn-primary" type="button">Προσθήκη νέου</a>
+                                        <a x-cloak x-show="partyId" :href="`/properties/parties/${partyId}`" class="btn btn-primary" type="button" >Προβολή</a>
+                                    {{/if}}
+                                </div>
+                                <div class="form-text text-muted">Ο Συμβαλλόμενος που είναι υπεύθυνος για αυτό το ακίνητο</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="leaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης</label>
+                                <input type="date" class="form-control" id="leaseStart" name="lease_start" value="{{or propertyDetails.lease_start '' ''}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="leaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
+                                <input type="date" class="form-control" id="leaseEnd" name="lease_end" value="{{or propertyDetails.lease_end '' ''}}">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="monthlyRent" class="form-label fw-bold">Μηνιαίο Μίσθωμα (€)</label>
+                                <input type="number" step="0.01" class="form-control" id="monthlyRent" name="monthly_rent" value="{{or propertyDetails.monthly_rent '' ''}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="rentFrequency" class="form-label fw-bold">Συχνότητα Πληρωμής</label>
+                                <select class="form-select" id="rentFrequency" name="rent_frequency">
+                                    <option value="monthly" {{#if (eq propertyDetails.rent_frequency 'monthly')}}selected{{/if}}>Μηνιαία</option>
+                                    <option value="quarterly" {{#if (eq propertyDetails.rent_frequency 'quarterly')}}selected{{/if}}>Τριμηνιαία</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="rentAdjustmentInfo" class="form-label fw-bold">Πληροφορίες Αναπροσαρμογής Μισθώματος</label>
+                                <textarea class="form-control" id="rentAdjustmentInfo" name="rent_adjustment_info" rows="2">{{or propertyDetails.rent_adjustment_info '' ''}}</textarea>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="guaranteeLetter" class="form-label fw-bold">Εγγυητική Επιστολή</label>
+                                <input type="text" class="form-control" id="guaranteeLetter" name="guarantee_letter" value="{{or propertyDetails.guarantee_letter '' ''}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="fileServerLink" class="form-label fw-bold">Link Αρχείων</label>
+                                <input type="text" class="form-control" id="fileServerLink" name="file_server_link" value="{{or propertyDetails.file_server_link '' ''}}">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="propertyActive" class="form-label fw-bold">Κατάσταση</label>
+                                <select class="form-select" id="propertyActive" name="active">
+                                    <option value="true" {{#unless (eq propertyDetails.active false)}}selected{{/unless}}>Ενεργό</option>
+                                    <option value="false" {{#if (eq propertyDetails.active false)}}selected{{/if}}>Ανενεργό</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    {{#if (can 'edit:content')}}
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
+                                        <div>{{check propertyDetails "Αποθήκευση" "Δημιουργία"}}</div>
+                                    </button>
+                                    {{/if}}
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
+                                        <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
+                                        <div>Ακύρωση</div>
+                                    </button>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid">
+                        {{#if propertyDetails}}
+                        <button type="button" class="btn btn-danger delete-property-btn"
+                                data-property-id="{{propertyDetails.id}}" 
+                                data-property-name="{{or propertyDetails.kaek propertyDetails.address}}">
+                            <i class="ti-trash me-1"></i>
+                            Διαγραφή Ακινήτου
+                        </button>
+                        
+                        <hr>
+                        {{/if}}
+                        
+                        <a href="/properties/properties" class="btn btn-secondary">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στη Λίστα Ακινήτων
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            {{#if propertyDetails}}
+            <!-- Πληροφορίες δραστηριότητας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Ακινήτου
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>Δημιουργία:</strong><br>
+                        {{date propertyDetails.createdAt}}</p>
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date propertyDetails.updatedAt}}</p>
+                        
+                    </small>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form για επεξεργασία/δημιουργία property
+    document.getElementById('propertyForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        const propertyId = data.id;
+        const isEdit = !!propertyId; // true αν υπάρχει ID (επεξεργασία)
+        
+        if (isEdit) {
+            delete data.id; // Αφαιρούμε το ID από τα data για PUT request
+        }
+        
+        // Μετατροπή κενών strings σε null για numbers και dates
+        if (data.area === '') data.area = null;
+        if (data.construction_year === '') data.construction_year = null;
+        if (data.monthly_rent === '') data.monthly_rent = null;
+        if (data.lease_start === '') data.lease_start = null;
+        if (data.lease_end === '') data.lease_end = null;
+        if (data.party_id === '') data.party_id = null;
+        
+        // Μετατροπή string boolean σε boolean
+        data.active = data.active === 'true';
+        
+        try {
+            const url = isEdit ? `/properties/properties/${propertyId}` : '/properties/properties';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                const message = isEdit ? 'Το Ακίνητο ενημερώθηκε επιτυχώς!' : 'Το Ακίνητο δημιουργήθηκε επιτυχώς!';
+
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal(message, 3000, () => {
+                    if (isEdit) {   // if updating
+                        redirectOnSuccess(null); // refresh current page
+                    } else {    // if creating new
+                        redirectOnSuccess(`/properties/properties/${result.property.id}`);
+                    }
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+    
+    // Button για διαγραφή property (μόνο σε επεξεργασία)
+    document.querySelectorAll('.delete-property-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const propertyId = this.dataset.propertyId;
+            const propertyName = this.dataset.propertyName;
+
+            if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε το Ακίνητο "${propertyName}";`)) {
+
+                Q('bootstrap-spinner').show();
+                try {
+                    const response = await fetch(`/properties/properties/${propertyId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    Q('bootstrap-spinner').show(false);
+
+                    if (result.success) {
+                        alert('Το Ακίνητο διαγράφηκε επιτυχώς!');
+                        window.location.href = '/properties/properties';
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    Q('bootstrap-spinner').show(false);
+                    showErrorModal('Σφάλμα δικτύου: ' + error.message);
+                }
+            }
+        });
+    });
+});
+</script>

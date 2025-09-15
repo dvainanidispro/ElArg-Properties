@@ -71,7 +71,7 @@ canteens.get('/principals/:id', can('view:content'), async (req, res) => {
         res.render('canteens/edit-principal', { 
             principalDetails: principal,
             user: req.user,
-            title: `Επεξεργασία Διευθυντή: ${principal.name || principal.email}`
+            title: `Διευθυντής: ${principal.name || principal.email}`
         });
     } catch (error) {
         log.error(`Σφάλμα κατά την ανάκτηση principal: ${error}`);
@@ -321,7 +321,7 @@ canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
             canteenDetails: canteen.toJSON(),
             principals,
             user: req.user,
-            title: `Επεξεργασία Κυλικείου: ${canteen.name}`
+            title: `Κυλικείο: ${canteen.name}`
         });
     } catch (error) {
         log.error(`Σφάλμα κατά την ανάκτηση canteen: ${error}`);
