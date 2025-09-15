@@ -32,7 +32,7 @@ canteens.get('/principals', can('view:content'), async (req, res) => {
             title: 'Διευθυντές Σχολείων'
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ανάκτηση διευθυντών:', error);
+        log.error(`Σφάλμα κατά την ανάκτηση διευθυντών: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση διευθυντών' });
     }
 });
@@ -48,7 +48,7 @@ canteens.get('/principals/new', can('edit:content'), async (req, res) => {
             title: 'Νέος Διευθυντής'
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την εμφάνιση φόρμας νέου principal:', error);
+        log.error(`Σφάλμα κατά την εμφάνιση φόρμας νέου principal: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την εμφάνιση φόρμας' });
     }
 });
@@ -74,7 +74,7 @@ canteens.get('/principals/:id', can('view:content'), async (req, res) => {
             title: `Επεξεργασία Διευθυντή: ${principal.name || principal.email}`
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ανάκτηση principal:', error);
+        log.error(`Σφάλμα κατά την ανάκτηση principal: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση του διευθυντή' });
     }
 });
@@ -129,7 +129,7 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
             }
         });
     } catch (error) {
-        log.error('Σφάλμα κατά τη δημιουργία principal:', error);
+        log.error(`Σφάλμα κατά τη δημιουργία principal: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά τη δημιουργία του Διευθυντή' 
@@ -195,7 +195,7 @@ canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
             }
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ενημέρωση principal:', error);
+        log.error(`Σφάλμα κατά την ενημέρωση principal: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά την ενημέρωση του Διευθυντή' 
@@ -227,7 +227,7 @@ canteens.delete('/principals/:id', can('edit:content'), async (req, res) => {
             message: 'Ο Διευθυντής διαγράφηκε επιτυχώς' 
         });
     } catch (error) {
-        log.error('Σφάλμα κατά τη διαγραφή principal:', error);
+        log.error(`Σφάλμα κατά τη διαγραφή principal: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά τη διαγραφή του Διευθυντή' 
@@ -267,7 +267,7 @@ canteens.get('/canteens', can('view:content'), async (req, res) => {
             title: 'Κυλικεία'
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ανάκτηση κυλικείων:', error);
+        log.error(`Σφάλμα κατά την ανάκτηση κυλικείων: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση κυλικείων' });
     }
 });
@@ -292,7 +292,7 @@ canteens.get('/canteens/new', can('edit:content'), async (req, res) => {
             title: 'Νέο Κυλικείο'
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την εμφάνιση φόρμας νέου canteen:', error);
+        log.error(`Σφάλμα κατά την εμφάνιση φόρμας νέου canteen: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την εμφάνιση φόρμας' });
     }
 });
@@ -324,7 +324,7 @@ canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
             title: `Επεξεργασία Κυλικείου: ${canteen.name}`
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ανάκτηση canteen:', error);
+        log.error(`Σφάλμα κατά την ανάκτηση canteen: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση του κυλικείου' });
     }
 });
@@ -385,7 +385,7 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
             }
         });
     } catch (error) {
-        log.error('Σφάλμα κατά τη δημιουργία canteen:', error);
+        log.error(`Σφάλμα κατά τη δημιουργία canteen: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά τη δημιουργία του Κυλικείου' 
@@ -458,7 +458,7 @@ canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
             }
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ενημέρωση canteen:', error);
+        log.error(`Σφάλμα κατά την ενημέρωση canteen: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά την ενημέρωση του Κυλικείου' 
@@ -490,7 +490,7 @@ canteens.delete('/canteens/:id', can('edit:content'), async (req, res) => {
             message: 'Το Κυλικείο διαγράφηκε επιτυχώς' 
         });
     } catch (error) {
-        log.error('Σφάλμα κατά τη διαγραφή canteen:', error);
+        log.error(`Σφάλμα κατά τη διαγραφή canteen: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά τη διαγραφή του Κυλικείου' 

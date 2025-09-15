@@ -1,0 +1,251 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/properties/parties">Συμβαλλόμενοι</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{or partyDetails.name "Νέος Συμβαλλόμενος" ""}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="{{or partyDetails 'ti-pencil' 'ti-plus'}} me-2"></i>
+                        {{or partyDetails.name "Νέος Συμβαλλόμενος" ""}}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="partyForm">
+                        <div class="row">
+                            {{#if partyDetails}}
+                            <div class="col-md-6 mb-3">
+                                <label for="partyId" class="form-label fw-bold">ID Συμβαλλομένου</label>
+                                <input type="text" class="form-control" id="partyId" name="id" value="{{partyDetails.id}}" readonly>
+                                <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
+                            </div>
+                            <div class="col-md-6 mb-3"></div>
+                            {{/if}}
+                            <div class="col-md-6 mb-3">
+                                <label for="partyName" class="form-label fw-bold">Όνομα *</label>
+                                <input type="text" class="form-control" id="partyName" name="name" value="{{or partyDetails.name '' ''}}" required>
+                                <div class="form-text text-muted">Πλήρες όνομα του συμβαλλομένου</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="partyAfm" class="form-label fw-bold">ΑΦΜ</label>
+                                <input type="text" class="form-control" id="partyAfm" name="afm" value="{{or partyDetails.afm '' ''}}" placeholder="123456789">
+                                <div class="form-text text-muted">Αριθμός Φορολογικού Μητρώου</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="partyEmail" class="form-label fw-bold">Email</label>
+                                <input type="email" class="form-control" id="partyEmail" name="email" value="{{or partyDetails.email '' ''}}">
+                                <div class="form-text text-muted">Διεύθυνση ηλεκτρονικού ταχυδρομείου</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="partyContact" class="form-label fw-bold">Επικοινωνία</label>
+                                <input type="text" class="form-control" id="partyContact" name="contact" value="{{or partyDetails.contact '' ''}}" placeholder="Τηλέφωνο ή άλλη επικοινωνία">
+                                <div class="form-text text-muted">Τηλέφωνο, διεύθυνση ή άλλες πληροφορίες επικοινωνίας</div>
+                            </div>
+                        </div>
+                        
+                        {{#if partyDetails.contracts}}
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5>Συμβάσεις</h5>
+                                <div class="form-text text-muted mb-3">Λίστα συμβάσεων στις οποίες συμμετέχει ο συμβαλλόμενος</div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID Σύμβασης</th>
+                                                <th>Τύπος</th>
+                                                <th>Κατάσταση</th>
+                                                <th>Ημερομηνία</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#each partyDetails.contracts}}
+                                            <tr>
+                                                <td>{{this.id}}</td>
+                                                <td>{{this.type}}</td>
+                                                <td>{{this.status}}</td>
+                                                <td>{{this.date}}</td>
+                                            </tr>
+                                            {{else}}
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">Δεν υπάρχουν συμβάσεις</td>
+                                            </tr>
+                                            {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    {{#if (can 'edit:content')}}
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
+                                        <div>{{check partyDetails "Αποθήκευση" "Δημιουργία"}}</div>
+                                    </button>
+                                    {{/if}}
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
+                                        <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
+                                        <div>Ακύρωση</div>
+                                    </button>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid">
+                        {{#if partyDetails}}
+                        <button type="button" class="btn btn-danger delete-party-btn"
+                                data-party-id="{{partyDetails.id}}" 
+                                data-party-name="{{partyDetails.name}}">
+                            <i class="ti-trash me-1"></i>
+                            Διαγραφή Συμβαλλομένου
+                        </button>
+                        
+                        <hr>
+                        {{/if}}
+                        
+                        <a href="/properties/parties" class="btn btn-secondary">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στη Λίστα Συμβαλλομένων
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            {{#if partyDetails}}
+            <!-- Πληροφορίες δραστηριότητας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Λογαριασμού
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>Δημιουργία λογαριασμού:</strong><br>
+                        {{date partyDetails.createdAt}}</p>
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date partyDetails.updatedAt}}</p>
+                        
+                    </small>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form για επεξεργασία/δημιουργία party
+    document.getElementById('partyForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        const partyId = data.id;
+        const isEdit = !!partyId; // true αν υπάρχει ID (επεξεργασία)
+        
+        if (isEdit) {
+            delete data.id; // Αφαιρούμε το ID από τα data για PUT request
+        }
+        
+        try {
+            const url = isEdit ? `/properties/parties/${partyId}` : '/properties/parties';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                const message = isEdit ? 'Ο Συμβαλλόμενος ενημερώθηκε επιτυχώς!' : 'Ο Συμβαλλόμενος δημιουργήθηκε επιτυχώς!';
+
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal(message, 3000, () => {
+                    if (isEdit) {   // if updating
+                        redirectOnSuccess(null); // refresh current page
+                    } else {        // if creating new
+                        redirectOnSuccess(`/properties/parties/${result.party.id}`);
+                    }
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+    
+    // Button για διαγραφή party (μόνο σε επεξεργασία)
+    document.querySelectorAll('.delete-party-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const partyId = this.dataset.partyId;
+            const partyName = this.dataset.partyName;
+
+            if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε τον Συμβαλλόμενο "${partyName}";`)) {
+
+                Q('bootstrap-spinner').show();
+                try {
+                    const response = await fetch(`/properties/parties/${partyId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    Q('bootstrap-spinner').show(false);
+
+                    if (result.success) {
+                        alert('Ο Συμβαλλόμενος διαγράφηκε επιτυχώς!');
+                        window.location.href = '/properties/parties';
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    Q('bootstrap-spinner').show(false);
+                    showErrorModal('Σφάλμα δικτύου: ' + error.message);
+                }
+            }
+        });
+    });
+});
+</script>

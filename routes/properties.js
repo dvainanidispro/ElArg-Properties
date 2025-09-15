@@ -11,9 +11,238 @@ import { Op } from 'sequelize';
 const properties = Router();
 
 
+////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PARTIES   ////////////////////
+
+/**
+ * GET /properties/parties - Εμφάνιση λίστας όλων των parties
+ */
 properties.get('/parties', can('view:content'), async (req, res) => {
-    res.render('properties/parties');
+    try {
+        const parties = await Models.Party.findAll({
+            attributes: ['id', 'name', 'afm', 'email', 'contact', 'createdAt'],
+            order: [['createdAt', 'DESC']],
+            raw: true
+        });
+        
+        res.render('properties/parties', { 
+            parties,
+            user: req.user,
+            title: 'Συμβαλλόμενοι'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση συμβαλλομένων: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση συμβαλλομένων' });
+    }
 });
+
+/**
+ * GET /properties/parties/new - Φόρμα για νέο party
+ */
+properties.get('/parties/new', can('edit:content'), async (req, res) => {
+    try {
+        res.render('properties/edit-party', { 
+            partyDetails: null, // null για νέο party ώστε το view να ξέρει
+            user: req.user,
+            title: 'Νέος Συμβαλλόμενος'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την εμφάνιση φόρμας νέου party: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την εμφάνιση φόρμας' });
+    }
+});
+
+/**
+ * GET /properties/parties/:id - Εμφάνιση στοιχείων συγκεκριμένου party
+ */
+properties.get('/parties/:id', can('view:content'), async (req, res) => {
+    try {
+        const partyId = parseInt(req.params.id);
+        const party = await Models.Party.findByPk(partyId, {
+            attributes: ['id', 'name', 'afm', 'email', 'contact', 'contracts', 'createdAt', 'updatedAt'],
+            raw: true
+        });
+        
+        if (!party) {
+            return res.status(404).render('errors/404', { message: 'Ο Συμβαλλόμενος δεν βρέθηκε' });
+        }
+        
+        res.render('properties/edit-party', { 
+            partyDetails: party,
+            user: req.user,
+            title: `Επεξεργασία Συμβαλλομένου: ${party.name || party.email}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση party: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση του συμβαλλομένου' });
+    }
+});
+
+/**
+ * POST /properties/parties - Δημιουργία νέου party
+ */
+properties.post('/parties', can('edit:content'), async (req, res) => {
+    try {
+        const { name, afm, email, contact } = req.body;
+        
+        // Βασικός έλεγχος δεδομένων
+        if (!name && !email) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Τουλάχιστον ένα από τα πεδία όνομα ή email είναι υποχρεωτικό' 
+            });
+        }
+        
+        // Έλεγχος αν υπάρχει ήδη party με το ίδιο AFM ή email
+        const whereConditions = [];
+        if (afm) whereConditions.push({ afm });
+        if (email) whereConditions.push({ email });
+        
+        if (whereConditions.length > 0) {
+            const existingParty = await Models.Party.findOne({
+                where: { [Op.or]: whereConditions }
+            });
+            
+            if (existingParty) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Υπάρχει ήδη Συμβαλλόμενος με αυτό το ΑΦΜ ή email' 
+                });
+            }
+        }
+        
+        const newParty = await Models.Party.create({
+            name: name || email.split('@')[0],
+            afm: afm || '',
+            email: email || '',
+            contact: contact || '',
+            contracts: []
+        });
+        
+        log.info(`Νέος party δημιουργήθηκε: ${newParty.name} (ID: ${newParty.id})`);
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'Ο Συμβαλλόμενος δημιουργήθηκε επιτυχώς',
+            party: {
+                id: newParty.id,
+                name: newParty.name,
+                afm: newParty.afm,
+                email: newParty.email,
+                contact: newParty.contact,
+                contracts: newParty.contracts
+            }
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη δημιουργία party: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη δημιουργία του Συμβαλλομένου' 
+        });
+    }
+});
+
+/**
+ * PUT /properties/parties/:id - Ενημέρωση στοιχείων party
+ */
+properties.put('/parties/:id', can('edit:content'), async (req, res) => {
+    try {
+        const partyId = parseInt(req.params.id);
+        const { name, afm, email, contact } = req.body;
+        
+        const party = await Models.Party.findByPk(partyId);
+        if (!party) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Ο Συμβαλλόμενος δεν βρέθηκε' 
+            });
+        }
+        
+        // Έλεγχος αν το νέο AFM ή email υπάρχει ήδη σε άλλον party
+        const whereConditions = [];
+        if (afm && afm !== party.afm) whereConditions.push({ afm });
+        if (email && email !== party.email) whereConditions.push({ email });
+        
+        if (whereConditions.length > 0) {
+            const existingParty = await Models.Party.findOne({
+                where: {
+                    id: { [Op.ne]: partyId },
+                    [Op.or]: whereConditions
+                }
+            });
+            
+            if (existingParty) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Υπάρχει ήδη άλλος Συμβαλλόμενος με αυτό το ΑΦΜ ή email' 
+                });
+            }
+        }
+        
+        // Δημιουργία αντικειμένου ενημέρωσης
+        const updateData = {
+            name: name || party.name,
+            afm: afm || party.afm,
+            email: email || party.email,
+            contact: contact || party.contact
+        };
+        
+        await party.update(updateData);
+        
+        log.info(`Ο Party ${party.name} ενημερώθηκε (ID: ${party.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Ο Συμβαλλόμενος ενημερώθηκε επιτυχώς',
+            party: {
+                id: party.id,
+                name: party.name,
+                afm: party.afm,
+                email: party.email,
+                contact: party.contact,
+                contracts: party.contracts
+            }
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ενημέρωση party: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά την ενημέρωση του Συμβαλλομένου' 
+        });
+    }
+});
+
+/**
+ * DELETE /properties/parties/:id - Διαγραφή party
+ */
+properties.delete('/parties/:id', can('edit:content'), async (req, res) => {
+    try {
+        const partyId = parseInt(req.params.id);
+        
+        const party = await Models.Party.findByPk(partyId);
+        if (!party) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Ο Συμβαλλόμενος δεν βρέθηκε' 
+            });
+        }
+        
+        await party.destroy();
+        
+        log.info(`Party διαγράφηκε: ${party.name} (ID: ${party.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Ο Συμβαλλόμενος διαγράφηκε επιτυχώς' 
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη διαγραφή party: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη διαγραφή του Συμβαλλομένου' 
+        });
+    }
+});
+
 
 properties.get('/properties', can('view:content'), async (req, res) => {
     res.render('properties/properties');

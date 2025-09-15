@@ -42,7 +42,7 @@ admin.get('/users', async (req, res) => {
             title: 'Διαχείριση Χρηστών'
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ανάκτηση χρηστών:', error);
+        log.error(`Σφάλμα κατά την ανάκτηση χρηστών: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση χρηστών' });
     }
 });
@@ -69,7 +69,7 @@ admin.get('/users/:id', async (req, res) => {
             title: `Επεξεργασία Χρήστη: ${user.name || user.email}`
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ανάκτηση χρήστη:', error);
+        log.error(`Σφάλμα κατά την ανάκτηση χρήστη: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση χρήστη' });
     }
 });
@@ -122,7 +122,7 @@ admin.post('/users', async (req, res) => {
             }
         });
     } catch (error) {
-        log.error('Σφάλμα κατά τη δημιουργία χρήστη:', error);
+        log.error(`Σφάλμα κατά τη δημιουργία χρήστη: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά τη δημιουργία χρήστη' 
@@ -192,7 +192,7 @@ admin.put('/users/:id', async (req, res) => {
             }
         });
     } catch (error) {
-        log.error('Σφάλμα κατά την ενημέρωση χρήστη:', error);
+        log.error(`Σφάλμα κατά την ενημέρωση χρήστη: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά την ενημέρωση χρήστη' 
@@ -232,7 +232,7 @@ admin.delete('/users/:id', async (req, res) => {
             message: 'Ο χρήστης διαγράφηκε επιτυχώς' 
         });
     } catch (error) {
-        log.error('Σφάλμα κατά τη διαγραφή χρήστη:', error);
+        log.error(`Σφάλμα κατά τη διαγραφή χρήστη: ${error}`);
         res.status(500).json({ 
             success: false, 
             message: 'Σφάλμα κατά τη διαγραφή χρήστη' 

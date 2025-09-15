@@ -60,7 +60,7 @@ export default {
     User,
     Canteen,
     Principal,
-    // Property,
-    // Party,
+    Property,
+    Party,
     syncModels
 };
