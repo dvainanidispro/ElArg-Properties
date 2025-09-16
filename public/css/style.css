@@ -12,6 +12,8 @@
     --input-bg-color: hsl(240, 67%, 98%);
 
     --bs-btn-bg: green;
+    --bs-orange: hsl(39, 100%, 46%);
+    --bs-pink: hsl(332, 100%, 60%);
 
 
 }
@@ -101,8 +103,25 @@ input[readonly]{
 }
 
 .bg-orange{
-    background-color: orange !important;
+    background-color: var(--bs-orange) !important;
     color: var(--bs-light) !important;
+}
+.bg-purple{
+    background-color: var(--bs-purple) !important;
+    color: var(--bs-light) !important;
+}
+.bg-pink{
+    background-color: var(--bs-pink) !important;
+    color: var(--bs-light) !important;
+}
+.bg-indigo{
+    background-color: var(--bs-indigo) !important;
+    color: var(--bs-light) !important;
+}
+
+a.text-primary, .btn-outline-primary, .btn-outline-primary i{
+    color: #04c !important;
+    border-color: #04c !important;
 }
 
 

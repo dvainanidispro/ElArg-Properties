@@ -120,7 +120,7 @@
                                 <input type="text" class="form-control" id="fileServerLink" name="file_server_link" value="{{or propertyDetails.file_server_link '' ''}}">
                             </div>
                             
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="propertyActive" class="form-label fw-bold">Κατάσταση</label>
                                 <select class="form-select" id="propertyActive" name="active">
                                     <option value="true" {{#unless (eq propertyDetails.active false)}}selected{{/unless}}>Ενεργό</option>
@@ -164,7 +164,7 @@
                         {{#if propertyDetails}}
                         <button type="button" class="btn btn-danger delete-property-btn"
                                 data-property-id="{{propertyDetails.id}}" 
-                                data-property-name="{{or propertyDetails.kaek propertyDetails.address}}">
+                                data-property-name="{{or propertyDetails.address propertyDetails.kaek}}">
                             <i class="ti-trash me-1"></i>
                             Διαγραφή Ακινήτου
                         </button>

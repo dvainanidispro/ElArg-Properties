@@ -27,7 +27,7 @@ const roles = {
         user: true,
         description: 'Χρήστης με δικαιώματα μόνο προβολής',
         permissions: ['view:content'],
-        color: 'secondary'
+        color: 'info'
     },
 
 };
