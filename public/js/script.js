@@ -1,7 +1,35 @@
+/**
+ * Ένδειξη στο sidebar για το link που αντιστοιχεί στην τρέχουσα σελίδα
+ */
 [...document.querySelectorAll(".sidebar .sidebar-link")].forEach(link => {
     if (link.getAttribute("href") === window.location.pathname) {
         link.classList.add("active");
     }
+});
+
+/**
+ * Προσθήκη validation classes (is-valid, is-invalid) σε input πεδία με pattern ή minlength
+ * καθώς ο χρήστης πληκτρολογεί
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  const inputs = document.querySelectorAll("input[pattern], input[minlength]");
+
+  inputs.forEach(input => {
+    input.addEventListener("input", () => {
+      if (input.value === "") {
+        input.classList.remove("is-valid", "is-invalid");
+        return;
+      }
+
+      if (input.checkValidity()) {
+        input.classList.add("is-valid");
+        input.classList.remove("is-invalid");
+      } else {
+        input.classList.add("is-invalid");
+        input.classList.remove("is-valid");
+      }
+    });
+  });
 });
 
 /**
@@ -100,13 +128,22 @@ function closeModal(modalId) {
     if (modal) {
         modal.classList.remove('show');
         modal.style.display = 'none';
-        document.body.classList.remove('modal-open');
         
         // Εκτέλεση του onClose callback αν υπάρχει και το modal είναι το success modal
         if (modalId === 'successModal' && currentOnCloseCallback && typeof currentOnCloseCallback === 'function') {
             currentOnCloseCallback();
             currentOnCloseCallback = null; // Καθαρισμός του callback
         }
+    }
+    
+    // Αφαίρεση του modal-open class από το body ανεξάρτητα από το αν βρέθηκε το modal
+    // για να εξασφαλίσουμε ότι η σελίδα δεν μένει blocked
+    document.body.classList.remove('modal-open');
+    
+    // Αφαίρεση οποιουδήποτε backdrop element που μπορεί να έχει μείνει
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+        backdrop.remove();
     }
 }
 
@@ -141,12 +178,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Κλείσιμο modal με κλικ στο backdrop
+    // Κλείσιμο modal με κλικ στο backdrop - διόρθωση για drag behavior
     document.querySelectorAll('.modal').forEach(modal => {
+        let mouseDownTarget = null;
+        
+        modal.addEventListener('mousedown', function(e) {
+            mouseDownTarget = e.target;
+        });
+        
         modal.addEventListener('click', function(e) {
-            if (e.target === this) {
+            // Κλείσιμο μόνο αν το mousedown και το click έγιναν στο ίδιο element (το backdrop)
+            if (e.target === this && mouseDownTarget === this) {
                 closeModal(this.id);
             }
+            mouseDownTarget = null;
         });
     });
 

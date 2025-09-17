@@ -40,13 +40,8 @@ html {
 }
 
 /* DIM TABLES - Για να μην πηδάει στο φόρτωμα */
-table.dim-table:not([data-dimtables-initialized="1"]) {
-    margin-top: 60px;
-}
-.dim-table-bar {
-    height: calc(60px - 1rem);
-    transition: opacity 0.3s ease-in-out;
-}
+table.dim-table:not([data-dimtables-initialized="1"]) { margin-top: 3rem }
+.dim-table-bar { height: 2rem }
 
 
 

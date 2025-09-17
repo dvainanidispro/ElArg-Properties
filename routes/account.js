@@ -41,7 +41,7 @@ account.get('/profile', async (req, res) => {
  */
 account.post('/profile', async (req, res) => {
     try {
-        const { name, password, confirmPassword } = req.body;
+        const { name, password } = req.body;
         const userId = req.user.sub;
 
         // Βασικός έλεγχος εισόδου
@@ -58,21 +58,7 @@ account.post('/profile', async (req, res) => {
             });
         }
 
-        // Έλεγχος password αν έχει οριστεί
-        if (password) {
-            if (password !== confirmPassword) {
-                const user = await Models.User.findByPk(userId, {
-                    attributes: ['id', 'email', 'name', 'role', 'createdAt', 'updatedAt'],
-                    raw: true
-                });
-                return res.status(400).render('account/profile', {
-                    user,
-                    title: 'Προφίλ Χρήστη',
-                    error: 'Τα passwords δεν ταιριάζουν'
-                });
-            }
-
-        }
+        // Ο έλεγχος ομοιότητας password με confirmPassword γίνεται μόνο client-side
 
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = { name };

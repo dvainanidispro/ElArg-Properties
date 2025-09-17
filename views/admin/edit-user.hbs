@@ -39,7 +39,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="editUserPassword" class="form-label fw-bold">Νέο Password</label>
-                                <input type="password" class="form-control" id="editUserPassword" name="password" >
+                                <input type="password" class="form-control" id="editUserPassword" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$" title="Το password πρέπει να περιέχει τουλάχιστον 8 χαρακτήρες, ένα γράμμα, έναν αριθμό και ένα σύμβολο.">
                                 <div class="form-text text-muted">Να παραμείνει κενό αν δεν επιθυμείτε την αλλαγή του</div>
                             </div>
                             <div class="col-md-6 mb-3">

@@ -57,12 +57,12 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="userPassword" class="form-label fw-bold">Νέο Password</label>
-                                <input type="password" class="form-control" id="userPassword" name="password" minlength="6">
+                                <input type="password" class="form-control" id="userPassword" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$" title="Το password πρέπει να περιέχει τουλάχιστον 8 χαρακτήρες, ένα γράμμα, έναν αριθμό και ένα σύμβολο.">
                                 <div class="form-text text-muted">Να παραμείνει κενό αν δεν επιθυμείτε την αλλαγή του</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="confirmPassword" class="form-label fw-bold">Επιβεβαίωση Password</label>
-                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" minlength="6">
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
                                 <div class="form-text text-muted">Επαναλάβετε το νέο password για επιβεβαίωση σε περίπτωση αλλαγής</div>
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                 <div class="card-header">
                     <h6 class="card-title mb-0">
                         <i class="ti-shield me-2"></i>
-                        Συμβουλές Ασφάλειας
+                        Απαιτήσεις Κωδικού και Συμβουλές Ασφαλείας
                     </h6>
                 </div>
                 <div class="card-body">
@@ -122,15 +122,19 @@
                         <ul class="list-unstyled mb-0">
                             <li class="mb-2">
                                 <i class="ti-check text-success me-1"></i>
-                                Χρησιμοποιήστε ισχυρό password
+                                Τουλάχιστον 8 χαρακτήρες
                             </li>
                             <li class="mb-2">
                                 <i class="ti-check text-success me-1"></i>
-                                Τουλάχιστον 6 χαρακτήρες
+                                Τουλάχιστον ένα λατινικό γράμμα (πεζό ή κεφαλαίο)
                             </li>
                             <li class="mb-2">
                                 <i class="ti-check text-success me-1"></i>
-                                Συνδυασμός γραμμάτων και αριθμών
+                                Τουλάχιστον ένας αριθμός
+                            </li>
+                            <li class="mb-2">
+                                <i class="ti-check text-success me-1"></i>
+                                Τουλάχιστον ένα σύμβολο (!@#$%^&*)
                             </li>
                             <li>
                                 <i class="ti-check text-success me-1"></i>
@@ -150,33 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordField = document.getElementById('userPassword');
     const confirmPasswordField = document.getElementById('confirmPassword');
     
-    // Έλεγχος ομοιότητας passwords πριν την υποβολή
-    form.addEventListener('submit', function(e) {
-        Q('bootstrap-spinner').show();
-        const password = passwordField.value;
-        const confirmPassword = confirmPasswordField.value;
-        
-        // Αν έχει οριστεί password, έλεγχος ομοιότητας
-        if (password || confirmPassword) {
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                Q('bootstrap-spinner').show(false);
-                alert('Τα passwords δεν ταιριάζουν. Παρακαλώ επιβεβαιώστε ότι τα δύο πεδία είναι όμοια.');
-                confirmPasswordField.focus();
-                return false;
-            }
-            
-            if (password.length < 6) {
-                e.preventDefault();
-                Q('bootstrap-spinner').show(false);
-                alert('Το password πρέπει να έχει τουλάχιστον 6 χαρακτήρες.');
-                passwordField.focus();
-                return false;
-            }
-        }
-    });
-    
-    // Έλεγχος ομοιότητας passwords κατά την πληκτρολόγηση
+    // Έλεγχος ομοιότητας passwords κατά την πληκτρολόγηση και υποβολή
     function checkPasswordMatch() {
         const password = passwordField.value;
         const confirmPassword = confirmPasswordField.value;
@@ -185,14 +163,30 @@ document.addEventListener('DOMContentLoaded', function() {
             if (password === confirmPassword) {
                 confirmPasswordField.classList.remove('is-invalid');
                 confirmPasswordField.classList.add('is-valid');
+                return true;
             } else {
                 confirmPasswordField.classList.remove('is-valid');
                 confirmPasswordField.classList.add('is-invalid');
+                return false;
             }
         } else {
             confirmPasswordField.classList.remove('is-valid', 'is-invalid');
+            return true; // Αν δεν έχει οριστεί password, είναι OK
         }
     }
+    
+    // Spinner και έλεγχος ομοιότητας passwords πριν την υποβολή
+    form.addEventListener('submit', function(e) {
+        Q('bootstrap-spinner').show();
+        
+        if (!checkPasswordMatch()) {
+            e.preventDefault();
+            Q('bootstrap-spinner').show(false);
+            alert('Τα passwords δεν ταιριάζουν. Παρακαλώ επιβεβαιώστε ότι τα δύο πεδία είναι όμοια.');
+            confirmPasswordField.focus();
+            return false;
+        }
+    });
     
     passwordField.addEventListener('input', checkPasswordMatch);
     confirmPasswordField.addEventListener('input', checkPasswordMatch);

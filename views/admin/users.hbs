@@ -76,6 +76,7 @@
                     <div class="mb-3">
                         <label for="addUserEmail" class="form-label">Email *</label>
                         <input type="email" class="form-control" id="addUserEmail" name="email" required>
+                        <div class="form-text">Χρησιμοποιείται για να πραγματοποιήσει είσοδο ο Χρήστης.</div>
                     </div>
                     <div class="mb-3">
                         <label for="addUserName" class="form-label">Όνομα</label>
@@ -83,7 +84,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="addUserPassword" class="form-label">Κωδικός *</label>
-                        <input type="password" class="form-control" id="addUserPassword" name="password" required>
+                        <input type="password" class="form-control" id="addUserPassword" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$" title="Το password πρέπει να περιέχει τουλάχιστον 8 χαρακτήρες, ένα γράμμα, έναν αριθμό και ένα σύμβολο." required>
+                        <div class="form-text">Πληκτρολογήστε έναν προσωρινό κωδικό τον οποίο ο χρήστης θα πρέπει να αλλάξει μόνος του. Ο κωδικός θα πρέπει να περιέχει τουλάχιστον 8 χαρακτήρες, ένα γράμμα, έναν αριθμό και ένα σύμβολο.</div>
                     </div>
                     <div class="mb-3">
                         <label for="addUserRole" class="form-label">Ρόλος</label>
