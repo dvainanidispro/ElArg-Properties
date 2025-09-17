@@ -390,7 +390,7 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
             active: active !== undefined ? active : true
         });
         
-        log.info(`Νέο property δημιουργήθηκε: ${newProperty.kaek || newProperty.address} (ID: ${newProperty.id})`);
+        log.info(`Νέο property δημιουργήθηκε: ${newProperty.address || newProperty.kaek} (ID: ${newProperty.id})`);
         
         res.status(201).json({ 
             success: true, 
@@ -463,9 +463,9 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
         };
         
         await property.update(updateData);
-        
-        log.info(`Το Property ${property.kaek || property.address} ενημερώθηκε (ID: ${property.id})`);
-        
+
+        log.info(`Το Property ${property.address || property.kaek} ενημερώθηκε (ID: ${property.id})`);
+
         res.json({ 
             success: true, 
             message: 'Το Ακίνητο ενημερώθηκε επιτυχώς',
@@ -497,7 +497,7 @@ properties.delete('/properties/:id', can('edit:content'), async (req, res) => {
         
         await property.destroy();
         
-        log.info(`Property διαγράφηκε: ${property.kaek || property.address} (ID: ${property.id})`);
+        log.info(`Property διαγράφηκε: ${property.address || property.kaek} (ID: ${property.id})`);
         
         res.json({ 
             success: true, 

@@ -15,6 +15,7 @@
     --bs-orange: hsl(39, 100%, 46%);
     --bs-pink: hsl(332, 100%, 60%);
 
+    interpolate-size: allow-keywords; /* Smooth transitions */
 
 }
 
@@ -31,6 +32,23 @@
 @view-transition {
     navigation: auto;
 }
+
+/* smooth scrolling by default */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 3rem;
+}
+
+/* DIM TABLES - Για να μην πηδάει στο φόρτωμα */
+table.dim-table:not([data-dimtables-initialized="1"]) {
+    margin-top: 60px;
+}
+.dim-table-bar {
+    height: calc(60px - 1rem);
+    transition: opacity 0.3s ease-in-out;
+}
+
+
 
 
 /*********     THEME CORRECTIONS     *********/
@@ -93,7 +111,10 @@ input.form-control{
 }
 input[readonly]{
     background-color: hsl(240, 50%, 92%) !important;
-    
+}
+input::placeholder{
+    color: gray !important;
+    opacity: 1 !important; /* Firefox */
 }
 .form-select{
     background-color: var(--input-bg-color);
