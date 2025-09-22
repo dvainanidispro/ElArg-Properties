@@ -28,6 +28,13 @@ const Lease = db.define('lease', {
 		allowNull: false,
 		comment: 'property ή canteen',
 	},
+	// Κατεύθυνση μίσθωσης από άποψη δήμου
+	lease_direction: {
+		type: DataTypes.STRING,
+		allowNull: false,
+		defaultValue: 'incoming',
+		comment: 'Κατεύθυνση μίσθωσης από άποψη δήμου - incoming (Μίσθωση - ο δήμος μισθώνει από τρίτους), outgoing (Εκμίσθωση - ο δήμος εκμισθώνει σε τρίτους)',
+	},
 	// Στοιχεία μίσθωσης
 	lease_start: {
 		type: DataTypes.DATEONLY,
@@ -73,6 +80,7 @@ const Lease = db.define('lease', {
 		{ fields: ['property_id'] },
 		{ fields: ['party_id'] },
 		{ fields: ['property_type'] },
+		{ fields: ['lease_direction'] },
 		{ fields: ['lease_end'] }
 	]
 });

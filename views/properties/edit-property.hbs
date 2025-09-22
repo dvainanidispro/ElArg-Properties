@@ -58,10 +58,10 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="propertyType" class="form-label fw-bold">Τύπος Ακινήτου</label>
-                                <select class="form-select" id="propertyType" name="property_type">
-                                    <option value="owned" {{#if (eq propertyDetails.property_type 'owned')}}selected{{/if}}>Ιδιόκτητο</option>
-                                    <option value="leased_out" {{#if (eq propertyDetails.property_type 'leased_out')}}selected{{/if}}>Εκμισθωμένο</option>
-                                    <option value="rented" {{#if (eq propertyDetails.property_type 'rented')}}selected{{/if}}>Μισθωμένο</option>
+                                <select class="form-select" id="propertyType" name="asset_type">
+                                    <option value="owned" {{#if (eq propertyDetails.asset_type 'owned')}}selected{{/if}}>Ιδιόκτητο</option>
+                                    <option value="leased_out" {{#if (eq propertyDetails.asset_type 'leased_out')}}selected{{/if}}>Εκμισθωμένο</option>
+                                    <option value="rented" {{#if (eq propertyDetails.asset_type 'rented')}}selected{{/if}}>Μισθωμένο</option>
                                 </select>
                             </div>
                             

@@ -259,16 +259,39 @@ properties.get('/', can('view:content'), async (req, res) => {
 properties.get('/properties', can('view:content'), async (req, res) => {
     try {
         const propertiesList = await Models.Property.findAll({
-            include: [{ 
-                model: Models.Party, 
-                as: 'party',
-                attributes: ['id', 'name', 'email']
+            include: [{
+                model: Models.Lease,
+                as: 'leases',
+                where: {
+                    property_type: 'property'
+                },
+                required: false, // LEFT JOIN για να φέρουμε και properties χωρίς leases
+                order: [['lease_end', 'DESC']], // Ταξινόμηση με το μεγαλύτερο lease_end πρώτα
+                limit: 1, // Παίρνουμε μόνο το πρώτο (το πιο πρόσφατο)
+                include: [{
+                    model: Models.Party,
+                    as: 'party',
+                    attributes: ['id', 'name', 'email']
+                }]
             }],
             order: [['createdAt', 'DESC']]
         });
         
+        // Μετατροπή των δεδομένων για εύκολη χρήση στο template
+        const processedProperties = propertiesList.map(property => {
+            const propertyData = property.toJSON();
+            const latestLease = propertyData.leases && propertyData.leases.length > 0 ? propertyData.leases[0] : null;
+            
+            return {
+                ...propertyData,
+                party: latestLease ? latestLease.party : null,
+                lease_end: latestLease ? latestLease.lease_end : null,
+                lease_direction: latestLease ? latestLease.lease_direction : null
+            };
+        });
+        
         res.render('properties/properties', { 
-            properties: propertiesList,
+            properties: processedProperties,
             user: req.user,
             title: 'Ακίνητα'
         });
@@ -283,16 +306,8 @@ properties.get('/properties', can('view:content'), async (req, res) => {
  */
 properties.get('/properties/new', can('edit:content'), async (req, res) => {
     try {
-        // Ανάκτηση όλων των parties για το dropdown
-        const parties = await Models.Party.findAll({
-            attributes: ['id', 'name', 'email'],
-            order: [['id', 'DESC']],
-            raw: true
-        });
-        
         res.render('properties/edit-property', { 
             propertyDetails: null, // null για νέο property ώστε το view να ξέρει
-            parties,
             user: req.user,
             title: 'Νέο Ακίνητο'
         });
@@ -309,10 +324,15 @@ properties.get('/properties/:id', can('view:content'), async (req, res) => {
     try {
         const propertyId = parseInt(req.params.id);
         const property = await Models.Property.findByPk(propertyId, {
-            include: [{ 
-                model: Models.Party, 
-                as: 'party',
-                attributes: ['id', 'name', 'email']
+            include: [{
+                model: Models.Lease,
+                as: 'leases',
+                include: [{
+                    model: Models.Party,
+                    as: 'party',
+                    attributes: ['id', 'name', 'email']
+                }],
+                order: [['lease_end', 'DESC']]
             }]
         });
         
@@ -320,16 +340,8 @@ properties.get('/properties/:id', can('view:content'), async (req, res) => {
             return res.status(404).render('errors/404', { message: 'Το Ακίνητο δεν βρέθηκε' });
         }
         
-        // Ανάκτηση όλων των parties για το dropdown
-        const parties = await Models.Party.findAll({
-            attributes: ['id', 'name', 'email'],
-            order: [['id', 'DESC']],
-            raw: true
-        });
-        
         res.render('properties/edit-property', { 
             propertyDetails: property,
-            parties,
             user: req.user,
             title: `Ακίνητο: ${property.address || property.kaek || property.id}`
         });
@@ -346,8 +358,7 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
     try {
         const { 
             kaek, address, description, area, construction_year, file_server_link,
-            property_type, lease_start, lease_end, monthly_rent, rent_frequency,
-            rent_adjustment_info, guarantee_letter, party_id, active 
+            asset_type, active 
         } = req.body;
         
         // Βασικός έλεγχος δεδομένων
@@ -379,14 +390,7 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
             area: area ? parseInt(area) : null,
             construction_year: construction_year ? parseInt(construction_year) : null,
             file_server_link: file_server_link || '',
-            property_type: property_type || 'owned',
-            lease_start: lease_start || null,
-            lease_end: lease_end || null,
-            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : null,
-            rent_frequency: rent_frequency || 'monthly',
-            rent_adjustment_info: rent_adjustment_info || '',
-            guarantee_letter: guarantee_letter || '',
-            party_id: party_id ? parseInt(party_id) : null,
+            asset_type: asset_type || 'owned',
             active: active !== undefined ? active : true
         });
         
@@ -414,8 +418,7 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
         const propertyId = parseInt(req.params.id);
         const { 
             kaek, address, description, area, construction_year, file_server_link,
-            property_type, lease_start, lease_end, monthly_rent, rent_frequency,
-            rent_adjustment_info, guarantee_letter, party_id, active 
+            asset_type, active 
         } = req.body;
         
         const property = await Models.Property.findByPk(propertyId);
@@ -451,14 +454,7 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
             area: area ? parseInt(area) : property.area,
             construction_year: construction_year ? parseInt(construction_year) : property.construction_year,
             file_server_link: file_server_link || property.file_server_link,
-            property_type: property_type || property.property_type,
-            lease_start: lease_start || property.lease_start,
-            lease_end: lease_end || property.lease_end,
-            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : property.monthly_rent,
-            rent_frequency: rent_frequency || property.rent_frequency,
-            rent_adjustment_info: rent_adjustment_info || property.rent_adjustment_info,
-            guarantee_letter: guarantee_letter || property.guarantee_letter,
-            party_id: party_id ? parseInt(party_id) : null, // Αλλαγή: αν δεν υπάρχει party_id, βάλε null
+            asset_type: asset_type || property.asset_type,
             active: active !== undefined ? active : property.active
         };
         
@@ -509,6 +505,359 @@ properties.delete('/properties/:id', can('edit:content'), async (req, res) => {
             success: false, 
             message: 'Σφάλμα κατά τη διαγραφή του Ακινήτου' 
         });
+    }
+});
+
+
+////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ LEASES   ////////////////////
+
+/**
+ * GET /properties/leases - Εμφάνιση λίστας όλων των leases
+ */
+properties.get('/leases', can('view:content'), async (req, res) => {
+    try {
+        const leases = await Models.Lease.findAll({
+            where: {
+                property_type: 'property'
+            },
+            include: [
+                {
+                    model: Models.Property,
+                    as: 'property',
+                    attributes: ['id', 'kaek', 'address', 'asset_type']
+                },
+                {
+                    model: Models.Party,
+                    as: 'party',
+                    attributes: ['id', 'name', 'email', 'afm']
+                }
+            ],
+            order: [['id', 'DESC']],
+        });
+        
+        res.render('properties/leases', { 
+            leases,
+            user: req.user,
+            title: 'Μισθώσεις'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση μισθώσεων: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση μισθώσεων' });
+    }
+});
+
+/**
+ * GET /properties/leases/new - Φόρμα για νέο lease
+ */
+properties.get('/leases/new', can('edit:content'), async (req, res) => {
+    try {
+        // Ανάκτηση properties και parties για τα dropdowns
+        const [propertiesList, parties] = await Promise.all([
+            Models.Property.findAll({
+                attributes: ['id', 'kaek', 'address', 'asset_type'],
+                order: [['kaek', 'ASC']],
+                raw: true
+            }),
+            Models.Party.findAll({
+                attributes: ['id', 'name', 'email', 'afm'],
+                order: [['name', 'ASC']],
+                raw: true
+            })
+        ]);
+        
+        res.render('properties/edit-lease', { 
+            leaseDetails: null, // null για νέο lease
+            properties: propertiesList,
+            parties,
+            user: req.user,
+            title: 'Νέα Μίσθωση'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την εμφάνιση φόρμας νέου lease: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την εμφάνιση φόρμας' });
+    }
+});
+
+/**
+ * GET /properties/leases/:id - Εμφάνιση στοιχείων συγκεκριμένου lease
+ */
+properties.get('/leases/:id', can('view:content'), async (req, res) => {
+    try {
+        const leaseId = parseInt(req.params.id);
+        const lease = await Models.Lease.findByPk(leaseId, {
+            include: [
+                {
+                    model: Models.Property,
+                    as: 'property',
+                    attributes: ['id', 'kaek', 'address', 'asset_type']
+                },
+                {
+                    model: Models.Party,
+                    as: 'party',
+                    attributes: ['id', 'name', 'email', 'afm']
+                }
+            ]
+        });
+        
+        if (!lease) {
+            return res.status(404).render('errors/404', { message: 'Η Μίσθωση δεν βρέθηκε' });
+        }
+        
+        // Ανάκτηση properties και parties για τα dropdowns
+        const [propertiesList, parties] = await Promise.all([
+            Models.Property.findAll({
+                attributes: ['id', 'kaek', 'address', 'asset_type'],
+                order: [['kaek', 'ASC']],
+                raw: true
+            }),
+            Models.Party.findAll({
+                attributes: ['id', 'name', 'email', 'afm'],
+                order: [['name', 'ASC']],
+                raw: true
+            })
+        ]);
+        
+        res.render('properties/edit-lease', { 
+            leaseDetails: lease,
+            properties: propertiesList,
+            parties,
+            user: req.user,
+            title: `Μίσθωση: ${lease.property?.kaek || lease.property?.address || lease.id}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση lease: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση της μίσθωσης' });
+    }
+});
+
+/**
+ * POST /properties/leases - Δημιουργία νέου lease
+ */
+properties.post('/leases', can('edit:content'), async (req, res) => {
+    try {
+        const { 
+            property_id, party_id, lease_direction, lease_start, lease_end, monthly_rent, 
+            rent_frequency, rent_adjustment_info, guarantee_letter, active 
+        } = req.body;
+        // Βασικός έλεγχος δεδομένων
+        if (!property_id || !party_id || !lease_direction || !lease_start) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Τα πεδία ακίνητο, συμβαλλόμενος, κατεύθυνση και ημερομηνία έναρξης είναι υποχρεωτικά' 
+            });
+        }
+        // Έλεγχος αν υπάρχουν τα property και party
+        const [property, party] = await Promise.all([
+            Models.Property.findByPk(property_id),
+            Models.Party.findByPk(party_id)
+        ]);
+        if (!property) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Το ακίνητο δεν βρέθηκε' 
+            });
+        }
+        if (!party) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Ο συμβαλλόμενος δεν βρέθηκε' 
+            });
+        }
+        const newLease = await Models.Lease.create({
+            property_id: parseInt(property_id),
+            party_id: parseInt(party_id),
+            property_type: 'property',
+            lease_direction,
+            lease_start: lease_start,
+            lease_end: lease_end || null,
+            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : null,
+            rent_frequency: rent_frequency || 'monthly',
+            rent_adjustment_info: rent_adjustment_info || '',
+            guarantee_letter: guarantee_letter || '',
+            active: active !== undefined ? active : true
+        });
+        log.info(`Νέο lease δημιουργήθηκε: Property ${property_id} - Party ${party_id} (ID: ${newLease.id})`);
+        res.status(201).json({ 
+            success: true, 
+            message: 'Η Μίσθωση δημιουργήθηκε επιτυχώς',
+            lease: newLease
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη δημιουργία lease: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη δημιουργία της Μίσθωσης' 
+        });
+    }
+});
+
+/**
+ * PUT /properties/leases/:id - Ενημέρωση στοιχείων lease
+ */
+properties.put('/leases/:id', can('edit:content'), async (req, res) => {
+    try {
+        const leaseId = parseInt(req.params.id);
+        const { 
+            property_id, party_id, lease_direction, lease_start, lease_end, monthly_rent, 
+            rent_frequency, rent_adjustment_info, guarantee_letter, active 
+        } = req.body;
+        const lease = await Models.Lease.findByPk(leaseId);
+        if (!lease) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Η Μίσθωση δεν βρέθηκε' 
+            });
+        }
+        // Έλεγχος αν υπάρχουν τα property και party (αν δόθηκαν νέα)
+        if (property_id && property_id !== lease.property_id) {
+            const property = await Models.Property.findByPk(property_id);
+            if (!property) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Το ακίνητο δεν βρέθηκε' 
+                });
+            }
+        }
+        if (party_id && party_id !== lease.party_id) {
+            const party = await Models.Party.findByPk(party_id);
+            if (!party) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Ο συμβαλλόμενος δεν βρέθηκε' 
+                });
+            }
+        }
+        // Δημιουργία αντικειμένου ενημέρωσης
+        const updateData = {
+            property_id: property_id ? parseInt(property_id) : lease.property_id,
+            party_id: party_id ? parseInt(party_id) : lease.party_id,
+            lease_direction: lease_direction || lease.lease_direction,
+            lease_start: lease_start || lease.lease_start,
+            lease_end: lease_end || lease.lease_end,
+            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : lease.monthly_rent,
+            rent_frequency: rent_frequency || lease.rent_frequency,
+            rent_adjustment_info: rent_adjustment_info || lease.rent_adjustment_info,
+            guarantee_letter: guarantee_letter || lease.guarantee_letter,
+            active: active !== undefined ? active : lease.active
+        };
+        await lease.update(updateData);
+        log.info(`Το Lease ενημερώθηκε: Property ${updateData.property_id} - Party ${updateData.party_id} (ID: ${lease.id})`);
+        res.json({ 
+            success: true, 
+            message: 'Η Μίσθωση ενημερώθηκε επιτυχώς',
+            lease: lease
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ενημέρωση lease: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά την ενημέρωση της Μίσθωσης' 
+        });
+    }
+});
+
+/**
+ * DELETE /properties/leases/:id - Διαγραφή lease
+ */
+properties.delete('/leases/:id', can('edit:content'), async (req, res) => {
+    try {
+        const leaseId = parseInt(req.params.id);
+        
+        const lease = await Models.Lease.findByPk(leaseId);
+        if (!lease) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Η Μίσθωση δεν βρέθηκε' 
+            });
+        }
+        
+        await lease.destroy();
+        
+        log.info(`Lease διαγράφηκε: Property ${lease.property_id} - Party ${lease.party_id} (ID: ${lease.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Η Μίσθωση διαγράφηκε επιτυχώς' 
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη διαγραφή lease: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη διαγραφή της Μίσθωσης' 
+        });
+    }
+});
+
+
+////////////////////   AUXILIARY ROUTES ΓΙΑ LEASES   ////////////////////
+
+/**
+ * GET /properties/properties/:id/leases - Λίστα leases συγκεκριμένου property
+ */
+properties.get('/properties/:id/leases', can('view:content'), async (req, res) => {
+    try {
+        const propertyId = parseInt(req.params.id);
+        
+        const property = await Models.Property.findByPk(propertyId);
+        if (!property) {
+            return res.status(404).render('errors/404', { message: 'Το Ακίνητο δεν βρέθηκε' });
+        }
+        
+        const leases = await Models.Lease.findAll({
+            where: { property_id: propertyId },
+            include: [{
+                model: Models.Party,
+                as: 'party',
+                attributes: ['id', 'name', 'email', 'afm']
+            }],
+            order: [['lease_start', 'DESC']]
+        });
+        
+        res.render('properties/leases', { 
+            leases,
+            property,
+            user: req.user,
+            title: `Μισθώσεις Ακινήτου: ${property.address || property.kaek}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση leases του property: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση μισθώσεων' });
+    }
+});
+
+/**
+ * GET /properties/parties/:id/leases - Λίστα leases συγκεκριμένου party
+ */
+properties.get('/parties/:id/leases', can('view:content'), async (req, res) => {
+    try {
+        const partyId = parseInt(req.params.id);
+        
+        const party = await Models.Party.findByPk(partyId);
+        if (!party) {
+            return res.status(404).render('errors/404', { message: 'Ο Συμβαλλόμενος δεν βρέθηκε' });
+        }
+        
+        const leases = await Models.Lease.findAll({
+            where: { party_id: partyId },
+            include: [
+                {
+                    model: Models.Property,
+                    as: 'property',
+                    attributes: ['id', 'kaek', 'address', 'asset_type']
+                }
+            ],
+            order: [['lease_start', 'DESC']]
+        });
+        
+        res.render('properties/leases', { 
+            leases,
+            party,
+            user: req.user,
+            title: `Μισθώσεις Συμβαλλομένου: ${party.name || party.email}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση leases του party: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση μισθώσεων' });
     }
 });
 

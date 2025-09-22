@@ -50,9 +50,9 @@
                                         {{/if}}
                                     </td>
                                     <td>
-                                        {{#if (eq this.property_type 'leased_out')}}
+                                        {{#if (eq this.asset_type 'leased_out')}}
                                             <span class="badge bg-purple fs-6">Εκμισθωμένο</span>
-                                        {{else if (eq this.property_type 'rented')}}
+                                        {{else if (eq this.asset_type 'rented')}}
                                             <span class="badge bg-pink fs-6">Μισθωμένο</span>
                                         {{else}}
                                             <span class="badge bg-dark fs-6">Ιδιόκτητο</span>
@@ -60,12 +60,29 @@
                                     </td>
                                     <td>
                                         {{#if this.party}}
-                                            <a href="/properties/parties/{{this.party.id}}" class="text-primary text-decoration-none">{{this.party.name}}</a>
+                                            <div>
+                                                <a href="/properties/parties/{{this.party.id}}" class="text-primary text-decoration-none">{{this.party.name}}</a>
+                                                {{#if this.lease_direction}}
+                                                    <br><small class="text-muted">
+                                                        {{#if (eq this.lease_direction 'incoming')}}
+                                                            (Μισθωτής)
+                                                        {{else if (eq this.lease_direction 'outgoing')}}
+                                                            (Εκμισθωτής)
+                                                        {{/if}}
+                                                    </small>
+                                                {{/if}}
+                                            </div>
                                         {{else}}
                                             <span class="text-muted">-</span>
                                         {{/if}}
                                     </td>
-                                    <td>{{date this.lease_end}}</td>
+                                    <td>
+                                        {{#if this.lease_end}}
+                                            {{date this.lease_end}}
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
                                     <td>
                                         {{#if this.active}}
                                             <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease_end}}">Ενεργό</span>
