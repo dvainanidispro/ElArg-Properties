@@ -13,6 +13,7 @@
 
     --bs-btn-bg: green;
     --bs-orange: hsl(39, 100%, 46%);
+    --bs-warning-rgb: 235, 152, 0;
     --bs-pink: hsl(332, 100%, 60%);
 
     interpolate-size: allow-keywords; /* Smooth transitions */

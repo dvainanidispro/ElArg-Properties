@@ -48,17 +48,30 @@ window.dimtablesOptions = window.dimtablesOptions || {};
 
 // Προεπιλεγμένες ρυθμίσεις για κάθε πίνακα
 window.dimtables.defaultOptions = {
+    rowsPerPage: 50,
     minSearchCharacters: 2,
     placeholder: "Αναζήτηση...",
+    pageInfoTemplate: "Εμφανίζονται {start}-{end} από {total} εγγραφές",
     sortableHeaderClass: "sortable",
     hiddenRowClass: "d-none", // μία κλάση απόκρυψης για φίλτρο & σελιδοποίηση (ο έλεγχος γίνεται με flags)
-    rowsPerPage: 50,
-    pageInfoTemplate: "Εμφανίζονται {start}-{end} από {total} εγγραφές",
     pagerButtonClass: "btn btn-secondary", // κλάση για τα κουμπιά προηγ/επόμ
     searchInputClass: "form-control m-4", // κλάση για το input αναζήτησης
     searchInputWidth: 260, // πλάτος σε px για το input αναζήτησης
     sortIcon: '<svg viewBox="0 0 16 16" width="1.2em" height="1.2em" class="ms-1 dimtables-sort-icon"><path d="M8 2 L4 6 H12 L8 2 Z" fill="currentColor"></path><path d="M8 14 L4 10 H12 L8 14 Z" fill="currentColor"></path></svg>'
 };
+
+// Αφαίρεση ελληνικών τόνων για αναζήτηση/φιλτράρισμα χωρίς ανάγκη για σωστούς τόνους
+function removeGreekAccents(str) {
+  if (!str) return '';
+  return str
+    .replace(/[άα]/gi, 'α')
+    .replace(/[έε]/gi, 'ε')
+    .replace(/[ήη]/gi, 'η')
+    .replace(/[ίϊΐι]/gi, 'ι')
+    .replace(/[όο]/gi, 'ο')
+    .replace(/[ύϋΰυ]/gi, 'υ')
+    .replace(/[ώω]/gi, 'ω');
+}
 
 (function () {
   const state = new WeakMap(); // κατάσταση ανά πίνακα
@@ -199,8 +212,9 @@ window.dimtables.defaultOptions = {
     getAllRows(table).forEach(tr => { delete tr.dataset.dtFilterHidden; delete tr.dataset.dtPageHidden; syncRowHiddenClass(tr, opts); });
 
     // Αναζήτηση (on input) — εφαρμόζει/αναιρεί απόκρυψη και επαναφέρει στη σελίδα 1
+
     input.addEventListener("input", function () {
-      const q = (this.value || "").trim().toLowerCase();
+      const q = removeGreekAccents((this.value || "").trim().toLowerCase());
       const shouldFilter = q.length >= opts.minSearchCharacters;
 
       getAllRows(table).forEach((tr) => {
@@ -208,7 +222,7 @@ window.dimtables.defaultOptions = {
           setFilterHidden(tr, false, opts);
           return;
         }
-        const text = tr.textContent.toLowerCase();
+        const text = removeGreekAccents(tr.textContent.toLowerCase());
         setFilterHidden(tr, text.indexOf(q) === -1, opts);
       });
 
@@ -279,9 +293,10 @@ window.dimtables.defaultOptions = {
           } else if (sortType === "date-gr") {
             aVal = parseGreekDate(aVal);
             bVal = parseGreekDate(bVal);
+
           } else {
-            aVal = aVal.toLowerCase();
-            bVal = bVal.toLowerCase();
+            aVal = removeGreekAccents(aVal.toLowerCase());
+            bVal = removeGreekAccents(bVal.toLowerCase());
           }
 
           if (aVal < bVal) return direction === "asc" ? -1 : 1;
