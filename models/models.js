@@ -2,6 +2,7 @@ import { User } from "./user.js";
 import { Canteen } from "./canteen.js";
 import { Principal } from "./principal.js";
 import { Property } from "./property.js";
+import { Lease } from "./lease.js";
 import { Party } from "./party.js";
 import { db, databaseConnectionTest } from '../config/database.js';
 import log from '../controllers/logger.js';
@@ -21,28 +22,39 @@ Principal.hasMany(Canteen, {
     as: 'canteens'
 });
 
-// One-to-many relationship: Party -> Properties
-// Ένα party (μισθωτής/εκμισθωτής) μπορεί να έχει πολλά properties, ένα property έχει το πολύ ένα party.
-// Η σχέση αποτυπώνεται στον πίνακα properties με το πεδίο party_id.
-Property.belongsTo(Party, {
-    foreignKey: 'party_id',
-    as: 'party'
+
+////// Lease associations
+
+// Lease ανήκει σε Property
+Lease.belongsTo(Property, {
+    foreignKey: 'property_id',
+    as: 'property'
 });
-Party.hasMany(Property, {
-    foreignKey: 'party_id',
-    as: 'properties'
+Property.hasMany(Lease, {
+    foreignKey: 'property_id',
+    as: 'leases'
 });
 
-// One-to-many relationship: Party -> Canteens
-// Ένα party (μισθωτής/εκμισθωτής) μπορεί να έχει πολλά canteens, ένα canteen έχει το πολύ ένα party.
-// Η σχέση αποτυπώνεται στον πίνακα canteens με το πεδίο party_id.
-Canteen.belongsTo(Party, {
+// Lease ανήκει σε Canteen (αν property_type === 'canteen')
+Lease.belongsTo(Canteen, {
+    foreignKey: 'property_id',
+    constraints: false, // επιτρέπει να δείχνει είτε σε property είτε σε canteen
+    as: 'canteen'
+});
+Canteen.hasMany(Lease, {
+    foreignKey: 'property_id',
+    constraints: false,
+    as: 'leases'
+});
+
+// Lease ανήκει σε Party
+Lease.belongsTo(Party, {
     foreignKey: 'party_id',
     as: 'party'
 });
-Party.hasMany(Canteen, {
+Party.hasMany(Lease, {
     foreignKey: 'party_id',
-    as: 'canteens'
+    as: 'leases'
 });
 
 
@@ -74,5 +86,6 @@ export default {
     Principal,
     Property,
     Party,
+    Lease,
     syncModels
 };

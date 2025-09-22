@@ -34,37 +34,11 @@ const Property = db.define('property',
             comment: 'Link προς file server'
         },
         
-        // Τύπος ακινήτου
-        property_type: {
+        // Τύπος ακινήτου (owned, leased_out, rented)
+        asset_type: {
             type: DataTypes.STRING,
             defaultValue: 'owned',
-            comment: 'Τύπος ακινήτου - Επιτρεπόμενες τιμές: leased_out (εκμισθωμένο), rented (μισθωμένο)'
-        },
-        
-        lease_start: {
-            type: DataTypes.DATEONLY,
-            comment: 'Ημερομηνία έναρξης μίσθωσης/εκμίσθωσης'
-        },
-        lease_end: {
-            type: DataTypes.DATEONLY,
-            comment: 'Ημερομηνία λήξης μίσθωσης/εκμίσθωσης'
-        },
-        monthly_rent: {
-            type: DataTypes.DECIMAL(10, 2),
-            comment: 'Μηνιαίο τίμημα (ή τριμηνιαίο ανάλογα την μίσθωση)'
-        },
-        rent_frequency: {
-            type: DataTypes.STRING,
-            defaultValue: 'monthly',
-            comment: 'Συχνότητα πληρωμής μισθώματος - Επιτρεπόμενες τιμές: monthly (μηνιαία), quarterly (τριμηνιαία)'
-        },
-        rent_adjustment_info: {
-            type: DataTypes.TEXT,
-            comment: 'Πληροφορίες αναπροσαρμογής μισθώματος'
-        },
-        guarantee_letter: {
-            type: DataTypes.STRING,
-            comment: 'Εγγυητική Επιστολή (για μισθωμένα από δήμο)'
+            comment: 'Τύπος ιδιοκτησίας ακινήτου - Επιτρεπόμενες τιμές: owned, leased_out, rented'
         },
 
         active: {
@@ -78,13 +52,7 @@ const Property = db.define('property',
         timestamps: true,
         indexes: [
             {
-                fields: ['property_type']
-            },
-            {
-                fields: ['party_id']
-            },
-            {
-                fields: ['lease_end']
+                fields: ['asset_type']
             }
         ]
     }

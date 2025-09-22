@@ -16,22 +16,6 @@ const Canteen = db.define('canteen',
             type: DataTypes.SMALLINT,
             comment: 'Επιφάνεια σε τ.μ.'
         },
-        lease_start: {
-            type: DataTypes.DATEONLY,
-            comment: 'Έναρξη μίσθωσης'
-        },
-        lease_end: {
-            type: DataTypes.DATEONLY,
-            comment: 'Λήξη μίσθωσης'
-        },
-        revision_number: {
-            type: DataTypes.STRING,
-            comment: 'Αριθμός γνωστοποίησης'
-        },
-        landlord_offer: {
-            type: DataTypes.SMALLINT,
-            comment: 'Οικονομική προσφορά εκμισθωτή'
-        }, 
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true
@@ -46,9 +30,6 @@ const Canteen = db.define('canteen',
             },
             {
                 fields: ['active'],
-            },
-            {
-                fields: ['lease_end']
             }
         ]
     }
