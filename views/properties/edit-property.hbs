@@ -31,6 +31,23 @@
                             </div>
                             <div class="col-md-6 mb-3"></div>
                             {{/if}}
+
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Μίσθωση</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" 
+                                           value="{{#if propertyDetails.lease}}[{{leaseDirectionText propertyDetails.lease.lease_direction}}] {{propertyDetails.lease.party.name}} - Λήξη: {{date propertyDetails.lease.lease_end}}{{else}}Χωρίς ενεργή μίσθωση{{/if}}" 
+                                           readonly>
+                                    {{#if propertyDetails}}
+                                        {{#if propertyDetails.lease}}
+                                            <a href="/properties/leases/{{propertyDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή</a>
+                                        {{else}}
+                                            <a href="/properties/leases/new?property_id={{propertyDetails.id}}" class="btn btn-primary" type="button">Δημιουργία Μίσθωσης</a>
+                                        {{/if}}
+                                    {{/if}}
+                                </div>
+                                <div class="form-text text-muted">Πληροφορίες μίσθωσης για αυτό το ακίνητο</div>
+                            </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="propertyKaek" class="form-label fw-bold">ΚΑΕΚ</label>
@@ -64,57 +81,7 @@
                                     <option value="rented" {{#if (eq propertyDetails.asset_type 'rented')}}selected{{/if}}>Μισθωμένο</option>
                                 </select>
                             </div>
-                            
-                            <div class="col-md-12 mb-3" x-data="{partyId: '{{propertyDetails.party_id}}', searchQuery: ''}">
-                                <label for="propertyParty" class="form-label fw-bold">Συμβαλλόμενος</label>
-                                <div class="input-group">
-                                        <select x-model="partyId" class="form-select" id="propertyParty" name="party_id">
-                                            <option value="">-- Χωρίς Συμβαλλόμενο --</option>
-                                            {{#each parties}}
-                                            <option value="{{this.id}}" x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
-                                                {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
-                                            </option>
-                                            {{/each}}
-                                        </select>
-                                    <input x-model="searchQuery" type="text" class="form-control dropdown-search" placeholder="Φίλτρο">
-                                    {{#if propertyDetails}}
-                                        <a x-cloak x-show="!partyId" :href="`/properties/parties/new?redirect=${window.location.pathname}`" class="btn btn-primary" type="button">Προσθήκη νέου</a>
-                                        <a x-cloak x-show="partyId" :href="`/properties/parties/${partyId}`" class="btn btn-primary" type="button" >Προβολή</a>
-                                    {{/if}}
-                                </div>
-                                <div class="form-text text-muted">Ο Συμβαλλόμενος που είναι υπεύθυνος για αυτό το ακίνητο</div>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="leaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης</label>
-                                <input type="date" class="form-control" id="leaseStart" name="lease_start" value="{{or propertyDetails.lease_start '' ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="leaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
-                                <input type="date" class="form-control" id="leaseEnd" name="lease_end" value="{{or propertyDetails.lease_end '' ''}}">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="monthlyRent" class="form-label fw-bold">Μηνιαίο Μίσθωμα (€)</label>
-                                <input type="number" step="0.01" class="form-control" id="monthlyRent" name="monthly_rent" value="{{or propertyDetails.monthly_rent '' ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="rentFrequency" class="form-label fw-bold">Συχνότητα Πληρωμής</label>
-                                <select class="form-select" id="rentFrequency" name="rent_frequency">
-                                    <option value="monthly" {{#if (eq propertyDetails.rent_frequency 'monthly')}}selected{{/if}}>Μηνιαία</option>
-                                    <option value="quarterly" {{#if (eq propertyDetails.rent_frequency 'quarterly')}}selected{{/if}}>Τριμηνιαία</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-12 mb-3">
-                                <label for="rentAdjustmentInfo" class="form-label fw-bold">Πληροφορίες Αναπροσαρμογής Μισθώματος</label>
-                                <textarea class="form-control" id="rentAdjustmentInfo" name="rent_adjustment_info" rows="2">{{or propertyDetails.rent_adjustment_info '' ''}}</textarea>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="guaranteeLetter" class="form-label fw-bold">Εγγυητική Επιστολή</label>
-                                <input type="text" class="form-control" id="guaranteeLetter" name="guarantee_letter" value="{{or propertyDetails.guarantee_letter '' ''}}">
-                            </div>
+                                                       
                             <div class="col-md-6 mb-3">
                                 <label for="fileServerLink" class="form-label fw-bold">Link Αρχείων</label>
                                 <input type="text" class="form-control" id="fileServerLink" name="file_server_link" value="{{or propertyDetails.file_server_link '' ''}}">
@@ -224,10 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Μετατροπή κενών strings σε null για numbers και dates
         if (data.area === '') data.area = null;
         if (data.construction_year === '') data.construction_year = null;
-        if (data.monthly_rent === '') data.monthly_rent = null;
-        if (data.lease_start === '') data.lease_start = null;
-        if (data.lease_end === '') data.lease_end = null;
-        if (data.party_id === '') data.party_id = null;
         
         // Μετατροπή string boolean σε boolean
         data.active = data.active === 'true';

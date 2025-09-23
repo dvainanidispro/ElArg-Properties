@@ -87,13 +87,7 @@
                                     </td>
                                     {{/unless}}
                                     <td>
-                                        {{#if (eq this.lease_direction 'incoming')}}
-                                            Μίσθωση
-                                        {{else if (eq this.lease_direction 'outgoing')}}
-                                            Εκμίσθωση
-                                        {{else}}
-                                            -
-                                        {{/if}}
+                                        {{leaseDirectionText this.lease_direction}}
                                     </td>
                                     <td>{{date this.lease_end}}</td>
                                     <td>

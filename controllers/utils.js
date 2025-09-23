@@ -5,4 +5,16 @@ let presentTime = () => {
     return date.toLocaleString('el-GR',{hour12: false});
 };
 
-export { presentTime };
+
+let conversions = {
+    leaseDirection: (direction) => {
+        const directions = {
+            incoming: 'Μίσθωση',
+            outgoing: 'Εκμίσθωση'
+        };
+        return directions[direction] || direction;
+    }
+
+};
+
+export { presentTime, conversions };

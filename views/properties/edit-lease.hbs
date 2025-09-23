@@ -77,8 +77,8 @@
                             <div class="col-md-12 mb-3">
                                 <label for="leaseDirection" class="form-label fw-bold">Κατεύθυνση Μίσθωσης *</label>
                                 <select class="form-select" id="leaseDirection" name="lease_direction" required>
-                                    <option value="incoming" {{#if (eq leaseDetails.lease_direction 'incoming')}}selected{{/if}}>Μίσθωση (Δήμος μισθώνει)</option>
-                                    <option value="outgoing" {{#if (eq leaseDetails.lease_direction 'outgoing')}}selected{{/if}}>Εκμίσθωση (Δήμος εκμισθώνει)</option>
+                                    <option value="incoming" {{#if (eq leaseDetails.lease_direction 'incoming')}}selected{{/if}}>Μίσθωση (Ο Δήμος μισθώνει)</option>
+                                    <option value="outgoing" {{#if (eq leaseDetails.lease_direction 'outgoing')}}selected{{/if}}>Εκμίσθωση (Ο Δήμος εκμισθώνει)</option>
                                 </select>
                                 <div class="form-text text-muted">Επιλέξτε αν ο Δήμος μισθώνει ("Μίσθωση") ή εκμισθώνει ("Εκμίσθωση") το ακίνητο.</div>
                             </div>
@@ -117,25 +117,18 @@
                                 <div class="form-text text-muted">Πληροφορίες για αναπροσαρμογές, δείκτες, ποσοστά αύξησης κλπ.</div>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="guaranteeLetter" class="form-label fw-bold">Εγγυητική Επιστολή</label>
                                 <input type="text" class="form-control" id="guaranteeLetter" name="guarantee_letter" value="{{check leaseDetails.guarantee_letter leaseDetails.guarantee_letter ''}}">
                                 <div class="form-text text-muted">Αριθμός ή στοιχεία εγγυητικής επιστολής</div>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="leaseActive" class="form-label fw-bold">Κατάσταση</label>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="leaseActive" name="active" value="true" 
-                                           {{#if leaseDetails}}
-                                               {{#if leaseDetails.active}}checked{{/if}}
-                                           {{else}}
-                                               checked
-                                           {{/if}}>
-                                    <label class="form-check-label" for="leaseActive">
-                                        Ενεργή Μίσθωση
-                                    </label>
-                                </div>
+                                <select class="form-select" id="leaseActive" name="active">
+                                    <option value="true" {{#unless (eq leaseDetails.active false)}}selected{{/unless}}>Ενεργή</option>
+                                    <option value="false" {{#if (eq leaseDetails.active false)}}selected{{/if}}>Ανενεργή</option>
+                                </select>
                                 <div class="form-text text-muted">Αν η μίσθωση είναι ενεργή ή όχι</div>
                             </div>
                         </div>
@@ -143,15 +136,17 @@
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="ti-check me-1"></i>
-                                        {{#if leaseDetails}}Ενημέρωση{{else}}Δημιουργία{{/if}} Μίσθωσης
+                                    {{#if (can 'edit:content')}}
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
+                                        <div>{{#if leaseDetails}}Αποθήκευση{{else}}Δημιουργία{{/if}}</div>
                                     </button>
-                                    
-                                    <a href="/properties/leases" class="btn btn-secondary">
-                                        <i class="ti-arrow-left me-1"></i>
-                                        Ακύρωση
-                                    </a>
+                                    {{/if}}
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
+                                        <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
+                                        <div>Ακύρωση</div>
+                                    </button>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
                                 </div>
                             </div>
                         </div>
@@ -182,14 +177,14 @@
                         
                         <!-- Συνδέσεις για περισσότερες πληροφορίες -->
                         {{#if leaseDetails.property}}
-                        <a href="/properties/properties/{{leaseDetails.property.id}}" class="btn btn-outline-info">
+                        <a href="/properties/properties/{{leaseDetails.property.id}}" class="btn btn-info">
                             <i class="ti-home me-1"></i>
                             Προβολή Ακινήτου
                         </a>
                         {{/if}}
                         
                         {{#if leaseDetails.party}}
-                        <a href="/properties/parties/{{leaseDetails.party.id}}" class="btn btn-outline-success">
+                        <a href="/properties/parties/{{leaseDetails.party.id}}" class="btn btn-success">
                             <i class="ti-user me-1"></i>
                             Προβολή Συμβαλλομένου
                         </a>
@@ -203,12 +198,12 @@
                             Επιστροφή στις Μισθώσεις
                         </a>
                         
-                        <a href="/properties/properties" class="btn btn-outline-secondary">
+                        <a href="/properties/properties" class="btn btn-outline-secondary d-none">
                             <i class="ti-home me-1"></i>
                             Προς τα Ακίνητα
                         </a>
                         
-                        <a href="/properties/parties" class="btn btn-outline-secondary">
+                        <a href="/properties/parties" class="btn btn-outline-secondary d-none">
                             <i class="ti-user me-1"></i>
                             Προς τους Συμβαλλομένους
                         </a>

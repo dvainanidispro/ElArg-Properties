@@ -274,19 +274,18 @@ properties.get('/properties', can('view:content'), async (req, res) => {
                     attributes: ['id', 'name', 'email']
                 }]
             }],
-            order: [['createdAt', 'DESC']]
+            order: [['id', 'DESC']]
         });
         
         // Μετατροπή των δεδομένων για εύκολη χρήση στο template
         const processedProperties = propertiesList.map(property => {
             const propertyData = property.toJSON();
-            const latestLease = propertyData.leases && propertyData.leases.length > 0 ? propertyData.leases[0] : null;
+            const latestLease = propertyData.leases?.[0];
             
             return {
                 ...propertyData,
-                party: latestLease ? latestLease.party : null,
-                lease_end: latestLease ? latestLease.lease_end : null,
-                lease_direction: latestLease ? latestLease.lease_direction : null
+                lease: latestLease || null,
+                party: latestLease?.party || null,
             };
         });
         
@@ -327,12 +326,17 @@ properties.get('/properties/:id', can('view:content'), async (req, res) => {
             include: [{
                 model: Models.Lease,
                 as: 'leases',
+                where: {
+                    property_type: 'property'
+                },
+                required: false, // LEFT JOIN για να φέρουμε και properties χωρίς leases
+                order: [['lease_end', 'DESC']], // Ταξινόμηση με το μεγαλύτερο lease_end πρώτα
+                limit: 1, // Παίρνουμε μόνο το πρώτο (το πιο πρόσφατο)
                 include: [{
                     model: Models.Party,
                     as: 'party',
                     attributes: ['id', 'name', 'email']
-                }],
-                order: [['lease_end', 'DESC']]
+                }]
             }]
         });
         
@@ -340,8 +344,17 @@ properties.get('/properties/:id', can('view:content'), async (req, res) => {
             return res.status(404).render('errors/404', { message: 'Το Ακίνητο δεν βρέθηκε' });
         }
         
+        // Μετατροπή των δεδομένων για εύκολη χρήση στο template
+        const propertyData = property.toJSON();
+        const latestLease = propertyData.leases?.[0];
+        
+        const processedProperty = {
+            ...propertyData,
+            lease: latestLease || null
+        };
+        
         res.render('properties/edit-property', { 
-            propertyDetails: property,
+            propertyDetails: processedProperty,
             user: req.user,
             title: `Ακίνητο: ${property.address || property.kaek || property.id}`
         });

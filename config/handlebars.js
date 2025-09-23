@@ -1,5 +1,6 @@
 import { create as HandlebarsCreator } from 'express-handlebars';
 import { userHasPermission } from '../controllers/roles.js';
+import { conversions } from '../controllers/utils.js';
 
 const handlebarsConfig = {
     extname: '.hbs',    // extension for layouts (not views)
@@ -96,6 +97,7 @@ const handlebarsConfig = {
             const user = this.user;
             return userHasPermission(user, permission);
         },
+        leaseDirectionText: conversions.leaseDirection,
     }
 };
 

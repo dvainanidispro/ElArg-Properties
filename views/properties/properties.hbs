@@ -62,11 +62,11 @@
                                         {{#if this.party}}
                                             <div>
                                                 <a href="/properties/parties/{{this.party.id}}" class="text-primary text-decoration-none">{{this.party.name}}</a>
-                                                {{#if this.lease_direction}}
+                                                {{#if this.lease.lease_direction}}
                                                     <br><small class="text-muted">
-                                                        {{#if (eq this.lease_direction 'incoming')}}
+                                                        {{#if (eq this.lease.lease_direction 'incoming')}}
                                                             (Μισθωτής)
-                                                        {{else if (eq this.lease_direction 'outgoing')}}
+                                                        {{else if (eq this.lease.lease_direction 'outgoing')}}
                                                             (Εκμισθωτής)
                                                         {{/if}}
                                                     </small>
@@ -77,8 +77,8 @@
                                         {{/if}}
                                     </td>
                                     <td>
-                                        {{#if this.lease_end}}
-                                            {{date this.lease_end}}
+                                        {{#if this.lease.lease_end}}
+                                            {{date this.lease.lease_end}}
                                         {{else}}
                                             <span class="text-muted">-</span>
                                         {{/if}}
