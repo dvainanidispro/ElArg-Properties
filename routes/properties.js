@@ -568,12 +568,12 @@ properties.get('/leases/new', can('edit:content'), async (req, res) => {
         const [propertiesList, parties] = await Promise.all([
             Models.Property.findAll({
                 attributes: ['id', 'kaek', 'address', 'asset_type'],
-                order: [['kaek', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: true
             }),
             Models.Party.findAll({
                 attributes: ['id', 'name', 'email', 'afm'],
-                order: [['name', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: true
             })
         ]);
@@ -620,12 +620,12 @@ properties.get('/leases/:id', can('view:content'), async (req, res) => {
         const [propertiesList, parties] = await Promise.all([
             Models.Property.findAll({
                 attributes: ['id', 'kaek', 'address', 'asset_type'],
-                order: [['kaek', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: true
             }),
             Models.Party.findAll({
                 attributes: ['id', 'name', 'email', 'afm'],
-                order: [['name', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: true
             })
         ]);

@@ -595,12 +595,12 @@ canteens.get('/leases/new', can('edit:content'), async (req, res) => {
                     as: 'principal',
                     attributes: ['id', 'name', 'email']
                 }],
-                order: [['name', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: false
             }),
             Models.Party.findAll({
                 attributes: ['id', 'name', 'email', 'afm'],
-                order: [['name', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: true
             })
         ]);
@@ -657,12 +657,12 @@ canteens.get('/leases/:id', can('view:content'), async (req, res) => {
                     as: 'principal',
                     attributes: ['id', 'name', 'email']
                 }],
-                order: [['name', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: false
             }),
             Models.Party.findAll({
                 attributes: ['id', 'name', 'email', 'afm'],
-                order: [['name', 'ASC']],
+                order: [['id', 'DESC']],
                 raw: true
             })
         ]);
@@ -869,6 +869,70 @@ canteens.get('/canteens/:id/leases', can('view:content'), async (req, res) => {
     } catch (error) {
         log.error(`Σφάλμα κατά την ανάκτηση leases του canteen: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση μισθώσεων' });
+    }
+});
+
+/**
+ * GET /canteens/canteens/:id/leases/history - Ιστορικό όλων των μισθώσεων συγκεκριμένου canteen
+ */
+canteens.get('/canteens/:id/leases/history', can('view:content'), async (req, res) => {
+    try {
+        const canteenId = parseInt(req.params.id);
+        
+        const canteen = await Models.Canteen.findByPk(canteenId, {
+            include: [{
+                model: Models.Principal,
+                as: 'principal',
+                attributes: ['id', 'name', 'email']
+            }]
+        });
+        
+        if (!canteen) {
+            return res.status(404).render('errors/404', { message: 'Το Κυλικείο δεν βρέθηκε' });
+        }
+        
+        // Ανάκτηση όλων των μισθώσεων με πλήρη στοιχεία
+        const leases = await Models.Lease.findAll({
+            where: { 
+                property_id: canteenId,
+                property_type: 'canteen'
+            },
+            include: [{
+                model: Models.Party,
+                as: 'party',
+                attributes: ['id', 'name', 'email', 'afm', 'contact']
+            }],
+            order: [['lease_start', 'DESC']]
+        });
+        
+        // Στατιστικά για το ιστορικό
+        const stats = {
+            totalLeases: leases.length,
+            activeLeases: leases.filter(lease => lease.active && (!lease.lease_end || new Date(lease.lease_end) >= new Date())).length,
+            expiredLeases: leases.filter(lease => lease.lease_end && new Date(lease.lease_end) < new Date()).length,
+            totalRevenue: leases.reduce((sum, lease) => {
+                if (lease.monthly_rent && lease.lease_start && lease.lease_end) {
+                    const start = new Date(lease.lease_start);
+                    const end = new Date(lease.lease_end);
+                    const months = Math.ceil((end - start) / (1000 * 60 * 60 * 24 * 30));
+                    return sum + (parseFloat(lease.monthly_rent) * months);
+                }
+                return sum;
+            }, 0),
+            averageRent: leases.length > 0 ? 
+                leases.reduce((sum, lease) => sum + (parseFloat(lease.monthly_rent) || 0), 0) / leases.length : 0
+        };
+        
+        res.render('canteens/leases-history', { 
+            leases,
+            canteen,
+            stats,
+            user: req.user,
+            title: `Ιστορικό Μισθώσεων: ${canteen.name}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση ιστορικού leases του canteen: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση ιστορικού μισθώσεων' });
     }
 });
 

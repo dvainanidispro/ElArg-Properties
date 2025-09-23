@@ -46,11 +46,13 @@
                                            value="{{#if canteenDetails.lease}}{{canteenDetails.lease.party.name}} - Λήξη: {{date canteenDetails.lease.lease_end}}{{else}}Χωρίς ενεργή μίσθωση{{/if}}" 
                                            readonly>
                                     {{#if canteenDetails}}
-                                        {{#if canteenDetails.lease}}
-                                            <a href="/canteens/leases/{{canteenDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή</a>
-                                        {{else}}
-                                            <a href="/canteens/leases/new?canteen_id={{canteenDetails.id}}&redirect=/canteens/canteens/{{canteenDetails.id}}" class="btn btn-primary" type="button">Δημιουργία Μίσθωσης</a>
-                                        {{/if}}
+                                        <div class="btn-group">
+                                            {{#if canteenDetails.lease}}
+                                                <a href="/canteens/leases/{{canteenDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή</a>
+                                            {{/if}}
+                                            <a href="/canteens/canteens/{{canteenDetails.id}}/leases/history" class="btn btn-secondary" type="button">Ιστορικό</a>
+                                            <a href="/canteens/leases/new?canteen_id={{canteenDetails.id}}&redirect=/canteens/canteens/{{canteenDetails.id}}" class="btn btn-success" type="button">Νέα Μίσθωση</a>
+                                        </div>
                                     {{/if}}
                                 </div>
                                 {{#unless canteenDetails}}
@@ -64,7 +66,7 @@
                                             <option value="">-- Χωρίς Διευθυντή --</option>
                                             {{#each principals}}
                                             <option value="{{this.id}}" x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
-                                                {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
+                                                {{this.id}} - {{or this.name this.email ""}}
                                             </option>
                                             {{/each}}
                                         </select>
