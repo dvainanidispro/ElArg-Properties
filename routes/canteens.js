@@ -218,6 +218,19 @@ canteens.delete('/principals/:id', can('edit:content'), async (req, res) => {
             });
         }
         
+        // Έλεγχος αν υπάρχει κάποιο canteen που χρησιμοποιεί αυτόν τον principal
+        const canteenUsingPrincipal = await Models.Canteen.findOne({
+            where: { principal_id: principalId },
+            attributes: ['id', 'name']
+        });
+        
+        if (canteenUsingPrincipal) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Δεν είναι δυνατή η διαγραφή του Διευθυντή, διότι ανήκει στο σχολείο ${canteenUsingPrincipal.name}` 
+            });
+        }
+        
         await principal.destroy();
         
         log.info(`Principal διαγράφηκε: ${principal.email} (ID: ${principal.id})`);
@@ -516,6 +529,21 @@ canteens.delete('/canteens/:id', can('edit:content'), async (req, res) => {
             return res.status(404).json({ 
                 success: false, 
                 message: 'Το Κυλικείο δεν βρέθηκε' 
+            });
+        }
+        
+        // Έλεγχος αν υπάρχει κάποιο lease που χρησιμοποιεί αυτό το canteen
+        const leaseUsingCanteen = await Models.Lease.findOne({
+            where: { 
+                property_id: canteenId,
+                property_type: 'canteen'
+            }
+        });
+        
+        if (leaseUsingCanteen) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Δεν είναι δυνατή η διαγραφή του Κυλικείου διότι διαθέτει τουλάχιστον μια μίσθωση. Αντί για διαγραφή, κάντε απενεργοποίηση του Κυλικείου' 
             });
         }
         

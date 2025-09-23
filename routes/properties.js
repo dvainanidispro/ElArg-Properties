@@ -226,6 +226,19 @@ properties.delete('/parties/:id', can('edit:content'), async (req, res) => {
             });
         }
         
+        // Έλεγχος αν υπάρχει κάποιο lease που χρησιμοποιεί αυτό το party
+        const leaseUsingParty = await Models.Lease.findOne({
+            where: { party_id: partyId },
+            attributes: ['id']
+        });
+        
+        if (leaseUsingParty) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Δεν είναι δυνατή η διαγραφή του συμβαλλόμενου διότι ανήκει στη μίσθωση με id ${leaseUsingParty.id}` 
+            });
+        }
+        
         await party.destroy();
         
         log.info(`Party διαγράφηκε: ${party.name} (ID: ${party.id})`);
@@ -501,6 +514,21 @@ properties.delete('/properties/:id', can('edit:content'), async (req, res) => {
             return res.status(404).json({ 
                 success: false, 
                 message: 'Το Ακίνητο δεν βρέθηκε' 
+            });
+        }
+        
+        // Έλεγχος αν υπάρχει κάποιο lease που χρησιμοποιεί αυτό το property
+        const leaseUsingProperty = await Models.Lease.findOne({
+            where: { 
+                property_id: propertyId,
+                property_type: 'property'
+            }
+        });
+        
+        if (leaseUsingProperty) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Δεν είναι δυνατή η διαγραφή του Ακινήτου διότι διαθέτει τουλάχιστον μια μίσθωση. Αντί για διαγραφή, κάντε απενεργοποίηση του Ακινήτου' 
             });
         }
         
