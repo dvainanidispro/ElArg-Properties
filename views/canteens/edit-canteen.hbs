@@ -39,23 +39,23 @@
                                 <label for="canteenArea" class="form-label fw-bold">Επιφάνεια (τ.μ.)</label>
                                 <input type="number" class="form-control" id="canteenArea" name="area" value="{{or canteenDetails.area '' ''}}" min="0" step="0.01">
                             </div>
-                            <div class="col-md-12 mb-3" x-data="{partyId: '{{canteenDetails.party_id}}', searchQuery: ''}">
-                                <label for="canteenParty" class="form-label fw-bold">Μισθωτής</label>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Μίσθωση</label>
                                 <div class="input-group">
-                                        <select x-model="partyId" class="form-select" id="canteenParty" name="party_id">
-                                            <option value="">-- Χωρίς Μισθωτή --</option>
-                                            {{#each parties}}
-                                            <option value="{{this.id}}" x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
-                                                {{this.id}} - {{or this.name this.email ""}} - {{this.email}} 
-                                            </option>
-                                            {{/each}}
-                                        </select>
-                                    <input x-model="searchQuery" type="text" class="form-control dropdown-search" placeholder="Φίλτρο">
+                                    <input type="text" class="form-control" 
+                                           value="{{#if canteenDetails.lease}}{{canteenDetails.lease.party.name}} - Λήξη: {{date canteenDetails.lease.lease_end}}{{else}}Χωρίς ενεργή μίσθωση{{/if}}" 
+                                           readonly>
                                     {{#if canteenDetails}}
-                                        <a x-cloak x-show="!partyId" :href="`/properties/parties/new?redirect=${window.location.pathname}`" class="btn btn-primary" type="button">Προσθήκη νέου</a>
-                                        <a x-cloak x-show="partyId" :href="`/properties/parties/${partyId}`" class="btn btn-primary" type="button" >Προβολή</a>
+                                        {{#if canteenDetails.lease}}
+                                            <a href="/canteens/leases/{{canteenDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή</a>
+                                        {{else}}
+                                            <a href="/canteens/leases/new?canteen_id={{canteenDetails.id}}&redirect=/canteens/canteens/{{canteenDetails.id}}" class="btn btn-primary" type="button">Δημιουργία Μίσθωσης</a>
+                                        {{/if}}
                                     {{/if}}
                                 </div>
+                                {{#unless canteenDetails}}
+                                <div class="form-text text-muted">Θα πρέπει να αποθηκεύσετε το νέο κυλικείο πριν μπορέσετε να προσθέσετε πληροφορίες μίσθωσης</div>
+                                {{/unless}}
                             </div>
                             <div class="col-md-12 mb-3" x-data="{principalId: '{{canteenDetails.principal_id}}', searchQuery: ''}">
                                 <label for="canteenPrincipal" class="form-label fw-bold">Διευθυντής Σχολείου</label>
@@ -76,22 +76,7 @@
                                 </div>
                                 <div class="form-text text-muted">Ο Διευθυντής Σχολείου που είναι υπεύθυνος για αυτό το κυλικείο</div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="canteenLeaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης</label>
-                                <input type="date" class="form-control" id="canteenLeaseStart" name="lease_start" value="{{dateInput canteenDetails.lease_start}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="canteenLeaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
-                                <input type="date" class="form-control" id="canteenLeaseEnd" name="lease_end" value="{{dateInput canteenDetails.lease_end}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="canteenRevisionNumber" class="form-label fw-bold">Αριθμός Γνωστοποίησης</label>
-                                <input type="text" class="form-control" id="canteenRevisionNumber" name="revision_number" value="{{or canteenDetails.revision_number '' ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="canteenLandlordOffer" class="form-label fw-bold">Οικονομική Προσφορά Μισθωτή (€)</label>
-                                <input type="number" class="form-control" id="canteenLandlordOffer" name="landlord_offer" value="{{or canteenDetails.landlord_offer '' ''}}" min="0" step="0.01">
-                            </div>
+
                             <div class="col-md-12 mb-3">
                                 <label for="canteenActive" class="form-label fw-bold">Κατάσταση</label>
                                 <select class="form-select" id="canteenActive" name="active">
@@ -195,12 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Μετατροπή κενών strings σε null για numbers και dates
         if (data.area === '') data.area = null;
-        if (data.landlord_offer === '') data.landlord_offer = null;
-        if (data.lease_start === '') data.lease_start = null;
-        if (data.lease_end === '') data.lease_end = null;
         if (data.principal_id === '') data.principal_id = null;
-        if (data.party_id === '') data.party_id = null;
-        if (data.revision_number === '') data.revision_number = null;
         
         // Μετατροπή string boolean σε boolean
         data.active = data.active === 'true';

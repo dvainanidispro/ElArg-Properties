@@ -23,9 +23,8 @@
                                 <tr>
                                     <th class="sortable" data-sort-type="number">ID</th>
                                     <th class="sortable">Όνομα Κυλικείου</th>
-                                    <th>Μισθωτής</th>
                                     <th>Διευθυντής</th>
-                                    {{!-- <th>Έναρξη Μίσθωσης</th> --}}
+                                    <th>Μισθωτής</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη Μίσθωσης</th>
                                     <th class="sortable">Κατάσταση</th>
                                     <th>Λεπτομέρειες</th>
@@ -39,6 +38,13 @@
                                         <a href="/canteens/canteens/{{this.id}}" class="text-primary text-decoration-none">{{this.name}}</a>
                                     </td>
                                     <td>
+                                        {{#if this.principal}}
+                                            <a href="/canteens/principals/{{this.principal.id}}" class="text-primary text-decoration-none">{{this.principal.name}}</a>
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
                                         {{#if this.party}}
                                             <a href="/properties/parties/{{this.party.id}}" class="text-primary text-decoration-none">{{this.party.name}}</a>
                                         {{else}}
@@ -46,17 +52,15 @@
                                         {{/if}}
                                     </td>
                                     <td>
-                                        {{#if this.principal}}
-                                            <a href="/canteens/principals/{{this.principal.id}}" class="text-primary text-decoration-none">{{this.principal.name}}</a>
+                                        {{#if this.lease.lease_end}}
+                                            {{date this.lease.lease_end}}
                                         {{else}}
                                             <span class="text-muted">-</span>
                                         {{/if}}
                                     </td>
-                                    {{!-- <td>{{date this.lease_start}}</td> --}}
-                                    <td>{{date this.lease_end}}</td>
                                     <td>
                                         {{#if this.active}}
-                                            <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease_end}}">Ενεργό</span>
+                                            <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease.lease_end}}">Ενεργό</span>
                                         {{else}}
                                             <span class="badge bg-secondary fs-6">Ανενεργό</span>
                                         {{/if}}
@@ -79,17 +83,31 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Ελέγχει όλα τα ενεργά κυλικεία για ληγμένες μισθώσεις
+    // Ελέγχει όλα τα ενεργά κυλικεία για ληγμένες μισθώσεις και μισθώσεις που λήγουν σύντομα
     const statusBadges = document.querySelectorAll('.status-badge');
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+    
+    // Υπολογισμός ημερομηνίας 6 μηνών από σήμερα
+    const sixMonthsFromNow = new Date(today);
+    sixMonthsFromNow.setMonth(today.getMonth() + 6);
+    const sixMonthsFromNowStr = sixMonthsFromNow.toISOString().split('T')[0];
     
     statusBadges.forEach(badge => {
         const leaseEndStr = badge.getAttribute('data-lease-end');
         
-        if (leaseEndStr && leaseEndStr < today) {
-            badge.textContent = 'Ληγμένο';
-            badge.classList.remove('bg-success');
-            badge.classList.add('bg-danger', 'text-light');
+        if (leaseEndStr) {
+            if (leaseEndStr < todayStr) {
+                // Ληγμένη μίσθωση
+                badge.textContent = 'Ληγμένο';
+                badge.classList.remove('bg-success');
+                badge.classList.add('bg-danger', 'text-light');
+            } else if (leaseEndStr <= sixMonthsFromNowStr) {
+                // Μίσθωση που λήγει σύντομα (σε λιγότερο από 6 μήνες)
+                badge.textContent = 'Λήγει σύντομα';
+                badge.classList.remove('bg-success');
+                badge.classList.add('bg-warning');
+            }
         }
     });
 });

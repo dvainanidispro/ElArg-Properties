@@ -259,17 +259,39 @@ canteens.get('/canteens', can('view:content'), async (req, res) => {
                     as: 'principal',
                     attributes: ['id', 'name', 'email']
                 },
-                { 
-                    model: Models.Party, 
-                    as: 'party',
-                    attributes: ['id', 'name', 'email']
+                {
+                    model: Models.Lease,
+                    as: 'leases',
+                    where: {
+                        property_type: 'canteen'
+                    },
+                    required: false, // LEFT JOIN για να φέρουμε και canteens χωρίς leases
+                    order: [['lease_end', 'DESC']], // Ταξινόμηση με το μεγαλύτερο lease_end πρώτα
+                    limit: 1, // Παίρνουμε μόνο το πρώτο (το πιο πρόσφατο)
+                    include: [{
+                        model: Models.Party,
+                        as: 'party',
+                        attributes: ['id', 'name', 'email']
+                    }]
                 }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['id', 'DESC']]
+        });
+        
+        // Μετατροπή των δεδομένων για εύκολη χρήση στο template
+        const processedCanteens = canteensList.map(canteen => {
+            const canteenData = canteen.toJSON();
+            const latestLease = canteenData.leases?.[0];
+            
+            return {
+                ...canteenData,
+                lease: latestLease || null,
+                party: latestLease?.party || null,
+            };
         });
         
         res.render('canteens/canteens', { 
-            canteens: canteensList,
+            canteens: processedCanteens,
             user: req.user,
             title: 'Κυλικεία'
         });
@@ -292,17 +314,9 @@ canteens.get('/canteens/new', can('edit:content'), async (req, res) => {
             raw: true
         });
         
-        // Ανάκτηση όλων των parties για το dropdown
-        const parties = await Models.Party.findAll({
-            attributes: ['id', 'name', 'email'],
-            order: [['id', 'DESC']],
-            raw: true
-        });
-        
         res.render('canteens/edit-canteen', { 
             canteenDetails: null, // null για νέο canteen ώστε το view να ξέρει
             principals,
-            parties,
             user: req.user,
             title: 'Νέο Κυλικείο'
         });
@@ -318,7 +332,23 @@ canteens.get('/canteens/new', can('edit:content'), async (req, res) => {
 canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
     try {
         const canteenId = parseInt(req.params.id);
-        const canteen = await Models.Canteen.findByPk(canteenId);
+        const canteen = await Models.Canteen.findByPk(canteenId, {
+            include: [{
+                model: Models.Lease,
+                as: 'leases',
+                where: {
+                    property_type: 'canteen'
+                },
+                required: false, // LEFT JOIN για να φέρουμε και canteens χωρίς leases
+                order: [['lease_end', 'DESC']], // Ταξινόμηση με το μεγαλύτερο lease_end πρώτα
+                limit: 1, // Παίρνουμε μόνο το πρώτο (το πιο πρόσφατο)
+                include: [{
+                    model: Models.Party,
+                    as: 'party',
+                    attributes: ['id', 'name', 'email']
+                }]
+            }]
+        });
         
         if (!canteen) {
             return res.status(404).render('errors/404', { message: 'Το Κυλικείο δεν βρέθηκε' });
@@ -332,17 +362,18 @@ canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
             raw: true
         });
         
-        // Ανάκτηση όλων των parties για το dropdown
-        const parties = await Models.Party.findAll({
-            attributes: ['id', 'name', 'email'],
-            order: [['id', 'DESC']],
-            raw: true
-        });
+        // Μετατροπή των δεδομένων για εύκολη χρήση στο template
+        const canteenData = canteen.toJSON();
+        const latestLease = canteenData.leases?.[0];
+        
+        const processedCanteen = {
+            ...canteenData,
+            lease: latestLease || null
+        };
         
         res.render('canteens/edit-canteen', { 
-            canteenDetails: canteen.toJSON(),
+            canteenDetails: processedCanteen,
             principals,
-            parties,
             user: req.user,
             title: `Κυλικείο: ${canteen.name}`
         });
@@ -357,7 +388,7 @@ canteens.get('/canteens/:id', can('view:content'), async (req, res) => {
  */
 canteens.post('/canteens', can('edit:content'), async (req, res) => {
     try {
-        const { name, area, principal_id, party_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
+        const { name, area, principal_id, active } = req.body;
         
         // Βασικός έλεγχος δεδομένων
         if (!name) {
@@ -383,11 +414,6 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
             name,
             area: area || null,
             principal_id: principal_id || null,
-            party_id: party_id || null,
-            lease_start: lease_start || null,
-            lease_end: lease_end || null,
-            revision_number: revision_number || null,
-            landlord_offer: landlord_offer || null,
             active: active !== undefined ? active : true
         });
         
@@ -401,11 +427,6 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
                 name: newCanteen.name,
                 area: newCanteen.area,
                 principal_id: newCanteen.principal_id,
-                party_id: newCanteen.party_id,
-                lease_start: newCanteen.lease_start,
-                lease_end: newCanteen.lease_end,
-                revision_number: newCanteen.revision_number,
-                landlord_offer: newCanteen.landlord_offer,
                 active: newCanteen.active
             }
         });
@@ -424,7 +445,7 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
 canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
     try {
         const canteenId = parseInt(req.params.id);
-        const { name, area, principal_id, party_id, lease_start, lease_end, revision_number, landlord_offer, active } = req.body;
+        const { name, area, principal_id, active } = req.body;
         
         const canteen = await Models.Canteen.findByPk(canteenId);
         if (!canteen) {
@@ -456,11 +477,6 @@ canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
             name: name || canteen.name,
             area: area !== undefined ? area : canteen.area,
             principal_id: principal_id !== undefined ? principal_id : canteen.principal_id,
-            party_id: party_id !== undefined ? party_id : canteen.party_id,
-            lease_start: lease_start !== undefined ? lease_start : canteen.lease_start,
-            lease_end: lease_end !== undefined ? lease_end : canteen.lease_end,
-            revision_number: revision_number !== undefined ? revision_number : canteen.revision_number,
-            landlord_offer: landlord_offer !== undefined ? landlord_offer : canteen.landlord_offer,
             active: active !== undefined ? active : canteen.active
         };
         
@@ -476,11 +492,6 @@ canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
                 name: canteen.name,
                 area: canteen.area,
                 principal_id: canteen.principal_id,
-                party_id: canteen.party_id,
-                lease_start: canteen.lease_start,
-                lease_end: canteen.lease_end,
-                revision_number: canteen.revision_number,
-                landlord_offer: canteen.landlord_offer,
                 active: canteen.active
             }
         });
@@ -522,6 +533,342 @@ canteens.delete('/canteens/:id', can('edit:content'), async (req, res) => {
             success: false, 
             message: 'Σφάλμα κατά τη διαγραφή του Κυλικείου' 
         });
+    }
+});
+
+
+
+
+////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ LEASES   ////////////////////
+
+/**
+ * GET /canteens/leases - Εμφάνιση λίστας όλων των leases για canteens
+ */
+canteens.get('/leases', can('view:content'), async (req, res) => {
+    try {
+        const leases = await Models.Lease.findAll({
+            where: {
+                property_type: 'canteen'
+            },
+            include: [
+                {
+                    model: Models.Canteen,
+                    as: 'canteen',
+                    attributes: ['id', 'name', 'area'],
+                    include: [{
+                        model: Models.Principal,
+                        as: 'principal',
+                        attributes: ['id', 'name', 'email']
+                    }]
+                },
+                {
+                    model: Models.Party,
+                    as: 'party',
+                    attributes: ['id', 'name', 'email', 'afm']
+                }
+            ],
+            order: [['id', 'DESC']],
+        });
+        
+        res.render('canteens/leases', { 
+            leases,
+            user: req.user,
+            title: 'Μισθώσεις Κυλικείων'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση μισθώσεων κυλικείων: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση μισθώσεων κυλικείων' });
+    }
+});
+
+/**
+ * GET /canteens/leases/new - Φόρμα για νέο lease
+ */
+canteens.get('/leases/new', can('edit:content'), async (req, res) => {
+    try {
+        // Ανάκτηση canteens και parties για τα dropdowns
+        const [canteensList, parties] = await Promise.all([
+            Models.Canteen.findAll({
+                attributes: ['id', 'name', 'area'],
+                include: [{
+                    model: Models.Principal,
+                    as: 'principal',
+                    attributes: ['id', 'name', 'email']
+                }],
+                order: [['name', 'ASC']],
+                raw: false
+            }),
+            Models.Party.findAll({
+                attributes: ['id', 'name', 'email', 'afm'],
+                order: [['name', 'ASC']],
+                raw: true
+            })
+        ]);
+        
+        res.render('canteens/edit-lease', { 
+            leaseDetails: null, // null για νέο lease
+            canteens: canteensList,
+            parties,
+            user: req.user,
+            title: 'Νέα Μίσθωση Κυλικείου'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την εμφάνιση φόρμας νέου lease: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την εμφάνιση φόρμας' });
+    }
+});
+
+/**
+ * GET /canteens/leases/:id - Εμφάνιση στοιχείων συγκεκριμένου lease
+ */
+canteens.get('/leases/:id', can('view:content'), async (req, res) => {
+    try {
+        const leaseId = parseInt(req.params.id);
+        const lease = await Models.Lease.findByPk(leaseId, {
+            include: [
+                {
+                    model: Models.Canteen,
+                    as: 'canteen',
+                    attributes: ['id', 'name', 'area'],
+                    include: [{
+                        model: Models.Principal,
+                        as: 'principal',
+                        attributes: ['id', 'name', 'email']
+                    }]
+                },
+                {
+                    model: Models.Party,
+                    as: 'party',
+                    attributes: ['id', 'name', 'email', 'afm']
+                }
+            ]
+        });
+        
+        if (!lease || lease.property_type !== 'canteen') {
+            return res.status(404).render('errors/404', { message: 'Η Μίσθωση Κυλικείου δεν βρέθηκε' });
+        }
+        
+        // Ανάκτηση canteens και parties για τα dropdowns
+        const [canteensList, parties] = await Promise.all([
+            Models.Canteen.findAll({
+                attributes: ['id', 'name', 'area'],
+                include: [{
+                    model: Models.Principal,
+                    as: 'principal',
+                    attributes: ['id', 'name', 'email']
+                }],
+                order: [['name', 'ASC']],
+                raw: false
+            }),
+            Models.Party.findAll({
+                attributes: ['id', 'name', 'email', 'afm'],
+                order: [['name', 'ASC']],
+                raw: true
+            })
+        ]);
+        
+        res.render('canteens/edit-lease', { 
+            leaseDetails: lease,
+            canteens: canteensList,
+            parties,
+            user: req.user,
+            title: `Μίσθωση Κυλικείου: ${lease.canteen?.name || lease.id}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση lease: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση της μίσθωσης' });
+    }
+});
+
+/**
+ * POST /canteens/leases - Δημιουργία νέου lease
+ */
+canteens.post('/leases', can('edit:content'), async (req, res) => {
+    try {
+        const { 
+            canteen_id, party_id, lease_start, lease_end, monthly_rent, 
+            rent_adjustment_info, guarantee_letter, notes, active 
+        } = req.body;
+        
+        // Βασικός έλεγχος δεδομένων
+        if (!canteen_id || !party_id || !lease_start) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Τα πεδία κυλικείο, συμβαλλόμενος και ημερομηνία έναρξης είναι υποχρεωτικά' 
+            });
+        }
+        
+        // Έλεγχος αν υπάρχουν το canteen και party
+        const [canteen, party] = await Promise.all([
+            Models.Canteen.findByPk(canteen_id),
+            Models.Party.findByPk(party_id)
+        ]);
+        
+        if (!canteen) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Το κυλικείο δεν βρέθηκε' 
+            });
+        }
+        
+        if (!party) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Ο συμβαλλόμενος δεν βρέθηκε' 
+            });
+        }
+        
+        const newLease = await Models.Lease.create({
+            property_id: parseInt(canteen_id),
+            party_id: parseInt(party_id),
+            property_type: 'canteen',
+            lease_direction: 'outgoing', // Τα κυλικεία είναι πάντα εκμισθώσεις
+            lease_start: lease_start,
+            lease_end: lease_end || null,
+            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : null,
+            rent_frequency: 'quarterly', // Κυλικεία είναι πάντα τριμηνιαία
+            rent_adjustment_info: rent_adjustment_info || '',
+            guarantee_letter: guarantee_letter || '',
+            notes: notes || '',
+            active: active !== undefined ? active : true
+        });
+        
+        log.info(`Νέο lease κυλικείου δημιουργήθηκε: Canteen ${canteen_id} - Party ${party_id} (ID: ${newLease.id})`);
+        
+        res.status(201).json({ 
+            success: true, 
+            message: 'Η Μίσθωση Κυλικείου δημιουργήθηκε επιτυχώς',
+            lease: newLease
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη δημιουργία lease κυλικείου: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη δημιουργία της Μίσθωσης Κυλικείου' 
+        });
+    }
+});
+
+/**
+ * PUT /canteens/leases/:id - Ενημέρωση στοιχείων lease
+ */
+canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
+    try {
+        const leaseId = parseInt(req.params.id);
+        const { 
+            lease_start, lease_end, monthly_rent, 
+            rent_adjustment_info, guarantee_letter, notes, active 
+        } = req.body;
+        
+        const lease = await Models.Lease.findByPk(leaseId);
+        if (!lease || lease.property_type !== 'canteen') {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Η Μίσθωση Κυλικείου δεν βρέθηκε' 
+            });
+        }
+        
+        // Δημιουργία αντικειμένου ενημέρωσης (χωρίς canteen_id, party_id, lease_direction)
+        const updateData = {
+            lease_start: lease_start || lease.lease_start,
+            lease_end: lease_end || lease.lease_end,
+            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : lease.monthly_rent,
+            rent_frequency: 'quarterly', // Κυλικεία είναι πάντα τριμηνιαία
+            rent_adjustment_info: rent_adjustment_info || lease.rent_adjustment_info,
+            guarantee_letter: guarantee_letter || lease.guarantee_letter,
+            notes: notes !== undefined ? notes : lease.notes,
+            active: active !== undefined ? active : lease.active
+        };
+        
+        await lease.update(updateData);
+        
+        log.info(`Το Lease κυλικείου ενημερώθηκε: Canteen ${lease.property_id} - Party ${lease.party_id} (ID: ${lease.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Η Μίσθωση Κυλικείου ενημερώθηκε επιτυχώς',
+            lease: lease
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ενημέρωση lease κυλικείου: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά την ενημέρωση της Μίσθωσης Κυλικείου' 
+        });
+    }
+});
+
+/**
+ * DELETE /canteens/leases/:id - Διαγραφή lease
+ */
+canteens.delete('/leases/:id', can('edit:content'), async (req, res) => {
+    try {
+        const leaseId = parseInt(req.params.id);
+        
+        const lease = await Models.Lease.findByPk(leaseId);
+        if (!lease || lease.property_type !== 'canteen') {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Η Μίσθωση Κυλικείου δεν βρέθηκε' 
+            });
+        }
+        
+        await lease.destroy();
+        
+        log.info(`Lease κυλικείου διαγράφηκε: Canteen ${lease.property_id} - Party ${lease.party_id} (ID: ${lease.id})`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Η Μίσθωση Κυλικείου διαγράφηκε επιτυχώς' 
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη διαγραφή lease κυλικείου: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη διαγραφή της Μίσθωσης Κυλικείου' 
+        });
+    }
+});
+
+
+
+
+////////////////////   AUXILIARY ROUTES ΓΙΑ LEASES   ////////////////////
+
+/**
+ * GET /canteens/canteens/:id/leases - Λίστα leases συγκεκριμένου canteen
+ */
+canteens.get('/canteens/:id/leases', can('view:content'), async (req, res) => {
+    try {
+        const canteenId = parseInt(req.params.id);
+        
+        const canteen = await Models.Canteen.findByPk(canteenId);
+        if (!canteen) {
+            return res.status(404).render('errors/404', { message: 'Το Κυλικείο δεν βρέθηκε' });
+        }
+        
+        const leases = await Models.Lease.findAll({
+            where: { 
+                property_id: canteenId,
+                property_type: 'canteen'
+            },
+            include: [{
+                model: Models.Party,
+                as: 'party',
+                attributes: ['id', 'name', 'email', 'afm']
+            }],
+            order: [['lease_start', 'DESC']]
+        });
+        
+        res.render('canteens/leases', { 
+            leases,
+            canteen,
+            user: req.user,
+            title: `Μισθώσεις Κυλικείου: ${canteen.name}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση leases του canteen: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση μισθώσεων' });
     }
 });
 

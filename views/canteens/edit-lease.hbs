@@ -1,0 +1,333 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/canteens/leases">Μισθώσεις Κυλικείων</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{#if leaseDetails}}
+                            Μίσθωση #{{leaseDetails.id}}
+                        {{else}}
+                            Νέα Μίσθωση Κυλικείου
+                        {{/if}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="{{#if leaseDetails}}ti-pencil{{else}}ti-plus{{/if}} me-2"></i>
+                        {{#if leaseDetails}}
+                            Μίσθωση: {{#if leaseDetails.canteen}}{{leaseDetails.canteen.name}}{{/if}}{{#if leaseDetails.party}} - {{leaseDetails.party.name}}{{/if}}
+                        {{else}}
+                            Νέα Μίσθωση Κυλικείου
+                        {{/if}}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="leaseForm">
+                        <div class="row">
+                            {{#if leaseDetails}}
+                            <div class="col-md-6 mb-3">
+                                <label for="leaseId" class="form-label fw-bold">ID Μίσθωσης</label>
+                                <input type="text" class="form-control" id="leaseId" name="id" value="{{leaseDetails.id}}" readonly>
+                                <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
+                            </div>
+                            <div class="col-md-6 mb-3"></div>
+                            {{/if}}
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="canteenSelect" class="form-label fw-bold">Κυλικείο *</label>
+                                <select class="form-select" id="canteenSelect" name="canteen_id" required {{#if leaseDetails}}disabled{{/if}}>
+                                    <option value="">Επιλέξτε κυλικείο</option>
+                                    {{#each canteens}}
+                                    <option value="{{this.id}}" 
+                                            {{#if ../leaseDetails}}
+                                                {{#if (eq this.id ../leaseDetails.property_id)}}selected{{/if}}
+                                            {{/if}}>
+                                        {{this.name}}{{#if this.principal}} - {{this.principal.name}}{{/if}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                                <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία του κυλικείου{{else}}Επιλέξτε το κυλικείο που αφορά αυτή τη μίσθωση{{/if}}</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="partySelect" class="form-label fw-bold">Συμβαλλόμενος *</label>
+                                <select class="form-select" id="partySelect" name="party_id" required {{#if leaseDetails}}disabled{{/if}}>
+                                    <option value="">Επιλέξτε συμβαλλόμενο</option>
+                                    {{#each parties}}
+                                    <option value="{{this.id}}" 
+                                            {{#if ../leaseDetails}}
+                                                {{#if (eq this.id ../leaseDetails.party_id)}}selected{{/if}}
+                                            {{/if}}>
+                                        {{this.name}}{{#if this.afm}} [{{this.afm}}]{{/if}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                                <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία του συμβαλλομένου{{else}}Επιλέξτε τον συμβαλλόμενο (μισθωτή/εκμισθωτή){{/if}}</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="leaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης *</label>
+                                <input type="date" class="form-control" id="leaseStart" name="lease_start" value="{{#if leaseDetails}}{{dateInput leaseDetails.lease_start}}{{/if}}" required>
+                                <div class="form-text text-muted">Ημερομηνία έναρξης της μίσθωσης</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="leaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
+                                <input type="date" class="form-control" id="leaseEnd" name="lease_end" value="{{#if leaseDetails.lease_end}}{{dateInput leaseDetails.lease_end}}{{/if}}">
+                                <div class="form-text text-muted">Ημερομηνία λήξης της μίσθωσης (προαιρετικό)</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="monthlyRent" class="form-label fw-bold">Μηνιαίο Μίσθωμα (€)</label>
+                                <input type="number" step="0.01" class="form-control" id="monthlyRent" name="monthly_rent" value="{{check leaseDetails.monthly_rent leaseDetails.monthly_rent ''}}">
+                                <div class="form-text text-muted">Ποσό μισθώματος σε ευρώ</div>
+                            </div>
+                            
+
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="rentAdjustmentInfo" class="form-label fw-bold">Πληροφορίες Αναπροσαρμογής Μισθώματος</label>
+                                <textarea class="form-control" id="rentAdjustmentInfo" name="rent_adjustment_info" rows="3">{{check leaseDetails.rent_adjustment_info leaseDetails.rent_adjustment_info ''}}</textarea>
+                                <div class="form-text text-muted">Πληροφορίες για αναπροσαρμογές, δείκτες, ποσοστά αύξησης κλπ.</div>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="guaranteeLetter" class="form-label fw-bold">Εγγυητική Επιστολή</label>
+                                <input type="text" class="form-control" id="guaranteeLetter" name="guarantee_letter" value="{{check leaseDetails.guarantee_letter leaseDetails.guarantee_letter ''}}">
+                                <div class="form-text text-muted">Αριθμός ή στοιχεία εγγυητικής επιστολής</div>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="leaseNotes" class="form-label fw-bold">Σημειώσεις</label>
+                                <textarea class="form-control" id="leaseNotes" name="notes" rows="4" placeholder="Προαιρετικές σημειώσεις για τη μίσθωση...">{{check leaseDetails.notes leaseDetails.notes ''}}</textarea>
+                                <div class="form-text text-muted">Επιπλέον σημειώσεις και πληροφορίες για τη μίσθωση</div>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="leaseActive" class="form-label fw-bold">Κατάσταση</label>
+                                <select class="form-select" id="leaseActive" name="active">
+                                    <option value="true" {{#unless (eq leaseDetails.active false)}}selected{{/unless}}>Ενεργή</option>
+                                    <option value="false" {{#if (eq leaseDetails.active false)}}selected{{/if}}>Ανενεργή</option>
+                                </select>
+                                <div class="form-text text-muted">Αν η μίσθωση είναι ενεργή ή όχι</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    {{#if (can 'edit:content')}}
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
+                                        <div>{{#if leaseDetails}}Αποθήκευση{{else}}Δημιουργία{{/if}}</div>
+                                    </button>
+                                    {{/if}}
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
+                                        <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
+                                        <div>Ακύρωση</div>
+                                    </button>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {{#if leaseDetails}}
+                        <button type="button" class="btn btn-danger delete-lease-btn"
+                                data-lease-id="{{leaseDetails.id}}" 
+                                data-lease-name="Μίσθωση Κυλικείου #{{leaseDetails.id}}">
+                            <i class="ti-trash me-1"></i>
+                            Διαγραφή Μίσθωσης
+                        </button>
+                        
+                        <hr>
+                        
+                        <!-- Συνδέσεις για περισσότερες πληροφορίες -->
+                        {{#if leaseDetails.canteen}}
+                        <a href="/canteens/canteens/{{leaseDetails.canteen.id}}" class="btn btn-info">
+                            <i class="ti-shopping-cart me-1"></i>
+                            Προβολή Κυλικείου
+                        </a>
+                        {{/if}}
+                        
+                        {{#if leaseDetails.party}}
+                        <a href="/properties/parties/{{leaseDetails.party.id}}" class="btn btn-success">
+                            <i class="ti-user me-1"></i>
+                            Προβολή Συμβαλλομένου
+                        </a>
+                        {{/if}}
+                        
+                        <hr>
+                        {{/if}}
+                        
+                        <a href="/canteens/leases" class="btn btn-secondary">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στις Μισθώσεις
+                        </a>
+                        
+                        <a href="/canteens/canteens" class="btn btn-outline-secondary">
+                            <i class="ti-shopping-cart me-1"></i>
+                            Προς τα Κυλικεία
+                        </a>
+                        
+                        <a href="/properties/parties" class="btn btn-outline-secondary">
+                            <i class="ti-user me-1"></i>
+                            Προς τους Συμβαλλομένους
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            {{#if leaseDetails}}
+            <!-- Πληροφορίες δραστηριότητας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Μίσθωσης
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>Δημιουργία:</strong><br>
+                        {{date leaseDetails.createdAt}}</p>
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date leaseDetails.updatedAt}}</p>
+                        
+                        {{#if leaseDetails.canteen}}
+                        <p><strong>Κυλικείο:</strong><br>
+                        {{leaseDetails.canteen.name}}
+                        {{#if leaseDetails.canteen.principal}}<br>Διευθυντής: {{leaseDetails.canteen.principal.name}}{{/if}}</p>
+                        {{/if}}
+                        
+                        {{#if leaseDetails.party}}
+                        <p><strong>Συμβαλλόμενος:</strong><br>
+                        {{leaseDetails.party.name}}
+                        {{#if leaseDetails.party.afm}}<br>ΑΦΜ: [{{leaseDetails.party.afm}}]{{/if}}</p>
+                        {{/if}}
+                    </small>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form για επεξεργασία/δημιουργία lease
+    document.getElementById('leaseForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        const leaseId = data.id;
+        const isEdit = !!leaseId; // true αν υπάρχει ID (επεξεργασία)
+        
+        if (isEdit) {
+            delete data.id; // Αφαιρούμε το ID από τα data για PUT request
+        }
+        
+        // Μετατροπή κενών strings σε null για numbers και dates
+        if (data.monthly_rent === '') data.monthly_rent = null;
+        if (data.lease_end === '') data.lease_end = null;
+        if (data.canteen_id === '') data.canteen_id = null;
+        if (data.party_id === '') data.party_id = null;
+        
+        // Ορισμός σταθερής τριμηνιαίας συχνότητας για κυλικεία
+        data.rent_frequency = 'quarterly';
+        
+        // Μετατροπή string boolean σε boolean
+        data.active = data.active === 'true';
+        
+        try {
+            const url = isEdit ? `/canteens/leases/${leaseId}` : '/canteens/leases';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                const message = isEdit ? 'Η Μίσθωση Κυλικείου ενημερώθηκε επιτυχώς!' : 'Η Μίσθωση Κυλικείου δημιουργήθηκε επιτυχώς!';
+
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal(message, 3000, () => {
+                    if (isEdit) {   // if updating
+                        redirectOnSuccess(null); // refresh current page
+                    } else {    // if creating new
+                        redirectOnSuccess(`/canteens/leases/${result.lease.id}`);
+                    }
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+    
+    // Button για διαγραφή lease (μόνο σε επεξεργασία)
+    document.querySelectorAll('.delete-lease-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const leaseId = this.dataset.leaseId;
+            const leaseName = this.dataset.leaseName;
+
+            if (confirm(`Είστε σίγουροι ότι θέλετε να διαγράψετε τη ${leaseName};`)) {
+
+                Q('bootstrap-spinner').show();
+                try {
+                    const response = await fetch(`/canteens/leases/${leaseId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    Q('bootstrap-spinner').show(false);
+
+                    if (result.success) {
+                        alert('Η Μίσθωση Κυλικείου διαγράφηκε επιτυχώς!');
+                        window.location.href = '/canteens/leases';
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    Q('bootstrap-spinner').show(false);
+                    showErrorModal('Σφάλμα δικτύου: ' + error.message);
+                }
+            }
+        });
+    });
+});
+</script>
