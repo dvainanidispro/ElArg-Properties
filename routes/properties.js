@@ -235,7 +235,7 @@ properties.delete('/parties/:id', can('edit:content'), async (req, res) => {
         if (leaseUsingParty) {
             return res.status(400).json({ 
                 success: false, 
-                message: `Δεν είναι δυνατή η διαγραφή του συμβαλλόμενου διότι ανήκει στη μίσθωση με id ${leaseUsingParty.id}` 
+                message: `Δεν είναι δυνατή η διαγραφή του συμβαλλόμενου διότι ανήκει στη μίσθωση με id ${leaseUsingParty.id}.` 
             });
         }
         
@@ -528,7 +528,7 @@ properties.delete('/properties/:id', can('edit:content'), async (req, res) => {
         if (leaseUsingProperty) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Δεν είναι δυνατή η διαγραφή του Ακινήτου διότι διαθέτει τουλάχιστον μια μίσθωση. Αντί για διαγραφή, κάντε απενεργοποίηση του Ακινήτου' 
+                message: 'Δεν είναι δυνατή η διαγραφή του Ακινήτου διότι διαθέτει τουλάχιστον μια μίσθωση. Αντί για διαγραφή, κάντε απενεργοποίηση του Ακινήτου.' 
             });
         }
         

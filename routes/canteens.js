@@ -227,7 +227,7 @@ canteens.delete('/principals/:id', can('edit:content'), async (req, res) => {
         if (canteenUsingPrincipal) {
             return res.status(400).json({ 
                 success: false, 
-                message: `Δεν είναι δυνατή η διαγραφή του Διευθυντή, διότι ανήκει στο σχολείο ${canteenUsingPrincipal.name}` 
+                message: `Δεν είναι δυνατή η διαγραφή του Διευθυντή, διότι ανήκει στο σχολείο ${canteenUsingPrincipal.name}.` 
             });
         }
         
@@ -543,7 +543,7 @@ canteens.delete('/canteens/:id', can('edit:content'), async (req, res) => {
         if (leaseUsingCanteen) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Δεν είναι δυνατή η διαγραφή του Κυλικείου διότι διαθέτει τουλάχιστον μια μίσθωση. Αντί για διαγραφή, κάντε απενεργοποίηση του Κυλικείου' 
+                message: 'Δεν είναι δυνατή η διαγραφή του Κυλικείου διότι διαθέτει τουλάχιστον μια μίσθωση. Αντί για διαγραφή, κάντε απενεργοποίηση του Κυλικείου.' 
             });
         }
         

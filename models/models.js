@@ -28,10 +28,12 @@ Principal.hasMany(Canteen, {
 // Lease ανήκει σε Property
 Lease.belongsTo(Property, {
     foreignKey: 'property_id',
+    constraints: false, // επιτρέπει να δείχνει είτε σε property είτε σε canteen
     as: 'property'
 });
 Property.hasMany(Lease, {
     foreignKey: 'property_id',
+    constraints: false,
     as: 'leases'
 });
 
@@ -54,7 +56,8 @@ Lease.belongsTo(Party, {
 });
 Party.hasMany(Lease, {
     foreignKey: 'party_id',
-    as: 'leases'
+    as: 'leases',
+    onDelete: 'RESTRICT' // Δεν επιτρέπει διαγραφή party αν υπάρχουν leases
 });
 
 
