@@ -32,6 +32,28 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+/**
+ * Όταν υπάρχει κάποιο get parameter που αντιστοιχεί σε πεδιο φόρμας (με το ίδιο name),
+ * τότε συμπληρώνει αυτόματα το πεδίο με την τιμή του parameter και το πεδίο γίνεται readonly.
+ * Χρήσιμο για φόρμες αναζήτησης/φιλτραρίσματος.
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const formFields = document.querySelectorAll("input[name], select[name], textarea[name]");
+
+   formFields.forEach(field => {
+       const paramValue = urlParams.get(field.name);
+       if (paramValue) {
+           field.value = paramValue;
+           field.readOnly = true;
+       }
+   });
+});
+
+
+
+
 /**
  * Ελέγχει αν το JWT token είναι έγκυρο και αν δεν έχει λήξει
  * @param {string} token - Το JWT token προς έλεγχο
@@ -99,6 +121,13 @@ function showSuccessModal(message, autoCloseDelay = null, onClose = null) {
         }, autoCloseDelay);
     }
 }
+
+
+
+
+
+
+
 
 /**
  * Εμφανίζει ένα error modal με μήνυμα

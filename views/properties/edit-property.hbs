@@ -42,11 +42,13 @@
                                         {{#if propertyDetails.lease}}
                                             <a href="/properties/leases/{{propertyDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή</a>
                                         {{else}}
-                                            <a href="/properties/leases/new?property_id={{propertyDetails.id}}" class="btn btn-primary" type="button">Δημιουργία Μίσθωσης</a>
+                                            <a href="/properties/leases/new?property_id={{propertyDetails.id}}&redirect=/properties/properties/{{propertyDetails.id}}" class="btn btn-primary" type="button">Δημιουργία Μίσθωσης</a>
                                         {{/if}}
                                     {{/if}}
                                 </div>
-                                <div class="form-text text-muted">Πληροφορίες μίσθωσης για αυτό το ακίνητο</div>
+                                {{#unless propertyDetails}}
+                                <div class="form-text text-muted">Θα πρέπει να αποθηκεύσετε το νέο ακίνητο πριν μπορέσετε να προσθέσετε πληροφορίες μίσθωσης</div>
+                                {{/unless}}
                             </div>
                             
                             <div class="col-md-6 mb-3">
