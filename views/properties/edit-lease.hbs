@@ -96,8 +96,8 @@
                             </div>
                             
                             <div class="col-md-6 mb-3">
-                                <label for="monthlyRent" class="form-label fw-bold">Μηνιαίο Μίσθωμα (€)</label>
-                                <input type="number" step="0.01" class="form-control" id="monthlyRent" name="monthly_rent" value="{{check leaseDetails.monthly_rent leaseDetails.monthly_rent ''}}">
+                                <label for="monthlyRent" class="form-label fw-bold">Οικονομική προσφορά συμβαλλόμενου (€)</label>
+                                <input type="number" step="0.01" class="form-control" id="monthlyRent" name="rent" value="{{check leaseDetails.rent leaseDetails.rent ''}}">
                                 <div class="form-text text-muted">Ποσό μισθώματος σε ευρώ</div>
                             </div>
                             
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Μετατροπή κενών strings σε null για numbers και dates
-        if (data.monthly_rent === '') data.monthly_rent = null;
+        if (data.rent === '') data.rent = null;
         if (data.lease_end === '') data.lease_end = null;
         if (data.property_id === '') data.property_id = null;
         if (data.party_id === '') data.party_id = null;

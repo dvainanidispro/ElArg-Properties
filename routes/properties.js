@@ -649,7 +649,7 @@ properties.get('/leases/:id', can('view:content'), async (req, res) => {
 properties.post('/leases', can('edit:content'), async (req, res) => {
     try {
         const { 
-            property_id, party_id, lease_direction, lease_start, lease_end, monthly_rent, 
+            property_id, party_id, lease_direction, lease_start, lease_end, rent, 
             rent_frequency, rent_adjustment_info, guarantee_letter, notes, active 
         } = req.body;
         // Βασικός έλεγχος δεδομένων
@@ -683,7 +683,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
             lease_direction,
             lease_start: lease_start,
             lease_end: lease_end || null,
-            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : null,
+            rent: rent ? parseFloat(rent) : null,
             rent_frequency: rent_frequency || 'monthly',
             rent_adjustment_info: rent_adjustment_info || '',
             guarantee_letter: guarantee_letter || '',
@@ -712,7 +712,7 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
     try {
         const leaseId = parseInt(req.params.id);
         const { 
-            lease_start, lease_end, monthly_rent, 
+            lease_start, lease_end, rent, 
             rent_frequency, rent_adjustment_info, guarantee_letter, notes, active 
         } = req.body;
         
@@ -728,7 +728,7 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
         const updateData = {
             lease_start: lease_start || lease.lease_start,
             lease_end: lease_end || lease.lease_end,
-            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : lease.monthly_rent,
+            rent: rent ? parseFloat(rent) : lease.rent,
             rent_frequency: rent_frequency || lease.rent_frequency,
             rent_adjustment_info: rent_adjustment_info || lease.rent_adjustment_info,
             guarantee_letter: guarantee_letter || lease.guarantee_letter,

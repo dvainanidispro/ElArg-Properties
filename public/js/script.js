@@ -1,3 +1,11 @@
+
+/** Reload the page if it was restored from the back/forward cache */
+window.addEventListener('pageshow', function (event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+});
+
 /**
  * Ένδειξη στο sidebar για το link που αντιστοιχεί στην τρέχουσα σελίδα
  */

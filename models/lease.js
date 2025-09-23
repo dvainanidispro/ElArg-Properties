@@ -44,7 +44,7 @@ const Lease = db.define('lease', {
 		type: DataTypes.DATEONLY,
 		comment: 'Ημερομηνία λήξης μίσθωσης/εκμίσθωσης'
 	},
-	monthly_rent: {
+	rent: {
 		type: DataTypes.DECIMAL(10, 2),
 		comment: 'Μηνιαίο τίμημα (ή τριμηνιαίο ανάλογα την μίσθωση)'
 	},
@@ -67,7 +67,7 @@ const Lease = db.define('lease', {
 	},
 	landlord_offer: {
 		type: DataTypes.SMALLINT,
-		comment: 'Οικονομική προσφορά μισθωτή (canteen)'
+		comment: 'Οικονομική προσφορά μισθωτή/εκμισθωτή (δεν χρησιμοποιείται)'
 	},
 	notes: {
 		type: DataTypes.TEXT,

@@ -686,7 +686,7 @@ canteens.get('/leases/:id', can('view:content'), async (req, res) => {
 canteens.post('/leases', can('edit:content'), async (req, res) => {
     try {
         const { 
-            canteen_id, party_id, lease_start, lease_end, monthly_rent, 
+            canteen_id, party_id, lease_start, lease_end, rent, 
             rent_adjustment_info, guarantee_letter, notes, active 
         } = req.body;
         
@@ -725,7 +725,7 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
             lease_direction: 'outgoing', // Τα κυλικεία είναι πάντα εκμισθώσεις
             lease_start: lease_start,
             lease_end: lease_end || null,
-            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : null,
+            rent: rent ? parseFloat(rent) : null,
             rent_frequency: 'quarterly', // Κυλικεία είναι πάντα τριμηνιαία
             rent_adjustment_info: rent_adjustment_info || '',
             guarantee_letter: guarantee_letter || '',
@@ -756,7 +756,7 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
     try {
         const leaseId = parseInt(req.params.id);
         const { 
-            lease_start, lease_end, monthly_rent, 
+            lease_start, lease_end, rent, 
             rent_adjustment_info, guarantee_letter, notes, active 
         } = req.body;
         
@@ -772,7 +772,7 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
         const updateData = {
             lease_start: lease_start || lease.lease_start,
             lease_end: lease_end || lease.lease_end,
-            monthly_rent: monthly_rent ? parseFloat(monthly_rent) : lease.monthly_rent,
+            rent: rent ? parseFloat(rent) : lease.rent,
             rent_frequency: 'quarterly', // Κυλικεία είναι πάντα τριμηνιαία
             rent_adjustment_info: rent_adjustment_info || lease.rent_adjustment_info,
             guarantee_letter: guarantee_letter || lease.guarantee_letter,
@@ -911,16 +911,16 @@ canteens.get('/canteens/:id/leases/history', can('view:content'), async (req, re
             activeLeases: leases.filter(lease => lease.active && (!lease.lease_end || new Date(lease.lease_end) >= new Date())).length,
             expiredLeases: leases.filter(lease => lease.lease_end && new Date(lease.lease_end) < new Date()).length,
             totalRevenue: leases.reduce((sum, lease) => {
-                if (lease.monthly_rent && lease.lease_start && lease.lease_end) {
+                if (lease.rent && lease.lease_start && lease.lease_end) {
                     const start = new Date(lease.lease_start);
                     const end = new Date(lease.lease_end);
                     const months = Math.ceil((end - start) / (1000 * 60 * 60 * 24 * 30));
-                    return sum + (parseFloat(lease.monthly_rent) * months);
+                    return sum + (parseFloat(lease.rent) * months);
                 }
                 return sum;
             }, 0),
             averageRent: leases.length > 0 ? 
-                leases.reduce((sum, lease) => sum + (parseFloat(lease.monthly_rent) || 0), 0) / leases.length : 0
+                leases.reduce((sum, lease) => sum + (parseFloat(lease.rent) || 0), 0) / leases.length : 0
         };
         
         res.render('canteens/leases-history', { 
