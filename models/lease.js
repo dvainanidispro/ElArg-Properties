@@ -69,6 +69,10 @@ const Lease = db.define('lease', {
 		type: DataTypes.SMALLINT,
 		comment: 'Οικονομική προσφορά μισθωτή (canteen)'
 	},
+	notes: {
+		type: DataTypes.TEXT,
+		comment: 'Σημειώσεις για τη μίσθωση'
+	},
 	active: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: true

@@ -6,7 +6,7 @@ let presentTime = () => {
 };
 
 
-let conversions = {
+let descriptions = {
     leaseDirection: (direction) => {
         const directions = {
             incoming: 'Μίσθωση',
@@ -17,4 +17,4 @@ let conversions = {
 
 };
 
-export { presentTime, conversions };
+export { presentTime, descriptions };

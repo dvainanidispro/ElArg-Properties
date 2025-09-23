@@ -650,7 +650,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
     try {
         const { 
             property_id, party_id, lease_direction, lease_start, lease_end, monthly_rent, 
-            rent_frequency, rent_adjustment_info, guarantee_letter, active 
+            rent_frequency, rent_adjustment_info, guarantee_letter, notes, active 
         } = req.body;
         // Βασικός έλεγχος δεδομένων
         if (!property_id || !party_id || !lease_direction || !lease_start) {
@@ -687,6 +687,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
             rent_frequency: rent_frequency || 'monthly',
             rent_adjustment_info: rent_adjustment_info || '',
             guarantee_letter: guarantee_letter || '',
+            notes: notes || '',
             active: active !== undefined ? active : true
         });
         log.info(`Νέο lease δημιουργήθηκε: Property ${property_id} - Party ${party_id} (ID: ${newLease.id})`);
@@ -711,9 +712,10 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
     try {
         const leaseId = parseInt(req.params.id);
         const { 
-            property_id, party_id, lease_direction, lease_start, lease_end, monthly_rent, 
-            rent_frequency, rent_adjustment_info, guarantee_letter, active 
+            lease_start, lease_end, monthly_rent, 
+            rent_frequency, rent_adjustment_info, guarantee_letter, notes, active 
         } = req.body;
+        
         const lease = await Models.Lease.findByPk(leaseId);
         if (!lease) {
             return res.status(404).json({ 
@@ -721,40 +723,23 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
                 message: 'Η Μίσθωση δεν βρέθηκε' 
             });
         }
-        // Έλεγχος αν υπάρχουν τα property και party (αν δόθηκαν νέα)
-        if (property_id && property_id !== lease.property_id) {
-            const property = await Models.Property.findByPk(property_id);
-            if (!property) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: 'Το ακίνητο δεν βρέθηκε' 
-                });
-            }
-        }
-        if (party_id && party_id !== lease.party_id) {
-            const party = await Models.Party.findByPk(party_id);
-            if (!party) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: 'Ο συμβαλλόμενος δεν βρέθηκε' 
-                });
-            }
-        }
-        // Δημιουργία αντικειμένου ενημέρωσης
+        
+        // Δημιουργία αντικειμένου ενημέρωσης (χωρίς property_id, party_id, lease_direction)
         const updateData = {
-            property_id: property_id ? parseInt(property_id) : lease.property_id,
-            party_id: party_id ? parseInt(party_id) : lease.party_id,
-            lease_direction: lease_direction || lease.lease_direction,
             lease_start: lease_start || lease.lease_start,
             lease_end: lease_end || lease.lease_end,
             monthly_rent: monthly_rent ? parseFloat(monthly_rent) : lease.monthly_rent,
             rent_frequency: rent_frequency || lease.rent_frequency,
             rent_adjustment_info: rent_adjustment_info || lease.rent_adjustment_info,
             guarantee_letter: guarantee_letter || lease.guarantee_letter,
+            notes: notes !== undefined ? notes : lease.notes,
             active: active !== undefined ? active : lease.active
         };
+        
         await lease.update(updateData);
-        log.info(`Το Lease ενημερώθηκε: Property ${updateData.property_id} - Party ${updateData.party_id} (ID: ${lease.id})`);
+        
+        log.info(`Το Lease ενημερώθηκε: Property ${lease.property_id} - Party ${lease.party_id} (ID: ${lease.id})`);
+        
         res.json({ 
             success: true, 
             message: 'Η Μίσθωση ενημερώθηκε επιτυχώς',

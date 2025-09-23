@@ -42,7 +42,7 @@
                             
                             <div class="col-md-6 mb-3">
                                 <label for="propertySelect" class="form-label fw-bold">Ακίνητο *</label>
-                                <select class="form-select" id="propertySelect" name="property_id" required>
+                                <select class="form-select" id="propertySelect" name="property_id" required {{#if leaseDetails}}disabled{{/if}}>
                                     <option value="">Επιλέξτε ακίνητο</option>
                                     {{#each properties}}
                                     <option value="{{this.id}}" 
@@ -53,12 +53,12 @@
                                     </option>
                                     {{/each}}
                                 </select>
-                                <div class="form-text text-muted">Επιλέξτε το ακίνητο που αφορά αυτή τη μίσθωση</div>
+                                <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία του ακινήτου{{else}}Επιλέξτε το ακίνητο που αφορά αυτή τη μίσθωση{{/if}}</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="partySelect" class="form-label fw-bold">Συμβαλλόμενος *</label>
-                                <select class="form-select" id="partySelect" name="party_id" required>
+                                <select class="form-select" id="partySelect" name="party_id" required {{#if leaseDetails}}disabled{{/if}}>
                                     <option value="">Επιλέξτε συμβαλλόμενο</option>
                                     {{#each parties}}
                                     <option value="{{this.id}}" 
@@ -69,18 +69,18 @@
                                     </option>
                                     {{/each}}
                                 </select>
-                                <div class="form-text text-muted">Επιλέξτε τον συμβαλλόμενο (μισθωτή/εκμισθωτή)</div>
+                                <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία του συμβαλλομένου{{else}}Επιλέξτε τον συμβαλλόμενο (μισθωτή/εκμισθωτή){{/if}}</div>
                             </div>
 
                             {{!-- <input type="hidden" name="property_type" value="{{check leaseDetails.property_type leaseDetails.property_type 'property'}}"> --}}
 
                             <div class="col-md-12 mb-3">
                                 <label for="leaseDirection" class="form-label fw-bold">Κατεύθυνση Μίσθωσης *</label>
-                                <select class="form-select" id="leaseDirection" name="lease_direction" required>
+                                <select class="form-select" id="leaseDirection" name="lease_direction" required {{#if leaseDetails}}disabled{{/if}}>
                                     <option value="incoming" {{#if (eq leaseDetails.lease_direction 'incoming')}}selected{{/if}}>Μίσθωση (Ο Δήμος μισθώνει)</option>
                                     <option value="outgoing" {{#if (eq leaseDetails.lease_direction 'outgoing')}}selected{{/if}}>Εκμίσθωση (Ο Δήμος εκμισθώνει)</option>
                                 </select>
-                                <div class="form-text text-muted">Επιλέξτε αν ο Δήμος μισθώνει ("Μίσθωση") ή εκμισθώνει ("Εκμίσθωση") το ακίνητο.</div>
+                                <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία της κατεύθυνσης {{else}}Επιλέξτε αν ο Δήμος μισθώνει ("Μίσθωση") ή εκμισθώνει ("Εκμίσθωση") το ακίνητο.{{/if}}</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
@@ -121,6 +121,12 @@
                                 <label for="guaranteeLetter" class="form-label fw-bold">Εγγυητική Επιστολή</label>
                                 <input type="text" class="form-control" id="guaranteeLetter" name="guarantee_letter" value="{{check leaseDetails.guarantee_letter leaseDetails.guarantee_letter ''}}">
                                 <div class="form-text text-muted">Αριθμός ή στοιχεία εγγυητικής επιστολής</div>
+                            </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="leaseNotes" class="form-label fw-bold">Σημειώσεις</label>
+                                <textarea class="form-control" id="leaseNotes" name="notes" rows="4" placeholder="Προαιρετικές σημειώσεις για τη μίσθωση...">{{check leaseDetails.notes leaseDetails.notes ''}}</textarea>
+                                <div class="form-text text-muted">Επιπλέον σημειώσεις και πληροφορίες για τη μίσθωση</div>
                             </div>
                             
                             <div class="col-md-12 mb-3">
