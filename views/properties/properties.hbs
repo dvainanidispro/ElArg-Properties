@@ -22,8 +22,8 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th class="sortable" data-sort-type="number">ID</th>
-                                    <th>ΚΑΕΚ</th>
                                     <th>Διεύθυνση</th>
+                                    <th>ΚΑΕΚ</th>
                                     <th class="sortable">Τύπος</th>
                                     <th>Συμβαλλόμενος</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη Μίσθωσης</th>
@@ -36,15 +36,15 @@
                                 <tr>
                                     <td>{{this.id}}</td>
                                     <td>
-                                        {{#if this.kaek}}
-                                            <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">{{this.kaek}}</a>
+                                        {{#if this.address}}
+                                            <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">{{this.address}}</a>
                                         {{else}}
                                             <span class="text-muted">-</span>
                                         {{/if}}
                                     </td>
                                     <td>
-                                        {{#if this.address}}
-                                            <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">{{this.address}}</a>
+                                        {{#if this.kaek}}
+                                            <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">{{this.kaek}}</a>
                                         {{else}}
                                             <span class="text-muted">-</span>
                                         {{/if}}
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (leaseEndStr) {
             if (leaseEndStr < todayStr) {
                 // Ληγμένη μίσθωση
-                badge.textContent = 'Ληγμένο';
+                badge.textContent = 'Έχει λήξει';
                 badge.classList.remove('bg-success');
                 badge.classList.add('bg-danger', 'text-light');
             } else if (leaseEndStr <= sixMonthsFromNowStr) {

@@ -10,7 +10,7 @@
                     <div class="card-actions">
                         <button type="button" class="btn btn-secondary me-2" onclick="history.back()">
                             <i class="ti-arrow-left me-1"></i>
-                            Επιστροφή
+                            Πίσω
                         </button>
                         {{#if (can 'edit:content')}}
                         <a href="/canteens/leases/new?canteen_id={{canteen.id}}&redirect=/canteens/canteens/{{canteen.id}}/leases/history" class="btn btn-primary">
@@ -47,7 +47,7 @@
                                             <strong>Επιφάνεια (τ.μ.):</strong> {{canteen.area}}
                                         </div>
                                         <div class="col-md-4">
-                                            <strong>Διευθυντής:</strong> 
+                                            <strong>Τρέχων Διευθυντής:</strong> 
                                             {{#if canteen.principal}}
                                                 <a href="/canteens/principals/{{canteen.principal.id}}" class="text-primary text-decoration-none">
                                                     {{canteen.principal.name}}
@@ -72,7 +72,7 @@
                                     <th class="sortable" data-sort-type="date-gr">Έναρξη</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη</th>
                                     <th>Διάρκεια</th>
-                                    <th class="sortable" data-sort-type="number">Μίσθωμα (€)</th>
+                                    <th class="sortable" data-sort-type="number">Μίσθωμα</th>
                                     <th class="sortable">Κατάσταση</th>
                                     <th>Ενέργειες</th>
                                 </tr>
@@ -169,6 +169,11 @@
 </div>
 
 <script>
+
+window.dimtablesOptions = {
+    pageInfoTemplate: ' ',
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // Ελέγχει όλα τα ενεργά leases για ληγμένες μισθώσεις και μισθώσεις που λήγουν σύντομα
     const statusBadges = document.querySelectorAll('.status-badge');
@@ -186,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (leaseEndStr) {
             if (leaseEndStr < todayStr) {
                 // Ληγμένη μίσθωση
-                badge.textContent = 'Ληγμένο';
+                badge.textContent = 'Έχει λήξει';
                 badge.classList.remove('bg-success');
                 badge.classList.add('bg-danger', 'text-light');
             } else if (leaseEndStr <= sixMonthsFromNowStr) {

@@ -55,9 +55,8 @@
                                     {{#unless party}}
                                     <th>Συμβαλλόμενος</th>
                                     {{/unless}}
-                                    <th>Κατεύθυνση</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη</th>
-                                    <th class="sortable" data-sort-type="number">Μίσθωμα (€)</th>
+                                    <th class="sortable" data-sort-type="number">Μίσθωμα</th>
                                     <th class="sortable">Κατάσταση</th>
                                     <th>Λεπτομέρειες</th>
                                 </tr>
@@ -95,9 +94,6 @@
                                         {{/if}}
                                     </td>
                                     {{/unless}}
-                                    <td>
-                                        {{leaseDirectionText this.lease_direction}}
-                                    </td>
                                     <td>{{date this.lease_end}}</td>
                                     <td>
                                         {{euro this.monthly_rent}}
@@ -143,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (leaseEndStr) {
             if (leaseEndStr < todayStr) {
                 // Ληγμένη μίσθωση
-                badge.textContent = 'Ληγμένο';
+                badge.textContent = 'Έχει λήξει';
                 badge.classList.remove('bg-success');
                 badge.classList.add('bg-danger', 'text-light');
             } else if (leaseEndStr <= sixMonthsFromNowStr) {

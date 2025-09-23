@@ -13,6 +13,14 @@ let descriptions = {
             outgoing: 'Εκμίσθωση'
         };
         return directions[direction] || direction;
+    },
+    rentFrequency: (frequency) => {
+        const frequencies = {
+            monthly: 'Μηνιαία',
+            quarterly: 'Τριμηνιαία',
+            yearly: 'Ετήσια'
+        };
+        return frequencies[frequency] || frequency;
     }
 
 };

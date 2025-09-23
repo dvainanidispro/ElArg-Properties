@@ -98,6 +98,7 @@ const handlebarsConfig = {
             return userHasPermission(user, permission);
         },
         leaseDirectionText: descriptions.leaseDirection,
+        rentFrequencyText: descriptions.rentFrequency,
     }
 };
 

@@ -43,15 +43,15 @@
                                 <label class="form-label fw-bold">Μίσθωση</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" 
-                                           value="{{#if canteenDetails.lease}}{{canteenDetails.lease.party.name}} - Λήξη: {{date canteenDetails.lease.lease_end}}{{else}}Χωρίς ενεργή μίσθωση{{/if}}" 
+                                           value="{{#if canteenDetails.lease}}{{canteenDetails.lease.party.name}} - Λήξη: {{date canteenDetails.lease.lease_end}}{{else}}Χωρίς μίσθωση{{/if}}" 
                                            readonly>
                                     {{#if canteenDetails}}
                                         <div class="btn-group">
                                             {{#if canteenDetails.lease}}
-                                                <a href="/canteens/leases/{{canteenDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή</a>
+                                                <a href="/canteens/leases/{{canteenDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή μίσθωσης</a>
                                             {{/if}}
-                                            <a href="/canteens/canteens/{{canteenDetails.id}}/leases/history" class="btn btn-secondary" type="button">Ιστορικό</a>
-                                            <a href="/canteens/leases/new?canteen_id={{canteenDetails.id}}&redirect=/canteens/canteens/{{canteenDetails.id}}" class="btn btn-success" type="button">Νέα Μίσθωση</a>
+                                            <a href="/canteens/canteens/{{canteenDetails.id}}/leases/history" class="btn btn-secondary" type="button"> Ιστορικό μισθώσεων</a>
+                                            <a href="/canteens/leases/new?canteen_id={{canteenDetails.id}}&redirect=/canteens/canteens/{{canteenDetails.id}}" class="btn btn-success" type="button">Προσθήκη μίσθωσης</a>
                                         </div>
                                     {{/if}}
                                 </div>

@@ -56,7 +56,7 @@
                                     {{/unless}}
                                     <th>Κατεύθυνση</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη</th>
-                                    <th class="sortable" data-sort-type="number">Μίσθωμα (€)</th>
+                                    <th class="sortable" data-sort-type="number">Μίσθωμα</th>
                                     <th class="sortable">Συχνότητα</th>
                                     <th class="sortable">Κατάσταση</th>
                                     <th>Λεπτομέρειες</th>
@@ -94,15 +94,7 @@
                                         {{euro this.monthly_rent}}
                                     </td>
                                     <td>
-                                        {{#if (eq this.rent_frequency 'monthly')}}
-                                            <span class="badge bg-info fs-6">Μηνιαίο</span>
-                                        {{else if (eq this.rent_frequency 'quarterly')}}
-                                            <span class="badge bg-primary fs-6">Τριμηνιαίο</span>
-                                        {{else if (eq this.rent_frequency 'annual')}}
-                                            <span class="badge bg-success fs-6">Ετήσιο</span>
-                                        {{else}}
-                                            <span class="badge bg-secondary fs-6">{{this.rent_frequency}}</span>
-                                        {{/if}}
+                                        {{rentFrequencyText this.rent_frequency}}
                                     </td>
                                     <td>
                                         {{#if this.active}}
@@ -145,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (leaseEndStr) {
             if (leaseEndStr < todayStr) {
                 // Ληγμένη μίσθωση
-                badge.textContent = 'Ληγμένο';
+                badge.textContent = 'Έχει λήξει';
                 badge.classList.remove('bg-success');
                 badge.classList.add('bg-danger', 'text-light');
             } else if (leaseEndStr <= sixMonthsFromNowStr) {

@@ -40,9 +40,18 @@ html {
     scroll-padding-top: 3rem;
 }
 
-/* DIM TABLES - Για να μην πηδάει στο φόρτωμα */
+
+/*********   DIM TABLES *********/
+/* Για να μην πηδάει στο φόρτωμα */
 table.dim-table:not([data-dimtables-initialized="1"]) { margin-top: 3rem }
 .dim-table-bar { height: 2rem }
+/* Περιορισμός κελιών σε 50 χαρακτήρες με ellipsis (...) */
+table.dim-table td {
+    max-width: 50ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 
 

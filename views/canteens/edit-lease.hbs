@@ -180,17 +180,17 @@
                         <hr>
                         {{/if}}
                         
-                        <a href="/canteens/leases" class="btn btn-secondary">
+                        <button type="button" class="btn btn-secondary" onclick="history.back()">
                             <i class="ti-arrow-left me-1"></i>
-                            Επιστροφή στις Μισθώσεις
-                        </a>
+                            Πίσω
+                        </button>
                         
-                        <a href="/canteens/canteens" class="btn btn-outline-secondary">
+                        <a href="/canteens/canteens" class="btn btn-outline-secondary d-none">
                             <i class="ti-shopping-cart me-1"></i>
                             Προς τα Κυλικεία
                         </a>
                         
-                        <a href="/properties/parties" class="btn btn-outline-secondary">
+                        <a href="/properties/parties" class="btn btn-outline-secondary d-none">
                             <i class="ti-user me-1"></i>
                             Προς τους Συμβαλλομένους
                         </a>
@@ -224,7 +224,7 @@
                         {{#if leaseDetails.party}}
                         <p><strong>Συμβαλλόμενος:</strong><br>
                         {{leaseDetails.party.name}}
-                        {{#if leaseDetails.party.afm}}<br>ΑΦΜ: [{{leaseDetails.party.afm}}]{{/if}}</p>
+                        {{#if leaseDetails.party.afm}}<br>ΑΦΜ: {{leaseDetails.party.afm}}{{/if}}</p>
                         {{/if}}
                     </small>
                 </div>

@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (leaseEndStr) {
             if (leaseEndStr < todayStr) {
                 // Ληγμένη μίσθωση
-                badge.textContent = 'Ληγμένο';
+                badge.textContent = 'Έχει λήξει';
                 badge.classList.remove('bg-success');
                 badge.classList.add('bg-danger', 'text-light');
             } else if (leaseEndStr <= sixMonthsFromNowStr) {
