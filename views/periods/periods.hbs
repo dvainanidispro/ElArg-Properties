@@ -1,0 +1,77 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title h3">
+                        <i class="ti-reload me-2"></i>
+                        Περίοδοι Κυλικείων
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="dim-table table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Κωδικός</th>
+                                    <th>Έναρξη περιόδου</th>
+                                    <th>Λήξη περιόδου</th>
+                                    <th>Προθεσμία υποβολών</th>
+                                    <th>Κατάσταση</th>
+                                    <th>Ενεργή</th>
+                                    <th>Λεπτομέρειες</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each periods}}
+                                <tr>
+                                    <td>{{this.id}}</td>
+                                    <td>
+                                        <a href="/canteens/periods/{{this.id}}" class="text-primary text-decoration-none">
+                                            <strong>{{this.code}}</strong>
+                                        </a>
+                                    </td>
+                                    <td>{{date this.start_date}}</td>
+                                    <td>{{date this.end_date}}</td>
+                                    <td>{{date this.submission_deadline}}</td>
+                                    <td>
+                                        {{#if (eq this.status 'planned')}}
+                                            <span class="badge bg-info fs-6">Προγραμματισμένη</span>
+                                        {{else if (eq this.status 'open')}}
+                                            <span class="badge bg-success fs-6">Ανοιχτή</span>
+                                        {{else if (eq this.status 'closed')}}
+                                            <span class="badge bg-warning fs-6">Κλειστή</span>
+                                        {{else if (eq this.status 'inactive')}}
+                                            <span class="badge bg-secondary fs-6">Ανενεργή</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.active}}
+                                            <span title="Ενεργή">✅</span>
+                                        {{else}}
+                                            <span title="Ανενεργή">🚫</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <a href="/canteens/periods/{{this.id}}" class="btn btn-outline-primary" title="Προβολή/Επεξεργασία">
+                                            <i class="ti-eye text-primary" style="font-size: 1.2rem;"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {{else}}
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="ti-calendar fa-2x mb-2"></i><br>
+                                        Δεν βρέθηκαν περίοδοι κυλικείων
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

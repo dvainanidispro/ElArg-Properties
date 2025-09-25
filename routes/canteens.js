@@ -964,4 +964,14 @@ canteens.get('/canteens/:id/leases/history', can('view:content'), async (req, re
     }
 });
 
+
+
+
+
+// Periods subroute
+import periods from './periods.js';
+canteens.use('/periods', periods);
+
+
+
 export default canteens;

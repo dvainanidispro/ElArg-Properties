@@ -21,8 +21,16 @@ let descriptions = {
             yearly: 'Ετήσια'
         };
         return frequencies[frequency] || frequency;
-    }
-
+    },
+    periodStatus: (status) => {
+        const statuses = {
+            planned: 'Προγραμματισμένη',
+            open: 'Ανοιχτή',
+            closed: 'Κλειστή',
+            inactive: 'Ανενεργή'
+        };
+        return statuses[status] || status;
+    },
 };
 
 export { presentTime, descriptions };

@@ -26,7 +26,7 @@ const Period = db.define('period',
                 if (this.active) {
                     if (today < endDate) {
                         return 'planned'; // προγραμματισμένη
-                    } else if (today >= startDate && today <= submission_deadline) {
+                    } else if (today >= endDate && today <= submission_deadline) {
                         return 'open'; // ανοιχτή
                     } else if (today > submission_deadline) {
                         return 'closed'; // κλειστή

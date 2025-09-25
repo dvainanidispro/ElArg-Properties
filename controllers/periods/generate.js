@@ -12,8 +12,8 @@ import { createPeriodByQuarter, createPeriodEndingInMonthOf } from './functions.
 
 log.system("Ξεκινά η διαδικασία δημιουργίας περιόδου...");
 
-// const dateForPeriodGeneration = new Date(); // σημερινή ημερομηνία
-const dateForPeriodGeneration = '2025-11-02'; // σημερινή ημερομηνία
+const dateForPeriodGeneration = new Date(); // σημερινή ημερομηνία
+// const dateForPeriodGeneration = '2025-11-02'; // συγκεκριμένη ημερομηνία
 
 
 

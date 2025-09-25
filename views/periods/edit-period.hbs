@@ -1,0 +1,210 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/canteens/periods">Περίοδοι Κυλικείων</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{periodDetails.code}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="ti-pencil me-2"></i>
+                        <span>Περίοδος: {{periodDetails.code}}</span> 
+                        <span id="period-description"></span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form id="periodForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="periodId" class="form-label fw-bold">ID Περιόδου</label>
+                                <input type="text" class="form-control" id="periodId" name="id" value="{{periodDetails.id}}" readonly>
+                                <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="periodCode" class="form-label fw-bold">Κωδικός Περιόδου</label>
+                                <input type="text" class="form-control" id="periodCode" name="code" 
+                                       value="{{periodDetails.code}}" 
+                                       readonly>
+                                <div class="form-text text-muted">Ο κωδικός περιόδου δεν επιτρέπεται να τροποποιηθεί</div>
+                            </div>
+                            
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="periodStartDate" class="form-label fw-bold">Έναρξη περιόδου *</label>
+                                <input type="date" class="form-control" id="periodStartDate" name="start_date" 
+                                       value="{{dateInput periodDetails.start_date}}" required>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="periodEndDate" class="form-label fw-bold">Λήξη περιόδου *</label>
+                                <input type="date" class="form-control" id="periodEndDate" name="end_date" 
+                                       value="{{dateInput periodDetails.end_date}}" required>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="periodSubmissionDeadline" class="form-label fw-bold">Προθεσμία Υποβολών *</label>
+                                <input type="date" class="form-control" id="periodSubmissionDeadline" name="submission_deadline" 
+                                       value="{{dateInput periodDetails.submission_deadline}}" required>
+                                <div class="form-text text-muted">Τελευταία ημερομηνία για υποβολές από τους Διευθυντές Σχολείων</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12 mb-3">
+                            <label for="periodActive" class="form-label fw-bold">Κατάσταση</label>
+                            <select class="form-select" id="periodActive" name="active">
+                                <option value="true" {{#unless (eq periodDetails.active false)}}selected{{/unless}}>Ενεργή</option>
+                                <option value="false" {{#if (eq periodDetails.active false)}}selected{{/if}}>Ανενεργή</option>
+                            </select>
+                            <div class="form-text text-muted">Δηλώνει αν υπάρχει δυνατότητα υποβολών από τους Διευθυντές Σχολείων για αυτήν την περίοδο (εντός προθεσμιών).</div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    {{#if (can 'edit:content')}}
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <bootstrap-icon icon="check-circle-fill"></bootstrap-icon>
+                                        <div>Αποθήκευση Αλλαγών</div>
+                                    </button>
+                                    {{/if}}
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
+                                        <bootstrap-icon icon="x-circle-fill"></bootstrap-icon>
+                                        <div>Ακύρωση</div>
+                                    </button>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid">
+                        <a href="/canteens/periods" class="btn btn-secondary">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στη Λίστα Περιόδων
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Πληροφορίες δραστηριότητας -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Περιόδου
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        {{!-- <p><strong>Δημιουργία περιόδου:</strong><br>
+                        {{date periodDetails.createdAt}}</p> --}}
+                        
+                        <p><strong>Τελευταία ενημέρωση:</strong><br>
+                        {{date periodDetails.updatedAt}}</p>
+                        
+                        {{!-- <p><strong>Τύπος περιόδου:</strong><br>
+                        Κυλικείο</p> --}}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Συνάρτηση για τη μετατροπή αριθμού μήνα σε ελληνικό όνομα
+    function getGreekMonthName(monthIndex) {
+        const months = [
+            'Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος',
+            'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'
+        ];
+        return months[monthIndex];
+    }
+
+    // Ενημέρωση του period description με τους μήνες κατά το φόρτωμα
+    const startDateInput = document.getElementById('periodStartDate');
+    const endDateInput = document.getElementById('periodEndDate');
+    const descriptionElement = document.getElementById('period-description');
+    
+    if (startDateInput.value && endDateInput.value) {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        
+        const startMonth = getGreekMonthName(startDate.getMonth());
+        const endMonth = getGreekMonthName(endDate.getMonth());
+        
+        if (startMonth === endMonth) {
+            descriptionElement.textContent = `(${startMonth})`;
+        } else {
+            descriptionElement.textContent = `(${startMonth} - ${endMonth})`;
+        }
+    }
+
+    // Form για επεξεργασία περιόδου
+    document.getElementById('periodForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        const periodId = data.id;
+        
+        // Αφαιρούμε το ID από τα data για PUT request
+        delete data.id;
+        
+        try {
+            const url = `/canteens/periods/${periodId}`;
+            const method = 'PUT';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal('Η Περίοδος ενημερώθηκε επιτυχώς!', 3000, () => {
+                    redirectOnSuccess(null); // refresh current page
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+});
+</script>
