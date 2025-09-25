@@ -18,7 +18,7 @@
                     <h4 class="card-title">
                         <i class="ti-pencil me-2"></i>
                         <span>Περίοδος: {{periodDetails.code}}</span> 
-                        <span id="period-description"></span>
+                        <span data-variable="period-description"></span>
                     </h4>
                 </div>
                 <div class="card-body">
@@ -136,32 +136,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Συνάρτηση για τη μετατροπή αριθμού μήνα σε ελληνικό όνομα
-    function getGreekMonthName(monthIndex) {
-        const months = [
-            'Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος',
-            'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'
-        ];
-        return months[monthIndex];
-    }
 
     // Ενημέρωση του period description με τους μήνες κατά το φόρτωμα
-    const startDateInput = document.getElementById('periodStartDate');
-    const endDateInput = document.getElementById('periodEndDate');
-    const descriptionElement = document.getElementById('period-description');
-    
-    if (startDateInput.value && endDateInput.value) {
-        const startDate = new Date(startDateInput.value);
-        const endDate = new Date(endDateInput.value);
-        
-        const startMonth = getGreekMonthName(startDate.getMonth());
-        const endMonth = getGreekMonthName(endDate.getMonth());
-        
-        if (startMonth === endMonth) {
-            descriptionElement.textContent = `(${startMonth})`;
-        } else {
-            descriptionElement.textContent = `(${startMonth} - ${endMonth})`;
-        }
+    const startDate = Q('#periodStartDate')?.value;
+    const endDate = Q('#periodEndDate')?.value;
+    if (startDate && endDate) {
+            Q('~period-description').set(`(${periodDescription(startDate, endDate)})`);
     }
 
     // Form για επεξεργασία περιόδου

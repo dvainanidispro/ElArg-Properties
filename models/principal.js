@@ -15,6 +15,7 @@ const Principal = db.define('principal',
             type: DataTypes.STRING,
             defaultValue: 'principal'
         },
+        notes: DataTypes.TEXT,
         active: {
             type: DataTypes.BOOLEAN,
             defaultValue: true,

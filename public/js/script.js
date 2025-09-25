@@ -97,6 +97,31 @@ function isValidJWT(token) {
     }
 }
 
+
+function periodDescription(startDate, endDate) {
+    let getGreekMonthName = (monthIndex) => {
+        const months = [
+            'Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος',
+            'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'
+        ];
+        return months[monthIndex];
+    }; 
+
+    let start = new Date(startDate);
+    let end = new Date(endDate);
+    if (isNaN(start) || isNaN(end)) {
+        return '';
+    }
+
+    let startMonth = getGreekMonthName(start.getMonth());
+    let endMonth = getGreekMonthName(end.getMonth());
+
+    return `${startMonth} - ${endMonth}`;
+}
+
+
+
+
 // Μεταβλητή για αποθήκευση του onClose callback
 let currentOnCloseCallback = null;
 

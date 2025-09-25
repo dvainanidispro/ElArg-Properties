@@ -46,6 +46,11 @@
                                 <div class="form-text text-muted">Τηλέφωνο, διεύθυνση ή άλλες πληροφορίες επικοινωνίας</div>
                             </div>
                             <div class="col-md-12 mb-3">
+                                <label for="principalNotes" class="form-label fw-bold">Σημειώσεις</label>
+                                <textarea class="form-control" id="principalNotes" name="notes" rows="3" placeholder="Προαιρετικές σημειώσεις για τον διευθυντή">{{or principalDetails.notes '' ''}}</textarea>
+                                <div class="form-text text-muted">Προαιρετικές σημειώσεις (πχ σημείωση για σχολείο στο οποίο ήταν παλιότερα Διευθυντής)</div>
+                            </div>
+                            <div class="col-md-12 mb-3">
                                 <label for="principalActive" class="form-label fw-bold">Κατάσταση</label>
                                 <select class="form-select" id="principalActive" name="active">
                                     <option value="true" {{#unless (eq principalDetails.active false)}}selected{{/unless}}>Ενεργός</option>

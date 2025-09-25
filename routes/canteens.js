@@ -60,7 +60,7 @@ canteens.get('/principals/:id', can('view:content'), async (req, res) => {
     try {
         const principalId = parseInt(req.params.id);
         const principal = await Models.Principal.findByPk(principalId, {
-            attributes: ['id', 'email', 'name', 'contact', 'role', 'active', 'createdAt', 'updatedAt'],
+            attributes: ['id', 'email', 'name', 'contact', 'role', 'notes', 'active', 'createdAt', 'updatedAt'],
             raw: true
         });
         
@@ -84,7 +84,7 @@ canteens.get('/principals/:id', can('view:content'), async (req, res) => {
  */
 canteens.post('/principals', can('edit:content'), async (req, res) => {
     try {
-        const { email, name, contact, active } = req.body;
+        const { email, name, contact, notes, active } = req.body;
         
         // Βασικός έλεγχος δεδομένων
         if (!email) {
@@ -110,6 +110,7 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
             email,
             name: name || email.split('@')[0],
             contact: contact || '',
+            notes: notes || '',
             role: 'principal',
             active: active !== undefined ? active : true // Default true για νέους principals
         });
@@ -124,6 +125,7 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
                 email: newPrincipal.email,
                 name: newPrincipal.name,
                 contact: newPrincipal.contact,
+                notes: newPrincipal.notes,
                 role: newPrincipal.role,
                 active: newPrincipal.active
             }
@@ -143,7 +145,7 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
 canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
     try {
         const principalId = parseInt(req.params.id);
-        const { email, name, contact, active } = req.body;
+        const { email, name, contact, notes, active } = req.body;
         
         const principal = await Models.Principal.findByPk(principalId);
         if (!principal) {
@@ -175,6 +177,7 @@ canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
             email: email || principal.email,
             name: name || principal.name,
             contact: contact || principal.contact,
+            notes: notes !== undefined ? notes : principal.notes,
             active: active !== undefined ? active : principal.active
         };
         
@@ -190,6 +193,7 @@ canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
                 email: principal.email,
                 name: principal.name,
                 contact: principal.contact,
+                notes: principal.notes,
                 role: principal.role,
                 active: principal.active
             }
