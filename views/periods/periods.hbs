@@ -21,6 +21,7 @@
                                     <th>Κατάσταση υποβολών</th>
                                     <th>Ενεργή</th>
                                     <th>Λεπτομέρειες</th>
+                                    <th>Υποβολές στοιχείων περιόδου</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -55,13 +56,18 @@
                                     </td>
                                     <td>
                                         <a href="/canteens/periods/{{this.id}}" class="btn btn-outline-primary" title="Προβολή/Επεξεργασία">
-                                            <i class="ti-eye text-primary" style="font-size: 1.2rem;"></i>
+                                            <i class="ti-eye text-primary" ></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="/canteens/periods/{{this.id}}/submissions" class="btn btn-primary" title="Υποβολές Στοιχείων">
+                                            <i class="ti-files text-light" ></i>
                                         </a>
                                     </td>
                                 </tr>
                                 {{else}}
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-4">
+                                    <td colspan="9" class="text-center text-muted py-4">
                                         <i class="ti-calendar fa-2x mb-2"></i><br>
                                         Δεν βρέθηκαν περίοδοι κυλικείων
                                     </td>

@@ -105,14 +105,14 @@
                                                     <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
                                                        class="btn btn-outline-primary btn-icon" 
                                                        title="Προβολή υποβολής">
-                                                        <i class="ti-eye text-primary" style="font-size: 1.2rem;"></i>
+                                                        <i class="ti-eye text-primary" ></i>
                                                         <span>Προβολή υποβολής</span>
                                                     </a>
                                                 {{else if (eq this.status 'open')}}
                                                     <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
                                                        class="btn btn-outline-primary btn-icon" 
                                                        title="Επεξεργασία υποβολής">
-                                                        <i class="ti-pencil text-primary" style="font-size: 1.2rem;"></i>
+                                                        <i class="ti-pencil text-primary" ></i>
                                                         <span>Επεξεργασία υποβολής</span>
                                                     </a>
                                                 {{/if}}
@@ -120,14 +120,14 @@
                                                 <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
                                                    class="btn btn-primary btn-icon" 
                                                    title="Υποβολή στοιχείων">
-                                                    <i class="ti-plus" style="font-size: 1.2rem;"></i>
+                                                    <i class="ti-plus" ></i>
                                                     <span>Υποβολή στοιχείων</span>
                                                 </a>
                                             {{else if (eq this.status 'closed')}}
                                                 <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
                                                    class="btn btn-primary btn-icon" 
                                                    title="Υποβολή στοιχείων (Εκπρόθεσμη)">
-                                                    <i class="ti-plus" style="font-size: 1.2rem;"></i>
+                                                    <i class="ti-plus" ></i>
                                                     <span>Υποβολή στοιχείων</span>
                                                 </a>
                                             {{else if (eq this.status 'planned')}}

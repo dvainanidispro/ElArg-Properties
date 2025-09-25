@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { Op } from 'sequelize';
 import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
@@ -31,6 +32,97 @@ periods.get('/', can('view:content'), async (req, res) => {
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση περιόδων' });
     }
 });
+
+
+
+
+/**
+ * GET /periods/:periodId/submissions - Εμφάνιση υποβολών στοιχείων για συγκεκριμένη περίοδο
+ * Πρέπει να μπει πριν το /:id για να μην "παρακαμφθεί" από αυτό
+ */
+periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
+    try {
+        const periodId = parseInt(req.params.periodId);
+        
+        // Βρίσκουμε την περίοδο
+        const period = await Models.Period.findByPk(periodId);
+        if (!period || period.property_type !== 'canteen') {
+            return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
+        }
+        
+        // Βρίσκουμε όλα τα ενεργά canteens
+        const canteens = await Models.Canteen.findAll({
+            where: {
+                active: true
+            },
+            include: [
+                {
+                    model: Models.Principal,
+                    as: 'principal',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: Models.Lease,
+                    as: 'leases',
+                    include: [
+                        {
+                            model: Models.Party,
+                            as: 'party',
+                            attributes: ['id', 'name']
+                        }
+                    ],
+                    where: {
+                        property_type: 'canteen'
+                    },
+                    order: [['lease_end', 'DESC']],
+                    limit: 1,
+                    required: false
+                },
+                {
+                    model: Models.Submission,
+                    as: 'submissions',
+                    where: {
+                        period_id: periodId,
+                        property_type: 'canteen'
+                    },
+                    required: false
+                }
+            ],
+            order: [['name', 'ASC']]
+        });
+
+        // Μετασχηματίζουμε τα δεδομένα για το view
+        const canteensWithSubmissions = canteens.map(canteen => ({
+            id: canteen.id,
+            name: canteen.name,
+            active: canteen.active,
+            principal: canteen.principal,
+            lease: canteen.leases?.[0] || null,
+            party: canteen.leases?.[0]?.party || null,
+            hasSubmission: canteen.submissions && canteen.submissions.length > 0,
+            submission: canteen.submissions?.[0] || null
+        }));
+
+        // Υπολογισμός στατιστικών
+        const submittedCount = canteensWithSubmissions.filter(c => c.hasSubmission).length;
+        const pendingCount = canteensWithSubmissions.length - submittedCount;
+
+        res.render('periods/submissions', {
+            period,
+            canteens: canteensWithSubmissions,
+            submittedCount,
+            pendingCount,
+            user: req.user,
+            title: `Υποβολές Στοιχείων - ${period.code}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση υποβολών: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση υποβολών' });
+    }
+});
+
+
+
 
 /**
  * GET /periods/:id - Εμφάνιση στοιχείων συγκεκριμένης περιόδου
@@ -120,5 +212,14 @@ periods.put('/:id', can('edit:content'), async (req, res) => {
         });
     }
 });
+
+
+
+
+
+
+
+
+
 
 export default periods;

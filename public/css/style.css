@@ -216,3 +216,7 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
         transform: translateY(-5px);
     }
 }
+
+table i{
+    font-size: 1.2rem;
+}
