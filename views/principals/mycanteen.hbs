@@ -1,0 +1,79 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title h3">
+                        <i class="ti-shopping-cart-full me-2"></i>
+                        Το κυλικείο μου
+                    </h1>
+                </div>
+                <div class="card-body">
+                    {{#if canteens.length}}
+                        <div class="row">
+                            {{#each canteens}}
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card canteen-card h-100 shadow-sm border-0">
+                                    <a href="/canteens/mycanteen/{{this.id}}/periods" class="text-decoration-none text-dark stretched-link">
+                                        <div class="card-body d-flex flex-column">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="avatar avatar-lg bg-primary text-white me-3">
+                                                    <i class="ti-shopping-cart-full fs-4"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h5 class="card-title mb-1 text-truncate">{{this.name}}</h5>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex-grow-1">
+                                                {{#if this.area}}
+                                                <div class="mb-2">
+                                                    <i class="ti-ruler-pencil me-2 text-muted"></i>
+                                                    <span class="text-muted">Επιφάνεια:</span>
+                                                    <strong>{{this.area}} τ.μ.</strong>
+                                                </div>
+                                                {{/if}}
+                                                
+                                                <div class="mb-2">
+                                                    <i class="ti-pulse me-2 text-muted"></i>
+                                                    <span class="text-muted">Κατάσταση:</span>
+                                                    {{#if this.active}}
+                                                        <span class="badge bg-success">Ενεργό</span>
+                                                    {{else}}
+                                                        <span class="badge bg-secondary">Ανενεργό</span>
+                                                    {{/if}}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mt-auto pt-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-dark fw-semibold">
+                                                        <i class="ti-arrow-right me-1"></i>
+                                                        Υποβολή στοιχείων περιόδων
+                                                    </span>
+                                                    <i class="ti-angle-right text-muted"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="ti-shopping-cart-full display-1 text-muted"></i>
+                            </div>
+                            <h4 class="text-muted mb-3">Δεν βρέθηκαν κυλικεία</h4>
+                            <p class="text-muted">
+                                Δεν έχουν ανατεθεί κυλικεία στον λογαριασμό σας.<br>
+                                Παρακαλούμε επικοινωνήστε με τον διαχειριστή του συστήματος.
+                            </p>
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

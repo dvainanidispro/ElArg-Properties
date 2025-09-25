@@ -978,7 +978,7 @@ canteens.use('/periods', periods);
 
 // MyCanteens subroute for Principals
 import myCanteen from './mycanteen.js';
-canteens.use('/mycanteens', myCanteen);
+canteens.use('/mycanteen', myCanteen);
 
 
 export default canteens;

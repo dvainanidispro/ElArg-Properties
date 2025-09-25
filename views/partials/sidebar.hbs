@@ -175,7 +175,7 @@
                     <li role="separator" class="divider"></li>
 
                     {{#if (can "edit:ownschool")}}
-                    <li class="nav-item dropdown open">
+                    {{!-- <li class="nav-item dropdown open">
                         <a class="dropdown-toggle" href="javascript:void(0);">
                             <span class="icon-holder">
                                 <i class="c-orange-500 ti-shopping-cart"></i>
@@ -185,13 +185,13 @@
                                 <i class="ti-angle-right"></i>
                             </span>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu"> --}}
                             <li>
                                 <a class="sidebar-link" href="/canteens/mycanteen">
                                     <span class="icon-holder">
                                         <i class="c-blue-200 ti-info-alt"></i>
                                     </span>
-                                    <span>Στοιχεία κυλικείου</span>
+                                    <span>Το κυλικείο μου</span>
                                 </a>
                             </li>
                             <li>
@@ -202,16 +202,16 @@
                                     <span>Τρέχουσα περίοδος</span>
                                 </a>
                             </li>
-                            <li>
+                            {{!-- <li>
                                 <a class="sidebar-link" href="/canteens/mycanteen/history">
                                     <span class="icon-holder">
                                         <i class="c-blue-200 ti-reload"></i>
                                     </span>
                                     <span>Προηγούμενες περίοδοι</span>
                                 </a>
-                            </li>
-                        </ul>
-                    </li>
+                            </li> --}}
+                        {{!-- </ul>
+                    </li> --}}
                     {{/if}}
 
 

@@ -1,0 +1,173 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title h3">
+                        <i class="ti-reload me-2"></i>
+                        {{canteen.name}}
+                    </h1>
+                    <div class="card-actions">
+                        <a href="/canteens/mycanteen" class="btn btn-secondary btn-icon">
+                            <i class="ti-arrow-left me-1"></i>
+                            <span>Επιστροφή</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{#if periods.length}}
+                        {{!-- Πληροφορίες για το κυλικείο --}}
+                        <div class="mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="ti-info-alt me-2"></i>
+                                        Στοιχεία Κυλικείου
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <strong>Όνομα:</strong> {{canteen.name}}<br>
+                                            <strong>Διευθυντής:</strong> {{canteen.principal.name}}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {{#if canteen.area}}
+                                                <strong>Επιφάνεια:</strong> {{canteen.area}} τ.μ.<br>
+                                            {{/if}}
+                                            <strong>Κατάσταση:</strong> 
+                                            {{#if canteen.active}}
+                                                <span class="badge bg-success">Ενεργό</span>
+                                            {{else}}
+                                                <span class="badge bg-secondary">Ανενεργό</span>
+                                            {{/if}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="dim-table table table-striped table-hover align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="sortable">Κωδικός Περιόδου</th>
+                                        <th class="sortable" data-sort-type="date-gr">Χρονικό διάστημα</th>
+                                        <th class="sortable" data-sort-type="date-gr">Προθεσμία υποβολής</th>
+                                        <th>Κατάσταση Περιόδου</th>
+                                        <th>Κατάσταση Υποβολής</th>
+                                        <th>Ενέργειες</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each periods}}
+                                    <tr>
+                                        <td>
+                                            <strong>{{this.code}}</strong>
+                                        </td>
+                                        <td>
+                                            {{date this.start_date}} - {{date this.end_date}}
+                                        </td>
+                                        <td>{{date this.submission_deadline}}</td>
+                                        <td>
+                                            {{#if (eq this.status 'planned')}}
+                                                <span class="badge bg-info fs-6">Προγραμματισμένη</span>
+                                            {{else if (eq this.status 'open')}}
+                                                <span class="badge bg-success fs-6">Ανοιχτή</span>
+                                            {{else if (eq this.status 'closed')}}
+                                                <span class="badge bg-secondary fs-6">Κλειστή</span>
+                                            {{/if}}
+                                        </td>
+                                        <td>
+                                            {{#if this.hasSubmission}}
+                                                <span class="badge bg-success fs-6">
+                                                    <i class="ti-check me-1"></i>
+                                                    Έχουν υποβληθεί στοιχεία
+                                                </span>
+                                            {{else if (eq this.status 'planned')}}
+                                                <span class="text-muted small">
+                                                    <i class="ti-time me-1"></i>
+                                                    Μελλοντική περίοδος
+                                                </span>
+                                            {{else if (eq this.status 'closed')}}
+                                                <span class="badge bg-danger fs-6">
+                                                    <i class="ti-alert me-1"></i>
+                                                    Εκπρόθεσμη
+                                                </span>
+                                            {{else}}
+                                                <span class="badge bg-warning text-dark fs-6">
+                                                    <i class="ti-clock me-1"></i>
+                                                    Εκκρεμεί υποβολή στοιχείων
+                                                </span>
+                                            {{/if}}
+                                        </td>
+                                        <td>
+                                            {{#if this.hasSubmission}}
+                                                {{#if (eq this.status 'closed')}}
+                                                    <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
+                                                       class="btn btn-outline-primary btn-icon" 
+                                                       title="Προβολή υποβολής">
+                                                        <i class="ti-eye text-primary" style="font-size: 1.2rem;"></i>
+                                                        <span>Προβολή υποβολής</span>
+                                                    </a>
+                                                {{else if (eq this.status 'open')}}
+                                                    <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
+                                                       class="btn btn-outline-primary btn-icon" 
+                                                       title="Επεξεργασία υποβολής">
+                                                        <i class="ti-pencil text-primary" style="font-size: 1.2rem;"></i>
+                                                        <span>Επεξεργασία υποβολής</span>
+                                                    </a>
+                                                {{/if}}
+                                            {{else if (eq this.status 'open')}}
+                                                <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
+                                                   class="btn btn-primary btn-icon" 
+                                                   title="Υποβολή στοιχείων">
+                                                    <i class="ti-plus" style="font-size: 1.2rem;"></i>
+                                                    <span>Υποβολή στοιχείων</span>
+                                                </a>
+                                            {{else if (eq this.status 'closed')}}
+                                                <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
+                                                   class="btn btn-primary btn-icon" 
+                                                   title="Υποβολή στοιχείων (Εκπρόθεσμη)">
+                                                    <i class="ti-plus" style="font-size: 1.2rem;"></i>
+                                                    <span>Υποβολή στοιχείων</span>
+                                                </a>
+                                            {{else if (eq this.status 'planned')}}
+                                                <span class="text-muted small">
+                                                    <i class="ti-time me-1"></i>
+                                                    Μελλοντική περίοδος
+                                                </span>
+                                            {{/if}}
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    {{else}}
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="ti-calendar display-1 text-muted"></i>
+                            </div>
+                            <h4 class="text-muted mb-3">Δεν βρέθηκαν ενεργές περίοδοι</h4>
+                            <p class="text-muted">
+                                Δεν υπάρχουν διαθέσιμες περίοδοι για το κυλικείο <strong>{{canteen.name}}</strong>.<br>
+                                Οι περίοδοι θα εμφανιστούν όταν ανοίξουν από τη διαχείριση.
+                            </p>
+                            <a href="/canteens/mycanteen" class="btn btn-outline-primary mt-3 btn-icon">
+                                <i class="ti-arrow-left me-1"></i>
+                                <span>Επιστροφή στα κυλικεία</span>
+                            </a>
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    window.dimtablesOptions = {
+        pageInfoTemplate: "Εμφανίζονται {start}-{end} από {total} περίοδοι",
+        searchInputClass: "d-none"
+    }
+</script>
