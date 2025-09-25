@@ -976,6 +976,9 @@ canteens.get('/canteens/:id/leases/history', can('view:content'), async (req, re
 import periods from './periods.js';
 canteens.use('/periods', periods);
 
+// MyCanteens subroute for Principals
+import myCanteen from './mycanteen.js';
+canteens.use('/mycanteens', myCanteen);
 
 
 export default canteens;

@@ -53,6 +53,11 @@ server.use(validateUser);
 
 // Αρχική σελίδα (dashboard)
 server.get(['/', '/dashboard'], (req, res) => {
+    let userRole = req.user ? req.user.role : 'guest';
+    if (userRole === 'principal') {
+        res.render('principals/dashboard');
+        return;
+    }
     res.render('dashboard');
 });
 

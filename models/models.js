@@ -5,6 +5,7 @@ import { Property } from "./property.js";
 import { Lease } from "./lease.js";
 import { Party } from "./party.js";
 import { Period } from "./period.js";
+import { Submission } from "./submission.js";
 import { db, databaseConnectionTest } from '../config/database.js';
 import log from '../controllers/logger.js';
 
@@ -62,6 +63,53 @@ Party.hasMany(Lease, {
 });
 
 
+////// Submission associations
+
+// Submission ανήκει σε Period
+Submission.belongsTo(Period, {
+    foreignKey: 'period_id',
+    as: 'period'
+});
+Period.hasMany(Submission, {
+    foreignKey: 'period_id',
+    as: 'submissions'
+});
+
+// Submission ανήκει σε Property (αν property_type === 'property')
+Submission.belongsTo(Property, {
+    foreignKey: 'property_id',
+    constraints: false, // επιτρέπει να δείχνει είτε σε property είτε σε canteen
+    as: 'property'
+});
+Property.hasMany(Submission, {
+    foreignKey: 'property_id',
+    constraints: false,
+    as: 'submissions'
+});
+
+// Submission ανήκει σε Canteen (αν property_type === 'canteen')
+Submission.belongsTo(Canteen, {
+    foreignKey: 'property_id',
+    constraints: false, // επιτρέπει να δείχνει είτε σε property είτε σε canteen
+    as: 'canteen'
+});
+Canteen.hasMany(Submission, {
+    foreignKey: 'property_id',
+    constraints: false,
+    as: 'submissions'
+});
+
+// Submission ανήκει σε Principal
+Submission.belongsTo(Principal, {
+    foreignKey: 'principal_id',
+    as: 'principal'
+});
+Principal.hasMany(Submission, {
+    foreignKey: 'principal_id',
+    as: 'submissions'
+});
+
+
 
 ////////////////    MODELS SYNC    ////////////////
 
@@ -92,5 +140,6 @@ export default {
     Party,
     Lease,
     Period,
+    Submission,
     syncModels
 };

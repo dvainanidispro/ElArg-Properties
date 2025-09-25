@@ -35,6 +35,15 @@ const Submission = db.define('submission',
             comment: 'Κόστος ρεύματος για την περίοδο'
         },
         rent: DataTypes.DECIMAL(10, 2),
+        tax_stamp: DataTypes.DECIMAL(10, 2),
+        total: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                const rent = this.getDataValue('rent') || 0;
+                const taxStamp = this.getDataValue('tax_stamp') || 0;
+                return parseFloat(rent) + parseFloat(taxStamp);
+            }
+        }
     },
     {
         tableName: 'submissions',
