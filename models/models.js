@@ -4,6 +4,7 @@ import { Principal } from "./principal.js";
 import { Property } from "./property.js";
 import { Lease } from "./lease.js";
 import { Party } from "./party.js";
+import { Period } from "./period.js";
 import { db, databaseConnectionTest } from '../config/database.js';
 import log from '../controllers/logger.js';
 
@@ -90,5 +91,6 @@ export default {
     Property,
     Party,
     Lease,
+    Period,
     syncModels
 };

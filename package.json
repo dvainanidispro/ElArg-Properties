@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "node --env-file=.env --watch server.js",
     "start": "node server.js",
-    "start:local": "node --env-file=.env server.js"
+    "start:local": "node --env-file=.env server.js",
+    "generate:period": "node --env-file=.env controllers/periods/generate.js"
   },
   "keywords": [],
   "author": "",
