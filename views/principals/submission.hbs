@@ -1,0 +1,288 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/canteens/mycanteen">Το κυλικείο μου</a></li>
+                    <li class="breadcrumb-item"><a href="/canteens/mycanteen/{{canteen.id}}/periods">{{canteen.name}}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Υποβολή στοιχείων - {{canteen.name}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="ti-clipboard me-2"></i>
+                        Υποβολή στοιχείων - {{canteen.name}} [{{period.code}}]
+                    </h4>
+                    <div class="card-actions">
+                        <a href="/canteens/mycanteen/{{canteen.id}}/periods" class="btn btn-secondary btn-icon">
+                            <i class="ti-arrow-left me-1"></i>
+                            <span>Επιστροφή</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{!-- Πληροφορίες περιόδου και κυλικείου --}}
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="ti-info-alt me-2"></i>
+                                        Στοιχεία Κυλικείου
+                                    </h6>
+                                    <strong>Όνομα:</strong> {{canteen.name}}<br>
+                                    <strong>Διευθυντής Σχολείου:</strong> {{principal.name}}<br>
+                                    {{#if canteen.area}}
+                                        <strong>Επιφάνεια:</strong> {{canteen.area}} τ.μ.<br>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="ti-calendar me-2"></i>
+                                        Πληροφορίες Περιόδου
+                                    </h6>
+                                    <strong>Περίοδος:</strong> {{period.code}}<br>
+                                    <strong>Από:</strong> {{date period.start_date}}<br>
+                                    <strong>Έως:</strong> {{date period.end_date}}<br>
+                                    <strong>Κατάσταση:</strong> 
+                                    {{#if (eq period.status 'open')}}
+                                        <span class="badge bg-success">Ανοιχτή</span>
+                                    {{else if (eq period.status 'closed')}}
+                                        <span class="badge bg-warning">Κλειστή</span>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{!-- Κατάσταση υποβολής --}}
+                    {{#if submission}}
+                        <div class="alert alert-info" role="alert">
+                            <i class="ti-check me-2"></i>
+                            <strong>Έχετε υποβάλει στοιχεία για αυτή την περίοδο.</strong>
+                            {{#if (eq period.status 'open')}}
+                                Μπορείτε να τα επεξεργαστείτε παρακάτω.
+                            {{/if}}
+                        </div>
+                    {{/if}}
+
+                    {{!-- Φόρμα υποβολής στοιχείων --}}
+                    <form id="submissionForm" >
+                        <div class="row">
+                            {{!-- Rent Offer (disabled) --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="rentOffer" class="form-label fw-bold">
+                                    Οικονομική Προσφορά Μισθωτή (€)
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="rentOffer" 
+                                       name="rent_offer" 
+                                       value="{{rentOffer}}" 
+                                       step="0.01" 
+                                       disabled>
+                                <div class="form-text text-muted">Αυτό το ποσό προέρχεται από την τρέχουσα μίσθωση</div>
+                            </div>
+
+                            {{!-- Students --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="students" class="form-label fw-bold">
+                                    Αριθμός Μαθητών *
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="students" 
+                                       name="students" 
+                                       value="{{submission.students}}" 
+                                       min="0" 
+                                       step="1" 
+                                       required>
+                                <div class="form-text text-muted">Ο συνολικός αριθμός μαθητών του σχολείου για την περίοδο</div>
+                            </div>
+
+                            {{!-- Working Days --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="workingDays" class="form-label fw-bold">
+                                    Εργάσιμες Ημέρες *
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="workingDays" 
+                                       name="working_days" 
+                                       value="{{submission.working_days}}" 
+                                       min="0" 
+                                       step="1" 
+                                       required>
+                                <div class="form-text text-muted">Ο αριθμός εργάσιμων ημερών που λειτούργησε το σχολείο</div>
+                            </div>
+
+                            {{!-- Electricity Cost --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="electricityCost" class="form-label fw-bold">
+                                    Κόστος Ρεύματος (€) *
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="electricityCost" 
+                                       name="electricity_cost" 
+                                       value="{{submission.electricity_cost}}" 
+                                       min="0" 
+                                       step="0.01" 
+                                       required>
+                                <div class="form-text text-muted">Το κόστος ρεύματος που αναλογεί στο κυλικείο για την περίοδο</div>
+                            </div>
+                        </div>
+                        
+                        {{!-- Κουμπιά ενεργειών --}}
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                {{#unless (eq period.status 'open')}}
+                                    {{#if submission}}
+                                    <div class="alert alert-warning mb-3">
+                                        <i class="ti-alert-triangle me-2"></i>
+                                        <strong>Προσοχή:</strong> Η προθεσμία υποβολών έχει παρέλθει. Συνεπώς δεν μπορείτε να τροποποιήσετε τα παραπάνω.
+                                    </div>
+                                    {{else}}
+                                    <div class="alert alert-warning mb-3">
+                                        <i class="ti-alert-triangle me-2"></i>
+                                        <strong>Προσοχή:</strong> Η προθεσμία υποβολών έχει παρέλθει, αλλά μπορείτε ακόμα να υποβάλετε τα στοιχεία.
+                                    </div>
+                                    {{/if}}
+                                {{/unless}}
+                                
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <i class="ti-check me-1"></i>
+                                        <span>{{#if submission}}Ενημέρωση{{else}}Υποβολή{{/if}} Στοιχείων</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
+                                        <i class="ti-arrow-left me-1"></i>
+                                        <span>Ακύρωση</span>
+                                    </button>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{!-- Sidebar με πληροφορίες --}}
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title">
+                        <i class="ti-help me-2"></i>
+                        Οδηγίες Συμπλήρωσης
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="ti-user me-1"></i> Αριθμός Μαθητών</h6>
+                        <p class="small text-muted">Ο συνολικός αριθμός μαθητών που φοίτησαν στο σχολείο κατά τη διάρκεια της περιόδου.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="ti-calendar me-1"></i> Εργάσιμες Ημέρες</h6>
+                        <p class="small text-muted">Ο αριθμός των ημερών που το σχολείο λειτούργησε κανονικά σε αυτή την περίοδο.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="ti-bolt me-1"></i> Κόστος Ρεύματος</h6>
+                        <p class="small text-muted">Το κόστος ηλεκτρικού ρεύματος που αναλογεί στη χρήση του κυλικείου για την περίοδο αυτή.</p>
+                    </div>
+                </div>
+            </div>
+
+            {{#if submission}}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Υποβολής
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <strong>Δημιουργήθηκε:</strong> {{date submission.createdAt}}<br>
+                        {{#if submission.updatedAt}}
+                        <strong>Τελευταία ενημέρωση:</strong> {{date submission.updatedAt}}
+                        {{/if}}
+                    </small>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form για υποβολή/επεξεργασία submission
+    document.getElementById('submissionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        
+        // Δεν ελέγχουμε εδώ αν η περίοδος είναι ανοιχτή (γίνεται server-side έλεγχος)
+        
+        // Αφαίρεσε το rent_offer γιατί είναι disabled
+        delete data.rent_offer;
+        
+        // Έλεγχος αν υπάρχουν τα απαιτούμενα πεδία
+        if (!data.students || !data.working_days || !data.electricity_cost) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία.');
+            return;
+        }
+        
+        const hasSubmission = {{#if submission}}true{{else}}false{{/if}};
+        const isEdit = hasSubmission; // true αν υπάρχει submission (επεξεργασία)
+        
+        try {
+            const url = '/canteens/mycanteen/{{canteen.id}}/periods/{{period.id}}/submission';
+            const method = isEdit ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                const message = isEdit ? 'Τα στοιχεία ενημερώθηκαν επιτυχώς!' : 'Η υποβολή στοιχείων ολοκληρώθηκε επιτυχώς!';
+
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal(message, 3000, () => {
+                    redirectOnSuccess(null); // refresh current page
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+});
+</script>
+
