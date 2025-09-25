@@ -16,6 +16,38 @@ const myCanteen = Router();
 
 
 
+/**
+ * Helper function για υπολογισμό των πεδίων rent_offer, rent και tax_stamp
+ * @param {Object} canteen - Το canteen object με τα leases
+ * @param {number} students - Αριθμός μαθητών
+ * @param {number} workingDays - Ημέρες λειτουργίας
+ * @returns {Object} Αντικείμενο με τα υπολογιζόμενα πεδία
+ */
+function calculateRentFields(canteen, students, workingDays) {
+    // Πάρε το rent από το πιο πρόσφατο lease
+    const latestLease = canteen.leases?.[0];
+    const rentOffer = latestLease?.rent || 0;
+    
+    // Υπολογισμός rent: (1/189) * rent_offer * students * working_days
+    const rent = (1/189) * rentOffer * students * workingDays;
+    
+    // Υπολογισμός tax_stamp: rent * 0.036
+    const taxStamp = rent * 0.036;
+    
+    return {
+        rent_offer: rentOffer,
+        rent: parseFloat(rent.toFixed(2)),
+        tax_stamp: parseFloat(taxStamp.toFixed(2))
+    };
+}
+
+
+
+
+
+
+
+
 
 /**
  * GET / - Εμφάνιση όλων των κυλικείων του συνδεδεμένου principal
@@ -272,7 +304,17 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
                 id: canteenId,
                 principal_id: principal.id,
                 active: true
-            }
+            },
+            include: [{
+                model: Models.Lease,
+                as: 'leases',
+                where: {
+                    property_type: 'canteen'
+                },
+                required: false,
+                order: [['lease_end', 'DESC']],
+                limit: 1
+            }]
         });
 
         if (!canteen) {
@@ -334,6 +376,9 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
             });
         }
 
+        // Υπολογισμός των πεδίων rent_offer, rent και tax_stamp
+        const calculatedFields = calculateRentFields(canteen, parseInt(students), parseInt(working_days));
+        
         // Δημιουργία νέου submission
         const newSubmission = await Models.Submission.create({
             period_id: periodId,
@@ -342,7 +387,10 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
             principal_id: principal.id,
             students: parseInt(students),
             working_days: parseInt(working_days),
-            electricity_cost: parseFloat(electricity_cost)
+            electricity_cost: parseFloat(electricity_cost),
+            rent_offer: calculatedFields.rent_offer,
+            rent: calculatedFields.rent,
+            tax_stamp: calculatedFields.tax_stamp
         });
 
         log.info(`Νέο submission δημιουργήθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principal.id} (ID: ${newSubmission.id})`);
@@ -389,7 +437,17 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
                 id: canteenId,
                 principal_id: principal.id,
                 active: true
-            }
+            },
+            include: [{
+                model: Models.Lease,
+                as: 'leases',
+                where: {
+                    property_type: 'canteen'
+                },
+                required: false,
+                order: [['lease_end', 'DESC']],
+                limit: 1
+            }]
         });
 
         if (!canteen) {
@@ -451,11 +509,17 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
             });
         }
 
+        // Υπολογισμός των πεδίων rent_offer, rent και tax_stamp
+        const calculatedFields = calculateRentFields(canteen, parseInt(students), parseInt(working_days));
+        
         // Ενημέρωση του submission
         const updateData = {
             students: parseInt(students),
             working_days: parseInt(working_days),
-            electricity_cost: parseFloat(electricity_cost)
+            electricity_cost: parseFloat(electricity_cost),
+            rent_offer: calculatedFields.rent_offer,
+            rent: calculatedFields.rent,
+            tax_stamp: calculatedFields.tax_stamp
         };
 
         await submission.update(updateData);
