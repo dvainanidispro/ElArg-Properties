@@ -5,7 +5,8 @@
                 <div class="card-header">
                     <h1 class="card-title h3">
                         <i class="ti-files me-2"></i>
-                        Υποβολές Στοιχείων Περιόδου - Περίοδος {{period.code}}
+                        <span>Υποβολές Στοιχείων Κυλικείου - Περίοδος {{period.code}}</span>
+                        <span data-variable="period-description"></span>
                     </h1>
                     <div class="card-subtitle text-muted mt-2">
                         <i class="ti-calendar me-1"></i>
@@ -21,7 +22,7 @@
                         <div class="col-12">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-title">Στατιστικά Υποβολών</h6>
+                                    <h6 class="card-title">Στατιστικά Υποβολών για την περίοδο</h6>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="text-center">
@@ -52,14 +53,15 @@
                         <table class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Όνομα Κυλικείου</th>
+                                    <th class="sortable" data-sort-type="number">ID</th>
+                                    <th class="sortable">Όνομα Κυλικείου</th>
                                     <th>Διευθυντής</th>
                                     <th>Μισθωτής</th>
                                     {{!-- <th>Κατάσταση Κυλικείου</th> --}}
                                     <th>Λήξη Μίσθωσης</th>
-                                    <th>Υποβολή Στοιχείων</th>
-                                    <th>Ημερομηνία Υποβολής</th>
+                                    <th class="sortable">Υποβολή Στοιχείων</th>
+                                    <th class="sortable">Ημερομηνία Υποβολής</th>
+                                    <th class="sortable" data-sort-type="number">Μίσθωμα</th>
                                     <th>Ενέργειες</th>
                                 </tr>
                             </thead>
@@ -120,6 +122,9 @@
                                             <span class="text-muted">-</span>
                                         {{/if}}
                                     </td>
+                                    <td class="" data-sort-value="{{this.submission.rent}}">
+                                        {{check this.submission.rent (euro this.submission.rent) '-'}}
+                                    </td>
                                     <td>
                                         {{#if this.hasSubmission}}
                                             <a href="/canteens/periods/{{../period.id}}/submissions/{{this.submission.id}}" class="btn btn-outline-primary btn-sm me-1" title="Προβολή Υποβολής">
@@ -148,3 +153,9 @@
         </div>
     </div>
 </div>
+
+
+<script type="module">
+    Q('~period-description').set(`(${periodDescription('{{period.start_date}}' , '{{period.end_date}}')})`);
+
+</script>

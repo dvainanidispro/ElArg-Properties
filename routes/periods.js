@@ -196,7 +196,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
                 {
                     model: Models.Submission,
                     as: 'submissions',
-                    attributes: ['id', 'period_id', 'property_id', 'property_type', 'createdAt', 'updatedAt'],
+                    attributes: ['id', 'period_id', 'property_id', 'property_type', 'updatedAt', 'rent'],
                     where: {
                         period_id: periodId,
                         property_type: 'canteen'
