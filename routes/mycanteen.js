@@ -2,12 +2,14 @@ import { Router } from 'express';
 import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
+import { Op } from 'sequelize';
 
 /**
  * Routes for managing canteens of the logged-in principal.
  * @type {Router}
  */
 const myCanteen = Router();
+
 
 
 
@@ -54,6 +56,9 @@ function calculateRentFields(canteen, students, workingDays) {
  */
 myCanteen.get('/', can('edit:ownschool'), async (req, res) => {
     try {
+
+        //# 1. Βρίσκουμε τα κυλικεία του Διευθυντή
+
         // Βρες τον principal με βάση το email του συνδεδεμένου χρήστη
         const principal = await Models.Principal.findOne({
             where: { email: req.user.email },
@@ -73,9 +78,72 @@ myCanteen.get('/', can('edit:ownschool'), async (req, res) => {
             });
         }
 
+        //# 2. Ελέγχουμε τις εκκρεμότητές του Διευθυντή (αν δεν έχει υποβάλει στοιχεία για ανοιχτές περιόδους)
+        
+        // Φέρε τις 2 τελευταίες periods που είναι open ή closed (δεν γίνεται φίλτρο σε virtual field)
+        const latestPeriods = await Models.Period.findAll({
+            order: [['end_date', 'DESC']],
+            limit: 3 // Φέρνουμε τα 3 πιο πρόσφατα (δεν μας νοιάζουν τα παλιότερα)
+        });
+        const periods = latestPeriods.filter(p => ['open', 'closed'].includes(p.status));
+
+        // Για κάθε κυλικείο, έλεγξε αν έχει υποβάλει στοιχεία για τις relevant periods
+        const canteens = principal.canteens || [];
+        const periodIds = periods.map(p => p.id);
+
+        // Επιστρέφει για κάθε κυλικείο τις υποβολές που αφορούν τις recent periods
+        let canteensWithStatus;
+        if (periodIds.length === 0) {
+            // Δεν υπάρχουν relevant periods — επιστρέφουμε τα κυλικεία χωρίς pending
+            canteensWithStatus = canteens.map(c => ({
+                ...c.toJSON(),
+                submissions: [],
+                missingPeriods: [],
+                hasPending: false
+            }));
+        } else {
+            canteensWithStatus = await Promise.all(canteens.map(async (canteen) => {
+                // Βρες submissions του συγκεκριμένου κυλικείου για τις relevant periods
+                const submissions = await Models.Submission.findAll({
+                    where: {
+                        period_id: { [Op.in]: periodIds },
+                        property_id: canteen.id,
+                        property_type: 'canteen',
+                        // principal_id: principal.id           // Ας βλέπει και τις υποβολές άλλων principals
+                    },
+                    attributes: ['id', 'period_id', 'property_id', 'property_type']
+                });
+
+                const submittedPeriodIds = new Set(submissions.map(s => s.period_id));
+                const missingPeriods = periods
+                    .filter(p => !submittedPeriodIds.has(p.id))
+                    .map(p => ({ id: p.id, code: p.code, status: p.status }));
+
+                return {
+                    ...canteen.toJSON(),
+                    submissions,
+                    missingPeriods,
+                    hasPending: missingPeriods.length > 0
+                };
+            }));
+        }
+
+        //# 3. Συγκέντρωση στατιστικών εκκρεμοτήτων και render της σελίδας
+        const pendingCanteens = canteensWithStatus.filter(c => c.hasPending);
+        const pendingCount = pendingCanteens.length;
+        const pendingDetails = pendingCanteens.map(c => ({
+            id: c.id,
+            name: c.name,
+            missingCount: c.missingPeriods.length,
+            missingCodes: c.missingPeriods.map(p => p.code)
+        }));
+
         res.render('principals/mycanteen', { 
-            canteens: principal.canteens || [],
+            canteens: canteensWithStatus,
+            periods,
             principal,
+            pendingCount,
+            pendingDetails,
             user: req.user,
             title: 'Το κυλικείο μου'
         });
@@ -86,6 +154,9 @@ myCanteen.get('/', can('edit:ownschool'), async (req, res) => {
         });
     }
 });
+
+
+
 
 /**
  * GET /:canteenId/periods - Εμφάνιση περιόδων συγκεκριμένου κυλικείου του principal
@@ -523,5 +594,13 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
         });
     }
 });
+
+
+
+
+
+
+
+
 
 export default myCanteen;

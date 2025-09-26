@@ -1,12 +1,54 @@
 <div class="container-fluid">
+    
+    
+    
+    
+    
+    
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title h3">
+                        <i class="ti-alert me-2"></i>
+                        Εκκρεμότητες
+                    </h3>
+                </div>
+                <div class="card-body {{#if pendingCount}}bg-danger-light{{/if}}">
+                    {{#if pendingCount}}
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="ti-alert display-4 text-danger"></i>
+                            </div>
+                            <div class="">
+                                <h5 class="mb-1 text-danger fw-bold">Έχετε {{inflect pendingCount "εκκρεμότητα" "εκκρεμότητες"}}</h5>
+                                <p class="mb-0 text-muted">Κάντε κλικ παρακάτω στο κυλικείο που σας αντιστοιχεί για να υποβάλετε τα απαραίτητα στοιχεία.</p>
+                            </div>
+                        </div>
+                    {{else}}
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="ti-check-box display-4 text-success"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1 text-success">Δεν υπάρχουν εκκρεμότητες</h5>
+                                <p class="mb-0 text-muted">Τα στοιχεία των κυλικείων σας για τις πρόσφατες περιόδους έχουν καταχωρισθεί.</p>
+                            </div>
+                        </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h1 class="card-title h3">
+                    <h2 class="card-title h3">
                         <i class="ti-shopping-cart-full me-2"></i>
                         Το κυλικείο μου
-                    </h1>
+                    </h2>
                 </div>
                 <div class="card-body">
                     {{#if canteens.length}}

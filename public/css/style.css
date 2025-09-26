@@ -144,6 +144,9 @@ input::placeholder{
     background-color: var(--bs-indigo) !important;
     color: var(--bs-light) !important;
 }
+.bg-danger-light{
+    background-color: hsl(27, 100%, 84%) !important;
+}
 
 a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     color: #04c !important;
