@@ -221,6 +221,7 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
 }
 
 .dashboard-link-card{
+    padding: 0.3rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     &:hover {
@@ -229,6 +230,10 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     hr {
         margin-inline: 0.7rem;
         border-top: 1px solid var(--border-color);
+    }
+    i{
+        font-size: 3rem;
+        margin-right: 0.7rem;
     }
 }
 

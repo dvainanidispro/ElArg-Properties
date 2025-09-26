@@ -31,6 +31,8 @@ import { validateUser } from './controllers/auth.js';
 import { db, databaseConnectionTest } from './config/database.js';
 import Models from './models/models.js';
 
+import { dashboardMiddleware } from './routes/dashboard.js';
+
 
 
 /////////////////        ΕΛΕΥΘΕΡΑ ROUTES      /////////////////
@@ -52,14 +54,17 @@ server.use(loginRouter);
 server.use(validateUser);
 
 // Αρχική σελίδα (dashboard)
-server.get(['/', '/dashboard'], (req, res) => {
-    let userRole = req.user ? req.user.role : 'guest';
-    if (userRole === 'principal') {
-        res.redirect('/canteens/mycanteen');
-        return;
-    }
-    res.render('dashboard');
-});
+server.get(['/', '/dashboard'], 
+    (req, res, next) => {
+        let userRole = req.user ? req.user.role : 'guest';
+        if (userRole === 'principal') {
+            res.redirect('/canteens/mycanteen');
+            return;
+        }
+        next();
+    },
+    dashboardMiddleware
+);
 
 // Admin routes
 import admin from './routes/admin.js';
