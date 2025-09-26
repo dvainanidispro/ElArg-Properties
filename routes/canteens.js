@@ -972,6 +972,35 @@ canteens.get('/canteens/:id/leases/history', can('view:content'), async (req, re
 });
 
 
+canteens.get('/pending', can('view:content'), async (req, res) => {
+    try {
+        // Φέρε το τελευταίο period που είναι open ή closed (δεν γίνεται φίλτρο σε virtual field)
+        const periods = await Models.Period.findAll({
+            order: [['end_date', 'DESC']],
+            limit: 5 // Φέρνουμε τα 5 πιο πρόσφατα (αποκλείεται να χρειάζονται περισσότερα)
+        });
+        const period = periods.find(p => ['open', 'closed'].includes(p.status));
+
+        if (period) {
+            return res.redirect(`/canteens/periods/${period.id}/submissions`);
+        } else {
+            return res.render('periods/submissions', {
+                submissions: [],
+                period: null,
+                user: req.user,
+                title: 'Υποβολές Κυλικείων'
+            });
+        }
+    } catch (error) {
+        log.error(`Σφάλμα στο /canteens/pending: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση περιόδου' });
+    }
+});
+
+
+
+
+
 
 
 

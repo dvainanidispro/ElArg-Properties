@@ -55,7 +55,7 @@ server.use(validateUser);
 server.get(['/', '/dashboard'], (req, res) => {
     let userRole = req.user ? req.user.role : 'guest';
     if (userRole === 'principal') {
-        res.render('principals/dashboard');
+        res.redirect('/canteens/mycanteen');
         return;
     }
     res.render('dashboard');

@@ -10,7 +10,8 @@ window.addEventListener('pageshow', function (event) {
  * Ένδειξη στο sidebar για το link που αντιστοιχεί στην τρέχουσα σελίδα
  */
 [...document.querySelectorAll(".sidebar .sidebar-link")].forEach(link => {
-    if (link.getAttribute("href") === window.location.pathname) {
+    const href = link.getAttribute("href");
+    if (href && window.location.pathname.includes(href)) {
         link.classList.add("active");
     }
 });
