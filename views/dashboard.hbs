@@ -13,14 +13,120 @@
                 </div>
                 <div class="card-body">
                     
-                    <div class="alert alert-warning">
-                        <i class="ti-settings me-2"></i>
-                        <strong>Υπό Ανάπτυξη:</strong> 
-                        Η σελίδα Dashboard θα δημιουργηθεί αφού ολοκληρωθούν οι υπόλοιπες σελίδες της εφαρμογής. 
-                        Βρισκόμαστε προς το παρόν σε περίοδο ανάπτυξης.
+
+                    <!-- Κύριες μετρικές -->
+                    <div class="row mb-4 align-items-stretch">
+
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <a class="card bg-primary text-white h-100 dashboard-link-card" href="/canteens/canteens">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h2 class="mb-0 display-4 text-white fw-semibold">84</h2>
+                                            <p class="mb-0">Ενεργά Κυλικεία</p>
+                                        </div>
+                                        <div class="display-6">
+                                            <i class="ti-shopping-cart"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <a class="card bg-success text-white h-100 dashboard-link-card" href="/properties/properties">
+                                <div class="card-body bg-success">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h2 class="mb-0 text-white display-4 fw-semibold">127</h2>
+                                            <p class="mb-0 text-white">Ενεργά Ακίνητα</p>
+                                        </div>
+                                        <div class="display-6">
+                                            <i class="ti-home"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="card-body pt-2">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <h6 class="text-light mb-1">Μισθωμένα</h6>
+                                            <h3 class="text-white mb-0">78</h3>
+                                        </div>
+                                        <div class="col-6">
+                                            <h6 class="text-light mb-1">Εκμισθωμένα</h6>
+                                            <h3 class="text-white mb-0">49</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card border-danger h-100 dashboard-link-card bg-danger">
+                                <div class="card-body text-light">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h2 class="text-danger mb-1 display-4 fw-semibold text-light">26</h2>
+                                            <p class="mb-0 text-light">Μισθώσεις που λήγουν σύντομα</p>
+                                        </div>
+                                        <div class="display-6">
+                                            <i class="ti-alarm-clock text-light" style="font-size: 2.5rem;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="card-body pt-2">
+                                    <div class="row text-center">
+                                        <a class="col-6" href="/canteens/leases">
+                                            <h6 class="text-light mb-1">Κυλικεία</h6>
+                                            <h3 class="text-white mb-0">18</h3>
+                                        </a>
+                                        <a class="col-6" href="/properties/leases">
+                                            <h6 class="text-light mb-1">Ακίνητα</h6>
+                                            <h3 class="text-white mb-0">06</h3>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="row">
+                    <!-- Μισθώσεις και Ενεργή Περίοδος -->
+                    <div class="row mb-4">
+                        
+                        <div class="col-12 mb-3">
+                            <a class="card border-secondary" href="/canteens/pending">
+                                <div class="card-header bg-light">
+                                    <h5 class="card-title mb-0">
+                                        <i class="ti-calendar me-2"></i>
+                                        Ενεργή περίοδος υποβολής για Κυλικεία
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-md-4">
+                                            <h6 class="text-muted">Περίοδος</h6>
+                                            <h4 class="text-primary fw-semibold">
+                                                <span>C-2025-Q3</span> 
+                                                <span data-variable="period-description"></span>
+                                                </h4>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6 class="text-muted">Ολοκληρωμένες</h6>
+                                            <h2 class="text-success display-6 fw-semibold">67</h2>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6 class="text-muted">Εκκρεμείς</h6>
+                                            <h2 class="text-warning display-6 fw-semibold">17</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Στατιστικά και Ειδοποιήσεις -->
+                    {{!-- <div class="row">
                         <div class="col-md-6">
                             <div class="card border-primary">
                                 <div class="card-body text-center">
@@ -39,10 +145,18 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+
+<script type="module">
+    {{!-- Q('~period-description').set(`(${periodDescription('{{period.start_date}}' , '{{period.end_date}}')})`); --}}
+
+</script>
