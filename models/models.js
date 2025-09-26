@@ -109,6 +109,16 @@ Principal.hasMany(Submission, {
     as: 'submissions'
 });
 
+// Submission υποβλήθηκε από Principal (submittedBy)
+Submission.belongsTo(Principal, {
+    foreignKey: 'submittedBy',
+    as: 'submittedByPrincipal'
+});
+Principal.hasMany(Submission, {
+    foreignKey: 'submittedBy',
+    as: 'submittedSubmissions'
+});
+
 
 
 ////////////////    MODELS SYNC    ////////////////

@@ -245,21 +245,27 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
             });
         }
 
+
         // Βρες υπάρχον submission αν υπάρχει
         const existingSubmission = await Models.Submission.findOne({
-            where: { 
+            where: {
                 period_id: periodId,
                 property_id: canteenId,
                 property_type: 'canteen',
                 principal_id: principal.id
-            }
+            },
+            include: [{
+                model: Models.Principal,
+                as: 'submittedByPrincipal',
+                required: false
+            }]
         });
 
         // Πάρε το rent από το πιο πρόσφατο lease
         const latestLease = canteen.leases?.[0];
         const rentOffer = latestLease?.rent || 0;
 
-        res.render('principals/submission', { 
+        res.render('principals/submission', {
             canteen,
             period,
             submission: existingSubmission,
@@ -284,25 +290,13 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
         const canteenId = parseInt(req.params.canteenId);
         const periodId = parseInt(req.params.periodId);
         const { students, working_days, electricity_cost } = req.body;
-
-        // Βρες τον principal με βάση το email του συνδεδεμένου χρήστη
-        const principal = await Models.Principal.findOne({
-            where: { email: req.user.email }
-        });
-
-        if (!principal) {
-            log.warn(`Principal με email ${req.user.email} δεν βρέθηκε`);
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Δεν βρέθηκαν στοιχεία διευθυντή' 
-            });
-        }
+        const principalId = req.user.sub;
 
         // Βρες το κυλικείο και έλεγξε ότι ανήκει στον principal
         const canteen = await Models.Canteen.findOne({
-            where: { 
+            where: {
                 id: canteenId,
-                principal_id: principal.id,
+                principal_id: principalId,
                 active: true
             },
             include: [{
@@ -318,16 +312,16 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
         });
 
         if (!canteen) {
-            log.warn(`Canteen ${canteenId} δεν βρέθηκε ή δεν ανήκει στον principal ${principal.id}`);
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Δεν έχετε δικαίωμα πρόσβασης σε αυτό το κυλικείο' 
+            log.warn(`Canteen ${canteenId} δεν βρέθηκε ή δεν ανήκει στον principal ${principalId}`);
+            return res.status(403).json({
+                success: false,
+                message: 'Δεν έχετε δικαίωμα πρόσβασης σε αυτό το κυλικείο'
             });
         }
 
         // Βρες την περίοδο και έλεγξε ότι επιτρέπει υποβολές (open ή closed)
         const period = await Models.Period.findOne({
-            where: { 
+            where: {
                 id: periodId,
                 property_type: 'canteen',
                 active: true
@@ -336,55 +330,56 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
 
         if (!period) {
             log.warn(`Period ${periodId} δεν βρέθηκε`);
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Η περίοδος δεν βρέθηκε' 
+            return res.status(404).json({
+                success: false,
+                message: 'Η περίοδος δεν βρέθηκε'
             });
         }
 
         if (!['open', 'closed'].includes(period.status)) {
             log.warn(`Δεν επιτρέπεται υποβολή για περίοδο με status: ${period.status}`);
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Δεν επιτρέπεται υποβολή στοιχείων για αυτή την περίοδο' 
+            return res.status(400).json({
+                success: false,
+                message: 'Δεν επιτρέπεται υποβολή στοιχείων για αυτή την περίοδο'
             });
         }
 
         // Έλεγχος αν υπάρχει ήδη submission
         const existingSubmission = await Models.Submission.findOne({
-            where: { 
+            where: {
                 period_id: periodId,
                 property_id: canteenId,
                 property_type: 'canteen',
-                principal_id: principal.id
+                principal_id: principalId
             }
         });
 
         if (existingSubmission) {
-            log.warn(`Υπάρχει ήδη submission για period ${periodId}, canteen ${canteenId}, principal ${principal.id}`);
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Υπάρχει ήδη υποβολή στοιχείων για αυτή την περίοδο' 
+            log.warn(`Υπάρχει ήδη submission για period ${periodId}, canteen ${canteenId}, principal ${principalId}`);
+            return res.status(400).json({
+                success: false,
+                message: 'Υπάρχει ήδη υποβολή στοιχείων για αυτή την περίοδο'
             });
         }
 
         // Βασικός έλεγχος δεδομένων
         if (!students || !working_days || electricity_cost === undefined) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία' 
+            return res.status(400).json({
+                success: false,
+                message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία'
             });
         }
 
         // Υπολογισμός των πεδίων rent_offer, rent και tax_stamp
         const calculatedFields = calculateRentFields(canteen, parseInt(students), parseInt(working_days));
-        
+
         // Δημιουργία νέου submission
         const newSubmission = await Models.Submission.create({
             period_id: periodId,
             property_id: canteenId,
             property_type: 'canteen',
-            principal_id: principal.id,
+            principal_id: principalId,
+            submittedBy: principalId,
             students: parseInt(students),
             working_days: parseInt(working_days),
             electricity_cost: parseFloat(electricity_cost),
@@ -393,18 +388,18 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
             tax_stamp: calculatedFields.tax_stamp
         });
 
-        log.info(`Νέο submission δημιουργήθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principal.id} (ID: ${newSubmission.id})`);
+        log.info(`Νέο submission δημιουργήθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principalId} (ID: ${newSubmission.id})`);
 
-        res.status(201).json({ 
-            success: true, 
+        res.status(201).json({
+            success: true,
             message: 'Η υποβολή στοιχείων δημιουργήθηκε επιτυχώς',
             submission: newSubmission
         });
     } catch (error) {
         log.error(`Σφάλμα κατά τη δημιουργία submission: ${error}`);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Σφάλμα κατά τη δημιουργία της υποβολής στοιχείων' 
+        res.status(500).json({
+            success: false,
+            message: 'Σφάλμα κατά τη δημιουργία της υποβολής στοιχείων'
         });
     }
 });
@@ -417,25 +412,13 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
         const canteenId = parseInt(req.params.canteenId);
         const periodId = parseInt(req.params.periodId);
         const { students, working_days, electricity_cost } = req.body;
-
-        // Βρες τον principal με βάση το email του συνδεδεμένου χρήστη
-        const principal = await Models.Principal.findOne({
-            where: { email: req.user.email }
-        });
-
-        if (!principal) {
-            log.warn(`Principal με email ${req.user.email} δεν βρέθηκε`);
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Δεν βρέθηκαν στοιχεία διευθυντή' 
-            });
-        }
+        const principalId = req.user.sub;
 
         // Βρες το κυλικείο και έλεγξε ότι ανήκει στον principal
         const canteen = await Models.Canteen.findOne({
-            where: { 
+            where: {
                 id: canteenId,
-                principal_id: principal.id,
+                principal_id: principalId,
                 active: true
             },
             include: [{
@@ -451,16 +434,16 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
         });
 
         if (!canteen) {
-            log.warn(`Canteen ${canteenId} δεν βρέθηκε ή δεν ανήκει στον principal ${principal.id}`);
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Δεν έχετε δικαίωμα πρόσβασης σε αυτό το κυλικείο' 
+            log.warn(`Canteen ${canteenId} δεν βρέθηκε ή δεν ανήκει στον principal ${principalId}`);
+            return res.status(403).json({
+                success: false,
+                message: 'Δεν έχετε δικαίωμα πρόσβασης σε αυτό το κυλικείο'
             });
         }
 
         // Βρες την περίοδο και έλεγξε ότι είναι ανοιχτή για επεξεργασία
         const period = await Models.Period.findOne({
-            where: { 
+            where: {
                 id: periodId,
                 property_type: 'canteen',
                 active: true
@@ -469,49 +452,49 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
 
         if (!period) {
             log.warn(`Period ${periodId} δεν βρέθηκε`);
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Η περίοδος δεν βρέθηκε' 
+            return res.status(404).json({
+                success: false,
+                message: 'Η περίοδος δεν βρέθηκε'
             });
         }
 
         if (period.status !== 'open') {
             log.warn(`Δεν επιτρέπεται επεξεργασία για περίοδο με status: ${period.status}`);
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Δεν επιτρέπεται επεξεργασία στοιχείων για αυτή την περίοδο' 
+            return res.status(400).json({
+                success: false,
+                message: 'Δεν επιτρέπεται επεξεργασία στοιχείων για αυτή την περίοδο'
             });
         }
 
         // Βρες το υπάρχον submission
         const submission = await Models.Submission.findOne({
-            where: { 
+            where: {
                 period_id: periodId,
                 property_id: canteenId,
                 property_type: 'canteen',
-                principal_id: principal.id
+                principal_id: principalId
             }
         });
 
         if (!submission) {
-            log.warn(`Submission δεν βρέθηκε για period ${periodId}, canteen ${canteenId}, principal ${principal.id}`);
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Δεν βρέθηκε υποβολή στοιχείων για επεξεργασία' 
+            log.warn(`Submission δεν βρέθηκε για period ${periodId}, canteen ${canteenId}, principal ${principalId}`);
+            return res.status(404).json({
+                success: false,
+                message: 'Δεν βρέθηκε υποβολή στοιχείων για επεξεργασία'
             });
         }
 
         // Βασικός έλεγχος δεδομένων
         if (!students || !working_days || electricity_cost === undefined) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία' 
+            return res.status(400).json({
+                success: false,
+                message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία'
             });
         }
 
         // Υπολογισμός των πεδίων rent_offer, rent και tax_stamp
         const calculatedFields = calculateRentFields(canteen, parseInt(students), parseInt(working_days));
-        
+
         // Ενημέρωση του submission
         const updateData = {
             students: parseInt(students),
@@ -519,23 +502,24 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
             electricity_cost: parseFloat(electricity_cost),
             rent_offer: calculatedFields.rent_offer,
             rent: calculatedFields.rent,
-            tax_stamp: calculatedFields.tax_stamp
+            tax_stamp: calculatedFields.tax_stamp,
+            submittedBy: principalId
         };
 
         await submission.update(updateData);
 
-        log.info(`Το Submission ενημερώθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principal.id} (ID: ${submission.id})`);
+        log.info(`Το Submission ενημερώθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principalId} (ID: ${submission.id})`);
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: 'Η υποβολή στοιχείων ενημερώθηκε επιτυχώς',
             submission: submission
         });
     } catch (error) {
         log.error(`Σφάλμα κατά την ενημέρωση submission: ${error}`);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Σφάλμα κατά την ενημέρωση της υποβολής στοιχείων' 
+        res.status(500).json({
+            success: false,
+            message: 'Σφάλμα κατά την ενημέρωση της υποβολής στοιχείων'
         });
     }
 });

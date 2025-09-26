@@ -231,7 +231,7 @@
 
         {{!-- Sidebar με πληροφορίες --}}
         <div class="col-lg-4">
-            {{#if submission}}
+            {{#unless newSubmission}}
             <div class="card">
                 <div class="card-header">
                     <h6 class="card-title">
@@ -242,9 +242,7 @@
                 <div class="card-body">
                     <small class="text-muted">
                         <strong>ID:</strong> {{submission.id}}<br>
-                        {{#if canteen.principal}}
-                        <strong>Διευθυντής:</strong> {{canteen.principal.name}}<br>
-                        {{/if}}
+                        <strong>Υποβλήθηκε από:</strong> {{check submission.submittedByPrincipal submission.submittedByPrincipal.name 'Προσωπικό Δήμου'}}<br>
                         <strong>Δημιουργήθηκε:</strong> {{date submission.createdAt}}<br>
                         {{#if submission.updatedAt}}
                         <strong>Τελευταία ενημέρωση:</strong> {{date submission.updatedAt}}<br>
@@ -253,9 +251,11 @@
                     </small>
                 </div>
             </div>
-            {{/if}}
+            {{/unless}}
 
-            <div class="card {{#if submission}}mt-3{{/if}}">
+            {{!-- Οδηγίες συμπλήρωσης --}}
+
+            <div class="card {{#unless newSubmission}}mt-3{{/unless}}">
                 <div class="card-header">
                     <h6 class="card-title">
                         <i class="ti-help me-2"></i>

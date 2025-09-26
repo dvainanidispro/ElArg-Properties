@@ -216,8 +216,9 @@
                     <small class="text-muted">
                         <strong>Δημιουργήθηκε:</strong> {{date submission.createdAt}}<br>
                         {{#if submission.updatedAt}}
-                        <strong>Τελευταία ενημέρωση:</strong> {{date submission.updatedAt}}
+                        <strong>Τελευταία ενημέρωση:</strong> {{date submission.updatedAt}}<br>
                         {{/if}}
+                        <strong>Υποβλήθηκε από:</strong> {{check submission.submittedByPrincipal submission.submittedByPrincipal.name 'Προσωπικό Δήμου'}}<br>
                     </small>
                 </div>
             </div>

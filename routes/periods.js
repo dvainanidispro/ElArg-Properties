@@ -18,6 +18,7 @@ const periods = Router();
 ////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PERIOD SUBMISSIONS   ////////////////////
 
 //* Πρέπει πχ το GET '/:periodId/submissions' να δηλωθεί πριν το GET /:id
+// Για αυτό, η σειρά είναι λίγο μπερδεμένη σε αυτό το αρχείο. 
 
 
 /**
@@ -69,6 +70,12 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
                             required: false
                         }
                     ]
+                },
+                {
+                    model: Models.Principal,
+                    as: 'submittedByPrincipal',
+                    attributes: ['id', 'name'],
+                    required: false
                 }
             ]
         });
@@ -123,7 +130,7 @@ periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (
             });
         }
         
-        // Ενημέρωση των στοιχείων υποβολής
+        // Ενημέρωση των στοιχείων υποβολής (το submittedBy δεν αλλάζει)
         const updateData = { ...req.body };
         delete updateData.id; // Αφαιρούμε το id από τα δεδομένα ενημέρωσης
         

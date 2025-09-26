@@ -34,6 +34,11 @@ const Submission = db.define('submission',
             type: DataTypes.DECIMAL(10, 2),
             comment: 'Κόστος ρεύματος για την περίοδο'
         },
+        submittedBy: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            comment: 'principal_id αν συμπληρώνεται από principal, αλλιώς NULL (συμπληρώνεται από user)'
+        },
         rent: DataTypes.DECIMAL(10, 2),
         tax_stamp: DataTypes.DECIMAL(10, 2),
         total: {
@@ -44,7 +49,7 @@ const Submission = db.define('submission',
                 const total = parseFloat(rent) + parseFloat(taxStamp);
                 return total.toFixed(2);
             }
-        }
+        },
     },
     {
         tableName: 'submissions',
