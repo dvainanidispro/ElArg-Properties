@@ -1,0 +1,390 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Breadcrumb -->
+        <div class="col-12 mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/canteens/periods">Περίοδοι</a></li>
+                    <li class="breadcrumb-item"><a href="/canteens/periods/{{period.id}}/submissions">Υποβολές {{period.code}}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Υποβολή Στοιχείων Περιόδου - {{canteen.name}}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">
+                        <i class="ti-clipboard me-2"></i>
+                        Υποβολή Στοιχείων Περιόδου - {{canteen.name}} [{{period.code}}]
+                    </h4>
+                    <div class="card-actions">
+                        <a href="/canteens/periods/{{period.id}}/submissions" class="btn btn-secondary btn-icon">
+                            <i class="ti-arrow-left me-1"></i>
+                            <span>Επιστροφή</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{!-- Πληροφορίες περιόδου και κυλικείου --}}
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="ti-info-alt me-2"></i>
+                                        Στοιχεία Κυλικείου
+                                    </h6>
+                                    <strong>Όνομα:</strong> {{canteen.name}}<br>
+                                    {{#if canteen.principal}}
+                                        <strong>Διευθυντής:</strong> {{canteen.principal.name}}<br>
+                                    {{/if}}
+                                    {{#if canteen.party}}
+                                        <strong>Μισθωτής:</strong> {{canteen.party.name}}<br>
+                                    {{/if}}
+                                    {{#if canteen.area}}
+                                        <strong>Επιφάνεια:</strong> {{canteen.area}} τ.μ.<br>
+                                    {{/if}}
+                                    {{#if canteen.lease}}
+                                        <strong>Λήξη Μίσθωσης:</strong> {{date canteen.lease.lease_end}}<br>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="ti-calendar me-2"></i>
+                                        Πληροφορίες Περιόδου
+                                    </h6>
+                                    <strong>Περίοδος:</strong> {{period.code}}<br>
+                                    <strong>Από:</strong> {{date period.start_date}}<br>
+                                    <strong>Έως:</strong> {{date period.end_date}}<br>
+                                    <strong>Προθεσμία:</strong> {{date period.submission_deadline}}<br>
+                                    <strong>Κατάσταση:</strong> 
+                                    {{#if period.active}}
+                                        <span class="badge bg-success">Ενεργή</span>
+                                    {{else}}
+                                        <span class="badge bg-secondary">Ανενεργή</span>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {{!-- Φόρμα υποβολής στοιχείων --}}
+                    <form id="submissionForm">
+                        <div class="row">
+                            {{!-- Principal ID (Hidden) --}}
+                            <input type="hidden" name="principal_id" value="{{canteen.principal.id}}">
+
+                            <hr>
+                            {{!-- Rent Offer --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="rentOffer" class="form-label fw-bold">
+                                    Οικονομική Προσφορά Μισθωτή (€) *
+                                </label>
+                    <input type="number" 
+                        class="form-control" 
+                        id="rentOffer" 
+                        name="rent_offer" 
+                        value="{{submission.rent_offer}}" 
+                        step="0.01" 
+                        min="0" 
+                        required>
+                                <div class="form-text text-muted">Η οικονομική προσφορά του μισθωτή για την περίοδο</div>
+                            </div>
+
+                            {{!-- Students --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="students" class="form-label fw-bold">
+                                    Αριθμός Μαθητών *
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="students" 
+                                       name="students" 
+                                       value="{{submission.students}}" 
+                                       min="0" 
+                                       step="1" 
+                                       required>
+                                <div class="form-text text-muted">Ο συνολικός αριθμός μαθητών του σχολείου για την περίοδο</div>
+                            </div>
+
+                            {{!-- Working Days --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="workingDays" class="form-label fw-bold">
+                                    Εργάσιμες Ημέρες *
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="workingDays" 
+                                       name="working_days" 
+                                       value="{{submission.working_days}}" 
+                                       min="0" 
+                                       step="1" 
+                                       required>
+                                <div class="form-text text-muted">Ο αριθμός εργάσιμων ημερών που λειτούργησε το σχολείο</div>
+                            </div>
+
+                            {{!-- Electricity Cost --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="electricityCost" class="form-label fw-bold">
+                                    Κόστος Ρεύματος (€) *
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="electricityCost" 
+                                       name="electricity_cost" 
+                                       value="{{submission.electricity_cost}}" 
+                                       min="0" 
+                                       step="0.01" 
+                                       required>
+                                <div class="form-text text-muted">Το κόστος ρεύματος που αναλογεί στο κυλικείο για την περίοδο</div>
+                            </div>
+
+                            <hr>
+
+                            {{!-- Rent --}}
+
+                            <div class="col-md-6 mb-3">
+                                <label for="rent" class="form-label fw-bold">
+                                    Μίσθωμα (€) *
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" 
+                                        class="form-control" 
+                                        id="rent" 
+                                        name="rent" 
+                                        value="{{submission.rent}}" 
+                                        min="0" 
+                                        step="0.01" 
+                                        required>
+                                    <button type="button" class="btn btn-secondary" id="autoCalcRent">Υπολογισμός</button>
+                                </div>
+                                <div class="form-text text-muted">Το μίσθωμα προς καταβολή για την περίοδο</div>
+                            </div>
+
+                            {{!-- Tax Stamp --}}
+                            <div class="col-md-6 mb-3">
+                                <label for="taxStamp" class="form-label fw-bold">
+                                    Χαρτόσημο (€) *
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" 
+                                        class="form-control" 
+                                        id="taxStamp" 
+                                        name="tax_stamp" 
+                                        value="{{submission.tax_stamp}}" 
+                                        min="0" 
+                                        step="0.01" 
+                                        required>
+                                    <button type="button" class="btn btn-secondary" id="autoCalcTaxStamp">Υπολογισμός</button>
+                                </div>
+                                <div class="form-text text-muted">Το ποσό του χαρτοσήμου</div>
+                            </div>
+                        </div>
+                        
+                        {{!-- Υπολογισμός συνόλου --}}
+                        {{#if submission}}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="ti-control-forward me-2"></i>
+                                            Υπολογισμοί
+                                        </h6>
+                                        <strong>Συνολικό Ποσό Είσπραξης:</strong> 
+                                        <span id="totalAmount">{{submission.total}}</span> €
+                                        <div class="form-text text-muted">Μίσθωμα + Χαρτόσημο</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
+                        
+                        {{!-- Κουμπιά ενεργειών --}}
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success btn-icon">
+                                        <i class="ti-check me-1"></i>
+                                        <span>{{#if newSubmission}}Δημιουργία{{else}}Ενημέρωση{{/if}} Υποβολής</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-icon" onclick="history.back()">
+                                        <i class="ti-arrow-left me-1"></i>
+                                        <span>Ακύρωση</span>
+                                    </button>
+                                    <bootstrap-spinner class="d-none"></bootstrap-spinner>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{!-- Sidebar με πληροφορίες --}}
+        <div class="col-lg-4">
+            {{#if submission}}
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title">
+                        <i class="ti-info me-2"></i>
+                        Πληροφορίες Υποβολής
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <strong>ID:</strong> {{submission.id}}<br>
+                        {{#if canteen.principal}}
+                        <strong>Διευθυντής:</strong> {{canteen.principal.name}}<br>
+                        {{/if}}
+                        <strong>Δημιουργήθηκε:</strong> {{date submission.createdAt}}<br>
+                        {{#if submission.updatedAt}}
+                        <strong>Τελευταία ενημέρωση:</strong> {{date submission.updatedAt}}<br>
+                        {{/if}}
+                        <strong>Συνολικό Ποσό Είσπραξης:</strong> {{submission.total}} €
+                    </small>
+                </div>
+            </div>
+            {{/if}}
+
+            <div class="card {{#if submission}}mt-3{{/if}}">
+                <div class="card-header">
+                    <h6 class="card-title">
+                        <i class="ti-help me-2"></i>
+                        Οδηγίες Συμπλήρωσης
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6><i class="ti-money me-1"></i> Οικονομικά Στοιχεία</h6>
+                        <p class="small text-muted">Συμπληρώστε την οικονομική προσφορά, το καταβληθέν μίσθωμα και το χαρτόσημο.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="ti-user me-1"></i> Στοιχεία Λειτουργίας</h6>
+                        <p class="small text-muted">Αριθμός μαθητών και εργάσιμες ημέρες για τον υπολογισμό αναλογιών.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="ti-bolt me-1"></i> Κόστος Ρεύματος</h6>
+                        <p class="small text-muted">Το κόστος ηλεκτρικού ρεύματος που αναλογεί στη χρήση του κυλικείου.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Υπολογισμός Μισθώματος
+    document.getElementById('autoCalcRent').addEventListener('click', function() {
+        const rentOffer = parseFloat(document.getElementById('rentOffer').value) || 0;
+        const students = parseFloat(document.getElementById('students').value) || 0;
+        const workingDays = parseFloat(document.getElementById('workingDays').value) || 0;
+        const rent = (1/189) * rentOffer * students * workingDays;
+        document.getElementById('rent').value = rent.toFixed(2);
+        calculateTotal();
+    });
+
+    // Υπολογισμός Χαρτοσήμου
+    document.getElementById('autoCalcTaxStamp').addEventListener('click', function() {
+        const rent = parseFloat(document.getElementById('rent').value) || 0;
+        const taxStamp = rent * 0.036;
+        document.getElementById('taxStamp').value = taxStamp.toFixed(2);
+        calculateTotal();
+    });
+
+    // Form για υποβολή/επεξεργασία submission
+    document.getElementById('submissionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        Q('bootstrap-spinner').show();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        
+        // Έλεγχος απαιτούμενων πεδίων
+        if (!data.students || !data.working_days || !data.electricity_cost) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία (*).');
+            return;
+        }
+        
+        // Μετατροπή numeric fields
+        ['rent_offer', 'students', 'working_days', 'electricity_cost', 'rent', 'tax_stamp', 'principal_id'].forEach(field => {
+            if (data[field]) {
+                data[field] = parseFloat(data[field]) || parseInt(data[field]);
+            }
+        });
+        
+    const isEdit = !{{#if newSubmission}}true{{else}}false{{/if}};
+        
+        try {
+            let url, method;
+            if (isEdit) {
+                url = `/canteens/periods/{{period.id}}/submissions/{{submission.id}}`;
+                method = 'PUT';
+            } else {
+                url = '/canteens/periods/submissions';
+                method = 'POST';
+                // Προσθήκη των IDs για νέα υποβολή
+                data.period_id = {{period.id}};
+                data.canteen_id = {{canteen.id}};
+            }
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            Q('bootstrap-spinner').show(false);
+            await Q.delay(0.1);
+            
+            if (result.success) {
+                const message = isEdit ? 'Η υποβολή ενημερώθηκε επιτυχώς!' : 'Η υποβολή δημιουργήθηκε επιτυχώς!';
+
+                // Εμφάνιση success modal με callback για navigation
+                showSuccessModal(message, 3000, () => {
+                    if (result.redirectUrl) {
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        window.location.href = '/canteens/periods/{{period.id}}/submissions/{{submission.id}}';
+                    }
+                });
+                
+            } else {
+                showErrorModal(result.message || 'Προέκυψε σφάλμα κατά την επεξεργασία της αίτησής σας.');
+            }
+        } catch (error) {
+            Q('bootstrap-spinner').show(false);
+            showErrorModal('Σφάλμα δικτύου: ' + error.message);
+        }
+    });
+
+    // Auto-calculate total amount
+    function calculateTotal() {
+        const rent = parseFloat(document.getElementById('rent').value) || 0;
+        const taxStamp = parseFloat(document.getElementById('taxStamp').value) || 0;
+        const total = rent + taxStamp;
+        
+        const totalElement = document.getElementById('totalAmount');
+        if (totalElement) {
+            totalElement.textContent = total.toFixed(2);
+        }
+    }
+
+    // Add event listeners for auto-calculation
+    document.getElementById('rent').addEventListener('input', calculateTotal);
+    document.getElementById('taxStamp').addEventListener('input', calculateTotal);
+});
+</script>

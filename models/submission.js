@@ -41,7 +41,8 @@ const Submission = db.define('submission',
             get() {
                 const rent = this.getDataValue('rent') || 0;
                 const taxStamp = this.getDataValue('tax_stamp') || 0;
-                return parseFloat(rent) + parseFloat(taxStamp);
+                const total = parseFloat(rent) + parseFloat(taxStamp);
+                return total.toFixed(2);
             }
         }
     },

@@ -5,7 +5,7 @@ import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 
 /**
- * Routes for managing periods (canteens only).
+ * Routes for managing periods (canteens only). Path: /canteens/periods
  * @type {Router}
  */
 
@@ -19,6 +19,131 @@ const periods = Router();
 
 //* Πρέπει πχ το GET '/:periodId/submissions' να δηλωθεί πριν το GET /:id
 
+
+/**
+ * GET /periods/:periodId/submissions/:submissionId - Εμφάνιση συγκεκριμένης υποβολής
+ */
+periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (req, res) => {
+    try {
+        const periodId = parseInt(req.params.periodId);
+        const submissionId = parseInt(req.params.submissionId);
+        
+        // Βρίσκουμε την περίοδο
+        const period = await Models.Period.findByPk(periodId);
+        if (!period || period.property_type !== 'canteen') {
+            return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
+        }
+        
+        // Βρίσκουμε την υποβολή με όλα τα σχετικά δεδομένα
+        const submission = await Models.Submission.findOne({
+            where: {
+                id: submissionId,
+                period_id: periodId,
+                property_type: 'canteen'
+            },
+            include: [
+                {
+                    model: Models.Canteen,
+                    as: 'canteen',
+                    include: [
+                        {
+                            model: Models.Principal,
+                            as: 'principal',
+                            attributes: ['id', 'name']
+                        },
+                        {
+                            model: Models.Lease,
+                            as: 'leases',
+                            include: [
+                                {
+                                    model: Models.Party,
+                                    as: 'party',
+                                    attributes: ['id', 'name']
+                                }
+                            ],
+                            where: {
+                                property_type: 'canteen'
+                            },
+                            order: [['lease_end', 'DESC']],
+                            limit: 1,
+                            required: false
+                        }
+                    ]
+                }
+            ]
+        });
+        
+        if (!submission) {
+            return res.status(404).render('errors/404', { message: 'Η υποβολή δεν βρέθηκε' });
+        }
+        
+        res.render('periods/edit-submission', {
+            period,
+            submission,
+            canteen: submission.canteen,
+            user: req.user,
+            title: `Υποβολή Στοιχείων - ${submission.canteen.name}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση υποβολής: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση υποβολής' });
+    }
+});
+
+/**
+ * PUT /periods/:periodId/submissions/:submissionId - Ενημέρωση υποβολής στοιχείων
+ */
+periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (req, res) => {
+    try {
+        const periodId = parseInt(req.params.periodId);
+        const submissionId = parseInt(req.params.submissionId);
+        
+        // Βρίσκουμε την περίοδο
+        const period = await Models.Period.findByPk(periodId);
+        if (!period || period.property_type !== 'canteen') {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Η περίοδος κυλικείων δεν βρέθηκε' 
+            });
+        }
+        
+        // Βρίσκουμε την υποβολή
+        const submission = await Models.Submission.findOne({
+            where: {
+                id: submissionId,
+                period_id: periodId,
+                property_type: 'canteen'
+            }
+        });
+        
+        if (!submission) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Η υποβολή δεν βρέθηκε' 
+            });
+        }
+        
+        // Ενημέρωση των στοιχείων υποβολής
+        const updateData = { ...req.body };
+        delete updateData.id; // Αφαιρούμε το id από τα δεδομένα ενημέρωσης
+        
+        await submission.update(updateData);
+        
+        log.info(`Η Υποβολή ${submission.id} ενημερώθηκε για την περίοδο ${period.code}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Η Υποβολή ενημερώθηκε επιτυχώς',
+            submission: submission
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ενημέρωση υποβολής: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά την ενημέρωση της Υποβολής' 
+        });
+    }
+});
 
 /**
  * GET /periods/:periodId/submissions - Εμφάνιση υποβολών στοιχείων για συγκεκριμένη περίοδο
@@ -226,12 +351,166 @@ periods.put('/:id', can('edit:content'), async (req, res) => {
 });
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////           ROUTES ΓΙΑ SUBMISSIONS       ////////////////////
 
+/**
+ * GET /canteens/submissions/new - Φόρμα για δημιουργία νέας υποβολής
+ * Χρησιμοποιείται από το link στο submissions template
+ */
+periods.get('/submissions/new', can('edit:content'), async (req, res) => {
+    try {
+        const periodId = parseInt(req.query.period_id);
+        const canteenId = parseInt(req.query.canteen_id);
+        
+        if (!periodId || !canteenId) {
+            return res.status(400).render('errors/400', { message: 'Απαιτούνται period_id και canteen_id' });
+        }
+        
+        // Βρίσκουμε την περίοδο
+        const period = await Models.Period.findByPk(periodId);
+        if (!period || period.property_type !== 'canteen') {
+            return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
+        }
+        
+        // Βρίσκουμε το κυλικείο
+        const canteen = await Models.Canteen.findByPk(canteenId, {
+            include: [
+                {
+                    model: Models.Principal,
+                    as: 'principal',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: Models.Lease,
+                    as: 'leases',
+                    include: [
+                        {
+                            model: Models.Party,
+                            as: 'party',
+                            attributes: ['id', 'name']
+                        }
+                    ],
+                    where: {
+                        property_type: 'canteen'
+                    },
+                    order: [['lease_end', 'DESC']],
+                    limit: 1,
+                    required: false
+                }
+            ]
+        });
 
+        if (!canteen) {
+            return res.status(404).render('errors/404', { message: 'Το κυλικείο δεν βρέθηκε' });
+        }
 
+        // Έλεγχος αν υπάρχει ήδη υποβολή για αυτήν την περίοδο και κυλικείο
+        const existingSubmission = await Models.Submission.findOne({
+            where: {
+                period_id: periodId,
+                property_id: canteenId,
+                property_type: 'canteen'
+            }
+        });
 
+        if (existingSubmission) {
+            return res.redirect(`/periods/${periodId}/submissions/${existingSubmission.id}`);
+        }
 
+        // Προσυμπλήρωση rent_offer από το lease.rent αν υπάρχει lease
+        let prefillSubmission = null;
+        const lease = canteen.leases && canteen.leases.length > 0 ? canteen.leases[0] : null;
+        if (lease && lease.rent) {
+            prefillSubmission = { rent_offer: lease.rent };
+        }
 
+        res.render('periods/edit-submission', {
+            period,
+            canteen,
+            submission: prefillSubmission,
+            newSubmission: true,
+            user: req.user,
+            title: `Νέα Υποβολή - ${canteen.name}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη φόρτωση φόρμας νέας υποβολής: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά τη φόρτωση της φόρμας' });
+    }
+});
+
+/**
+ * POST /canteens/submissions - Δημιουργία νέας υποβολής στοιχείων
+ */
+periods.post('/submissions', can('edit:content'), async (req, res) => {
+    try {
+        const { period_id, canteen_id, ...submissionData } = req.body;
+        
+        if (!period_id || !canteen_id) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Απαιτούνται period_id και canteen_id' 
+            });
+        }
+        
+        // Βρίσκουμε την περίοδο
+        const period = await Models.Period.findByPk(period_id);
+        if (!period || period.property_type !== 'canteen') {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Η περίοδος κυλικείων δεν βρέθηκε' 
+            });
+        }
+        
+        // Βρίσκουμε το κυλικείο
+        const canteen = await Models.Canteen.findByPk(canteen_id);
+        if (!canteen) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Το κυλικείο δεν βρέθηκε' 
+            });
+        }
+        
+        // Έλεγχος αν υπάρχει ήδη υποβολή
+        const existingSubmission = await Models.Submission.findOne({
+            where: {
+                period_id: period_id,
+                property_id: canteen_id,
+                property_type: 'canteen'
+            }
+        });
+        
+        if (existingSubmission) {
+            return res.status(400).json({
+                success: false,
+                message: 'Υπάρχει ήδη υποβολή για αυτήν την περίοδο και κυλικείο'
+            });
+        }
+        
+        // Δημιουργία νέας υποβολής
+        const newSubmission = await Models.Submission.create({
+            period_id: period_id,
+            property_id: canteen_id,
+            property_type: 'canteen',
+            ...submissionData
+        });
+        
+        log.info(`Νέα Υποβολή δημιουργήθηκε (ID: ${newSubmission.id}) για κυλικείο ${canteen.name} και περίοδο ${period.code}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Η Υποβολή δημιουργήθηκε επιτυχώς',
+            submission: newSubmission,
+            redirectUrl: `/canteens/periods/${period_id}/submissions/${newSubmission.id}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη δημιουργία υποβολής: ${error}`);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Σφάλμα κατά τη δημιουργία της Υποβολής' 
+        });
+    }
+});
 
 
 export default periods;
