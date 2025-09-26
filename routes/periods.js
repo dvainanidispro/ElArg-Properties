@@ -11,34 +11,17 @@ import log from '../controllers/logger.js';
 
 const periods = Router();
 
-/**
- * GET /periods - Εμφάνιση λίστας όλων των periods για canteens
- */
-periods.get('/', can('view:content'), async (req, res) => {
-    try {
-        const periods = await Models.Period.findAll({
-            where: { property_type: 'canteen' },
-            attributes: ['id', 'code', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'status', 'createdAt'],
-            order: [['end_date', 'DESC']]
-        });
-        
-        res.render('periods/periods', { 
-            periods,
-            user: req.user,
-            title: 'Περίοδοι Κυλικείων'
-        });
-    } catch (error) {
-        log.error(`Σφάλμα κατά την ανάκτηση περιόδων: ${error}`);
-        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση περιόδων' });
-    }
-});
 
 
+
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PERIOD SUBMISSIONS   ////////////////////
+
+//* Πρέπει πχ το GET '/:periodId/submissions' να δηλωθεί πριν το GET /:id
 
 
 /**
  * GET /periods/:periodId/submissions - Εμφάνιση υποβολών στοιχείων για συγκεκριμένη περίοδο
- * Πρέπει να μπει πριν το /:id για να μην "παρακαμφθεί" από αυτό
  */
 periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
     try {
@@ -50,7 +33,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
         }
         
-        // Βρίσκουμε όλα τα ενεργά canteens
+        // Βρίσκουμε όλα τα ενεργά canteens  TODO: Περιορισμός μόνο σε canteens με ενεργό lease
         const canteens = await Models.Canteen.findAll({
             where: {
                 active: true
@@ -81,6 +64,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
                 {
                     model: Models.Submission,
                     as: 'submissions',
+                    attributes: ['id', 'period_id', 'property_id', 'property_type', 'createdAt', 'updatedAt'],
                     where: {
                         period_id: periodId,
                         property_type: 'canteen'
@@ -124,6 +108,33 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////      ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PERIODS     ////////////////////
+
+
+/**
+ * GET /periods - Εμφάνιση λίστας όλων των periods για canteens
+ */
+periods.get('/', can('view:content'), async (req, res) => {
+    try {
+        const periods = await Models.Period.findAll({
+            where: { property_type: 'canteen' },
+            attributes: ['id', 'code', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'status', 'createdAt'],
+            order: [['end_date', 'DESC']]
+        });
+        
+        res.render('periods/periods', { 
+            periods,
+            user: req.user,
+            title: 'Περίοδοι Κυλικείων'
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση περιόδων: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση περιόδων' });
+    }
+});
+
+
 /**
  * GET /periods/:id - Εμφάνιση στοιχείων συγκεκριμένης περιόδου
  */
@@ -154,6 +165,7 @@ periods.get('/:id', can('view:content'), async (req, res) => {
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση της περιόδου' });
     }
 });
+
 
 /**
  * PUT /periods/:id - Ενημέρωση στοιχείων περιόδου

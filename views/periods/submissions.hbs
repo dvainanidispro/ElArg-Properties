@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <h1 class="card-title h3">
                         <i class="ti-files me-2"></i>
-                        Υποβολές Στοιχείων - {{period.code}}
+                        Υποβολές Στοιχείων Περιόδου - Περίοδος {{period.code}}
                     </h1>
                     <div class="card-subtitle text-muted mt-2">
                         <i class="ti-calendar me-1"></i>
@@ -59,6 +59,7 @@
                                     {{!-- <th>Κατάσταση Κυλικείου</th> --}}
                                     <th>Λήξη Μίσθωσης</th>
                                     <th>Υποβολή Στοιχείων</th>
+                                    <th>Ημερομηνία Υποβολής</th>
                                     <th>Ενέργειες</th>
                                 </tr>
                             </thead>
@@ -113,6 +114,13 @@
                                         {{/if}}
                                     </td>
                                     <td>
+                                        {{#if this.submission.updatedAt}}
+                                            {{date this.submission.updatedAt}}
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
                                         {{#if this.hasSubmission}}
                                             <a href="/canteens/submissions/{{this.submission.id}}" class="btn btn-outline-primary btn-sm me-1" title="Προβολή Υποβολής">
                                                 <i class="ti-eye" ></i>
@@ -126,7 +134,7 @@
                                 </tr>
                                 {{else}}
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted py-4">
+                                    <td colspan="9" class="text-center text-muted py-4">
                                         <i class="ti-files fa-2x mb-2"></i><br>
                                         Δεν βρέθηκαν κυλικεία για αυτήν την περίοδο
                                     </td>
