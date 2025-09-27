@@ -130,7 +130,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-grid">
+                    <div class="d-grid gap-4">
                         {{#if propertyDetails}}
                         <button type="button" class="btn btn-danger delete-property-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-property-id="{{propertyDetails.id}}" 
@@ -139,7 +139,6 @@
                             Διαγραφή Ακινήτου
                         </button>
                         
-                        <hr>
                         {{/if}}
                         
                         <a href="/properties/properties" class="btn btn-secondary">

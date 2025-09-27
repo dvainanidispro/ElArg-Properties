@@ -119,7 +119,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-grid">
+                    <div class="d-grid gap-4">
                         {{#if canteenDetails}}
                         <button type="button" class="btn btn-danger delete-canteen-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-canteen-id="{{canteenDetails.id}}" 
@@ -128,7 +128,6 @@
                             Διαγραφή Κυλικείου
                         </button>
                         
-                        <hr>
                         {{/if}}
                         
                         <a href="/canteens/canteens" class="btn btn-secondary">

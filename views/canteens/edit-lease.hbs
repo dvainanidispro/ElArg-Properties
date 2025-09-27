@@ -151,7 +151,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-grid gap-2">
+                    <div class="d-grid gap-5">
                         {{#if leaseDetails}}
                         <button type="button" class="btn btn-danger delete-lease-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-lease-id="{{leaseDetails.id}}" 
@@ -160,24 +160,23 @@
                             Διαγραφή Μίσθωσης
                         </button>
                         
-                        <hr>
-                        
                         <!-- Συνδέσεις για περισσότερες πληροφορίες -->
-                        {{#if leaseDetails.canteen}}
-                        <a href="/canteens/canteens/{{leaseDetails.canteen.id}}" class="btn btn-info">
-                            <i class="ti-shopping-cart me-1"></i>
-                            Προβολή Κυλικείου
-                        </a>
-                        {{/if}}
+                        <div class="d-grid gap-3">
+                            {{#if leaseDetails.canteen}}
+                            <a href="/canteens/canteens/{{leaseDetails.canteen.id}}" class="btn btn-info">
+                                <i class="ti-shopping-cart me-1"></i>
+                                Προβολή Κυλικείου
+                            </a>
+                            {{/if}}
+                            
+                            {{#if leaseDetails.party}}
+                            <a href="/properties/parties/{{leaseDetails.party.id}}" class="btn btn-success">
+                                <i class="ti-user me-1"></i>
+                                Προβολή Συμβαλλομένου
+                            </a>
+                            {{/if}}
+                        </div>
                         
-                        {{#if leaseDetails.party}}
-                        <a href="/properties/parties/{{leaseDetails.party.id}}" class="btn btn-success">
-                            <i class="ti-user me-1"></i>
-                            Προβολή Συμβαλλομένου
-                        </a>
-                        {{/if}}
-                        
-                        <hr>
                         {{/if}}
                         
                         <button type="button" class="btn btn-secondary" onclick="history.back()">

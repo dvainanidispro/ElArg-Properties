@@ -119,7 +119,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-grid">
+                    <div class="d-grid gap-4">
                         {{#if partyDetails}}
                         <button type="button" class="btn btn-danger delete-party-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-party-id="{{partyDetails.id}}" 
@@ -128,7 +128,6 @@
                             Διαγραφή Συμβαλλομένου
                         </button>
                         
-                        <hr>
                         {{/if}}
                         
                         <a href="/properties/parties" class="btn btn-secondary">
