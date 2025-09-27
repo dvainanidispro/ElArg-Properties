@@ -10,10 +10,8 @@ import { Op } from 'sequelize';
  */
 const myCanteen = Router();
 
-
-
-
-
+// Middleware για έλεγχο edit:ownschool δικαιωμάτων
+myCanteen.use(can('edit:ownschool'));
 
 
 
@@ -54,7 +52,7 @@ function calculateRentFields(canteen, students, workingDays) {
 /**
  * GET / - Εμφάνιση όλων των κυλικείων του συνδεδεμένου principal
  */
-myCanteen.get('/', can('edit:ownschool'), async (req, res) => {
+myCanteen.get('/', async (req, res) => {
     try {
 
         //# 1. Βρίσκουμε τα κυλικεία του Διευθυντή
@@ -161,7 +159,7 @@ myCanteen.get('/', can('edit:ownschool'), async (req, res) => {
 /**
  * GET /:canteenId/periods - Εμφάνιση περιόδων συγκεκριμένου κυλικείου του principal
  */
-myCanteen.get('/:canteenId/periods', can('edit:ownschool'), async (req, res) => {
+myCanteen.get('/:canteenId/periods', async (req, res) => {
     try {
         const canteenId = parseInt(req.params.canteenId);
 
@@ -257,7 +255,7 @@ myCanteen.get('/:canteenId/periods', can('edit:ownschool'), async (req, res) => 
 /**
  * GET /:canteenId/periods/:periodId/submission - Εμφάνιση φόρμας υποβολής στοιχείων για συγκεκριμένη περίοδο
  */
-myCanteen.get('/:canteenId/periods/:periodId/submission', can('edit:ownschool'), async (req, res) => {
+myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
     try {
         const canteenId = parseInt(req.params.canteenId);
         const periodId = parseInt(req.params.periodId);
@@ -356,7 +354,7 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', can('edit:ownschool'),
 /**
  * POST /:canteenId/periods/:periodId/submission - Δημιουργία νέου submission
  */
-myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool'), async (req, res) => {
+myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
     try {
         const canteenId = parseInt(req.params.canteenId);
         const periodId = parseInt(req.params.periodId);
@@ -478,7 +476,7 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', can('edit:ownschool')
 /**
  * PUT /:canteenId/periods/:periodId/submission - Ενημέρωση υπάρχοντος submission (μόνο αν period.status = 'open')
  */
-myCanteen.put('/:canteenId/periods/:periodId/submission', can('edit:ownschool'), async (req, res) => {
+myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
     try {
         const canteenId = parseInt(req.params.canteenId);
         const periodId = parseInt(req.params.periodId);

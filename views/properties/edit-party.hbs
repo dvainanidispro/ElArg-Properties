@@ -121,7 +121,7 @@
                 <div class="card-body">
                     <div class="d-grid">
                         {{#if partyDetails}}
-                        <button type="button" class="btn btn-danger delete-party-btn"
+                        <button type="button" class="btn btn-danger delete-party-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-party-id="{{partyDetails.id}}" 
                                 data-party-name="{{partyDetails.name}}">
                             <i class="ti-trash me-1"></i>

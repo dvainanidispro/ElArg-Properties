@@ -97,6 +97,10 @@ const handlebarsConfig = {
             const user = this.user;
             return userHasPermission(user, permission);
         },
+        /* example: {{#unless (can2 'edit:content' ../user)}}d-none{{/unless}} χρήσιμο μέσα σε {{#each}} όπου δεν λειουργεί το can */
+        can2: function(permission, user) {
+            return userHasPermission(user, permission);
+        },
         leaseDirectionText: descriptions.leaseDirection,
         rentFrequencyText: descriptions.rentFrequency,
     }

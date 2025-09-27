@@ -51,7 +51,7 @@
                                                 <a href="/canteens/leases/{{canteenDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή μίσθωσης</a>
                                             {{/if}}
                                             <a href="/canteens/canteens/{{canteenDetails.id}}/leases/history" class="btn btn-secondary" type="button"> Ιστορικό μισθώσεων</a>
-                                            <a href="/canteens/leases/new?canteen_id={{canteenDetails.id}}&redirect=/canteens/canteens/{{canteenDetails.id}}" class="btn btn-success" type="button">Προσθήκη μίσθωσης</a>
+                                            <a href="/canteens/leases/new?canteen_id={{canteenDetails.id}}&redirect=/canteens/canteens/{{canteenDetails.id}}" class="btn btn-success {{#unless (can 'edit:content')}}d-none{{/unless}}" type="button">Προσθήκη μίσθωσης</a>
                                         </div>
                                     {{/if}}
                                 </div>
@@ -121,7 +121,7 @@
                 <div class="card-body">
                     <div class="d-grid">
                         {{#if canteenDetails}}
-                        <button type="button" class="btn btn-danger delete-canteen-btn"
+                        <button type="button" class="btn btn-danger delete-canteen-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-canteen-id="{{canteenDetails.id}}" 
                                 data-canteen-name="{{canteenDetails.name}}">
                             <i class="ti-trash me-1"></i>

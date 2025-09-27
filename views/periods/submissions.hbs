@@ -22,7 +22,7 @@
                         <div class="col-12">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h6 class="card-title">Στατιστικά Υποβολών για την περίοδο</h6>
+                                    <h6 class="card-title">Στατιστικά Υποβολών για την περίοδο {{#if (can 'edit:content')}}test{{/if}}</h6>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="text-center">
@@ -131,8 +131,9 @@
                                                 <i class="ti-eye" ></i>
                                             </a>
                                         {{else}}
-                                            <a href="/canteens/periods/submissions/new?period_id={{../period.id}}&canteen_id={{this.id}}" class="btn btn-primary btn-sm btn-icon" title="Νέα Υποβολή">
-                                                <i class="ti-plus me-1"></i>Υποβολή
+                                            <a href="/canteens/periods/submissions/new?period_id={{../period.id}}&canteen_id={{this.id}}" class="btn btn-primary btn-sm btn-icon {{#unless (can2 'edit:content' ../user)}}d-none{{/unless}}" title="Νέα Υποβολή">
+                                                <i class="ti-plus me-1"></i>
+                                                <span>Υποβολή</span>
                                             </a>
                                         {{/if}}
                                     </td>
@@ -157,5 +158,9 @@
 
 <script type="module">
     Q('~period-description').set(`(${periodDescription('{{period.start_date}}' , '{{period.end_date}}')})`);
-
 </script>
+
+<style>
+    /* Για τον viewer που του λείπουν κουμπιά στον πίνακα */
+    tr{ height: 3.5rem }
+</style>

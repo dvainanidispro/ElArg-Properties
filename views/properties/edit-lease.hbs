@@ -172,7 +172,7 @@
                 <div class="card-body">
                     <div class="d-grid gap-2">
                         {{#if leaseDetails}}
-                        <button type="button" class="btn btn-danger delete-lease-btn"
+                        <button type="button" class="btn btn-danger delete-lease-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-lease-id="{{leaseDetails.id}}" 
                                 data-lease-name="Μίσθωση #{{leaseDetails.id}}">
                             <i class="ti-trash me-1"></i>

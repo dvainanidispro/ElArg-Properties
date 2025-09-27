@@ -93,7 +93,7 @@
                 <div class="card-body">
                     <div class="d-grid">
                         {{#if principalDetails}}
-                        <button type="button" class="btn btn-danger delete-principal-btn"
+                        <button type="button" class="btn btn-danger delete-principal-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-principal-id="{{principalDetails.id}}" 
                                 data-principal-name="{{principalDetails.name}}">
                             <i class="ti-trash me-1"></i>
