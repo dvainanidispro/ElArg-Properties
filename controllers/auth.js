@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import ms from 'ms';
 import log from './logger.js';
 import Models from '../models/models.js';
@@ -142,32 +142,6 @@ let validateCredentials = async (req, res, next) => {
 };
 
 
-/** Δημιουργεί το Magic Link για τον χρήστη */
-let createMagicLink = async (email) => {
-    // Array με τα models που θα ψάξουμε για το email με τη σειρά
-    const userModels = [Models.Principal, Models.User];
-    
-    let user = null;
-    
-    // Ψάχνουμε διαδοχικά σε όλα τα models
-    for (const Model of userModels) {
-        user = await Model.findOne({ 
-            where: { email: email, active: true },
-            raw: true,
-            nest: true
-        });
-        if (user) break; // Αν βρήκαμε τον χρήστη, σταματάμε την αναζήτηση
-    }
-    
-    if (!user) {
-        log.warn(`Magic Link requested for non-existing email: ${email}`);
-        return false;
-    }
-    
-    log.info(`Magic Link requested for email: ${email}`);
-    let token = createAccessToken(user, true);
-    return `<a href="/login?token=${token}">${process.env.LISTENINGURL}/login?token=${token}</a>`;
-};
 
 
 /** 
@@ -232,4 +206,4 @@ let validateUser = (req, res, next) => {
 
 
 
-export { validateCredentials, validateUser, createMagicLink, hashPassword };
+export { validateCredentials, validateUser, hashPassword, createAccessToken };

@@ -2,8 +2,9 @@ import { Router } from 'express';
 const router = Router();
 
 
-import { validateCredentials, validateUser, createMagicLink } from '../controllers/auth.js';
-import log from '../controllers/logger.js';
+import { validateCredentials } from '../controllers/auth.js';
+import { createAndSendMagicLink } from '../controllers/email.js';
+// import log from '../controllers/logger.js';
 
 
 
@@ -26,7 +27,7 @@ router.post('/userlogin', validateCredentials, (req, res) => {
 
 router.post('/magiclink', async (req, res) => {
     let email = req.body.email;
-    let magicLink = await createMagicLink(email);
+    let magicLink = await createAndSendMagicLink(email);
     if (magicLink) {
         // Send the magic link to the user's email
         res.status(200).send( magicLink );
