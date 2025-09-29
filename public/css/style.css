@@ -16,6 +16,8 @@
     --bs-warning-rgb: 235, 152, 0;
     --bs-pink: hsl(332, 100%, 60%);
 
+    --card-gradient: radial-gradient(circle at center, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+
     interpolate-size: allow-keywords; /* Smooth transitions */
 
 }
@@ -51,6 +53,10 @@ table.dim-table td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+table.dim-table tr{ 
+    /* Μόνο για την παρούσα εφαρμογή, επειδή δεν έχουν όλες οι γραμμές κουμπιά (πχ viewer periods) */
+    height: 3.5rem; 
 }
 
 
@@ -211,19 +217,25 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
 }
 
 .card.canteen-card{
-    background-color: hsl(210, 95%, 86%);
     border: 1px solid hsl(210, 95%, 78%) !important;
+    background-color: hsl(210, 95%, 83%);
+    background-image: var(--card-gradient);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.5);
     &:hover {
         transform: translateY(-5px);
     }
 }
+.big-shadow{
+    box-shadow: 1px 3px 5px 0px rgba(0, 0, 0, 0.5);
+}
 
-.dashboard-link-card{
+
+.dashboard-card{
     padding: 0.3rem;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.5);
+    background-image: var(--card-gradient);
     &:hover {
         transform: translateY(-3px);
     }
