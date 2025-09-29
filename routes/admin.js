@@ -1,5 +1,5 @@
 import express from 'express';
-import crypto from 'crypto';
+import { hashPassword } from '../controllers/auth.js';
 import Models from '../models/models.js';
 import { can, roles, permissions } from '../controllers/roles.js';
 import { Op } from 'sequelize';
@@ -7,14 +7,7 @@ import log from '../controllers/logger.js';
 
 const admin = express.Router();
 
-/**
- * Κρυπτογραφεί ένα password με SHA-256 hashing
- * @param {string} password - Το password προς κρυπτογράφηση
- * @returns {string} Το hashed password
- */
-const hashPassword = (password) => {
-    return crypto.createHash('sha256').update(password).digest('hex');
-};
+
 
 
 

@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import ms from 'ms';
 import log from './logger.js';
-
 import Models from '../models/models.js';
 // import { Op } from 'sequelize';
 
@@ -52,6 +51,33 @@ const cookieOptions = {
 
 
 
+/////////////////////////////    HASHING AND VALIDATING PASSWORD    /////////////////////////////
+
+/**
+ * Κρυπτογραφεί ένα password με SHA-256 hashing και τυχαίο salt
+ * @param {string} password - Το password προς κρυπτογράφηση
+ * @returns {string} Το hashed password με salt (μορφή: salt:hash)
+ */
+const hashPassword = (password) => {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.createHash('sha256').update(salt + password).digest('hex');
+    return `${salt}:${hash}`;
+};
+
+/**
+ * Ελέγχει αν το password ταιριάζει με το hashedPassword (μορφή: salt:hash). Επιστρέφει true ή false.
+ * @param {string} password - Το password προς έλεγχο
+ * @param {string} hashedPassword - Το αποθηκευμένο hash με salt
+ * @returns {boolean}
+ */
+let validatePassword = (password, hashedPassword) => {
+    const [salt, hash] = hashedPassword.split(':');
+    if (!salt || !hash) return false;
+    const hashToCompare = crypto.createHash('sha256').update(salt + password).digest('hex');
+    return hashToCompare === hash;
+};
+
+
 
 /////////////////////////////    FUNCTIONS & MIDDLEWARE    /////////////////////////////
 
@@ -71,8 +97,8 @@ let getUserFromDatabaseByCredentials = async (email, password) => {
     if (!user) return false;
     // log.dev({user});
 
-    // let passwordMatch = (password === user.password);   
-    let passwordMatch = (crypto.createHash('sha256').update(password).digest('hex') === user.password);  
+    // let passwordMatch = (password === user.password);
+    let passwordMatch = validatePassword(password, user.password);
     if (passwordMatch) {return user}
     else {return false}
 };
@@ -206,4 +232,4 @@ let validateUser = (req, res, next) => {
 
 
 
-export { validateCredentials, validateUser, createMagicLink };
+export { validateCredentials, validateUser, createMagicLink, hashPassword };

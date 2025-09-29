@@ -1,5 +1,5 @@
 import express from 'express';
-import crypto from 'crypto';
+import { hashPassword } from '../controllers/auth.js';
 import Models from '../models/models.js';
 import { roles, can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
@@ -64,7 +64,7 @@ account.post('/profile', async (req, res) => {
         const updateData = { name };
         if (password) {
             // Hash του password με SHA-256
-            updateData.password = crypto.createHash('sha256').update(password).digest('hex');
+            updateData.password = hashPassword(password);
         }
 
         // Ενημέρωση χρήστη
