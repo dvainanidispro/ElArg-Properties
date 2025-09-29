@@ -34,7 +34,7 @@ function isFreePath(path) {
 
 /** Το audience του Access Token. Εδω, χρησιμοποιείται και ως aud και ως iss */
 let aud, iss;
-aud = iss = process.env.LISTENINGURL;
+aud = iss = process.env.LISTENINGDOMAIN || "localhost";
 /** H διάρκεια του Token σε string */
 const tokenExpirationTime = process.env.TOKENEXPIRATIONTIME;
 /** H διάρκεια του Magic Link Token σε string */

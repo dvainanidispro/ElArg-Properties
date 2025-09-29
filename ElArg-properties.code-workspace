@@ -4,5 +4,14 @@
 			"path": "."
 		}
     ],
-    "settings": {}
+    "settings": {
+        "VSCodeCounter.exclude": [
+            "**/.gitignore",
+            "**/.vscode/**",
+            "**/node_modules/**",
+            "**/adminator.js",
+            "**/adminator.css",
+            "**/fonts/**",
+        ]
+    }
 }

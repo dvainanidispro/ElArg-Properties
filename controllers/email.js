@@ -4,8 +4,7 @@ import log from './logger.js';
 import { createAccessToken } from './auth.js';
 
 
-
-
+const appName = process.env.APPNAME || "Εφαρμογή Ακινήτων Δήμου Ελληνικού - Αργυρούπολης";
 
 
 /**
@@ -30,7 +29,56 @@ const createAndSendMagicLink = async (email) => {
     }
     log.info(`Magic Link requested for email: ${email}`);
     let token = createAccessToken(user, true);
-    return `<a href="/login?token=${token}">${process.env.LISTENINGURL}/login?token=${token}</a>`;
+    user.link = `${process.env.LISTENINGURL}/login?token=${token}`;
+    // Εδώ θα έστελνα το email με το Magic Link, αλλά για την ώρα απλά το επιστρέφω
+    // log.info(`Magic Link for ${email}: ${user.link}`);
+    // return emailBodyTemplate("magicLink", user);
+    return `<a href="/login?token=${token}">${user.link}</a>`;
 };
+
+
+
+/**
+ * Επιστρέφει το σώμα του email, ανάλογα το σκοπό του email
+ * @param {string} purpose - Ο σκοπός του email (π.χ. "magicLink", "reminder")
+ */
+const emailBodyTemplate = (purpose, user) => {
+    switch (purpose) {
+        case "magicLink":
+              return /*HTML*/`
+              Για να συνδεθείτε στην εφαρμογή, κάντε κλικ στον παρακάτω σύνδεσμο:
+              <br>
+              <a href="${user.link}">Είσοδος στη Εφαρμογή</a>
+              <br>
+              <br>
+              ${appName}
+              `;
+        case "reminder":
+              return /*HTML*/`
+              Αυτή είναι μια υπενθύμιση.
+              <br>
+              <br>
+              ${appName}
+              `;
+        default:
+            return false;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export { createAndSendMagicLink };
