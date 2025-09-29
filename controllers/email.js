@@ -31,9 +31,7 @@ const createAndSendMagicLink = async (email) => {
     let token = createAccessToken(user, true);
     user.link = `${process.env.LISTENINGURL}/login?token=${token}`;
     // Εδώ θα έστελνα το email με το Magic Link, αλλά για την ώρα απλά το επιστρέφω
-    // log.info(`Magic Link for ${email}: ${user.link}`);
-    // return emailBodyTemplate("magicLink", user);
-    return `<a href="/login?token=${token}">${user.link}</a>`;
+    return emailBodyTemplate("magicLink", user);
 };
 
 
