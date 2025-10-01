@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
+import { getActiveCanteenPeriod } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 import { Op } from 'sequelize';
@@ -70,12 +71,7 @@ dashboard.get(['/', '/dashboard'],
 
 
         //# 3 Αριθμοί για το card για την τρέχουσα περίοδο υποβολής
-        // Βρες την πιο πρόσφατη περίοδο που είναι open ή closed
-        const recentPeriods = await Models.Period.findAll({
-            order: [['end_date', 'DESC']],
-            limit: 5
-        });
-        const currentPeriod = recentPeriods.find(p => ['open', 'closed'].includes(p.status));
+        const currentPeriod = await getActiveCanteenPeriod();
 
         if (currentPeriod) {
             activeCanteenPeriod.code = currentPeriod.code;

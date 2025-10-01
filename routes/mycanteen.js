@@ -78,7 +78,7 @@ myCanteen.get('/', async (req, res) => {
 
         //# 2. Ελέγχουμε τις εκκρεμότητές του Διευθυντή (αν δεν έχει υποβάλει στοιχεία για ανοιχτές περιόδους)
         
-        // Φέρε τις 2 τελευταίες periods που είναι open ή closed (δεν γίνεται φίλτρο σε virtual field)
+        // Φέρε τις 3 τελευταίες periods που είναι open ή closed (δεν γίνεται φίλτρο σε virtual field)
         const latestPeriods = await Models.Period.findAll({
             order: [['end_date', 'DESC']],
             limit: 3 // Φέρνουμε τα 3 πιο πρόσφατα (δεν μας νοιάζουν τα παλιότερα)

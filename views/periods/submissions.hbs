@@ -19,35 +19,38 @@
                 <div class="card-body">
                     {{#if canteens}}
                     <div class="row mb-4">
-                        <div class="col-12">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h6 class="card-title">Στατιστικά Υποβολών για την περίοδο {{#if (can 'edit:content')}}test{{/if}}</h6>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="text-center">
-                                                <h4 class="text-primary mb-0">{{canteens.length}}</h4>
-                                                <small class="text-muted">Συνολικά Κυλικεία</small>
+                            <div class="col-12 my-3">
+                                <div class="card border-secondary" href="#">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0 d-flex align-items-center gap-3">
+                                            <i class="ti-calendar me-2"></i>
+                                            <span>Στατιστικά Υποβολών για την περίοδο</span>
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row text-center align-items-center">
+                                            <div class="col-md-4">
+                                                <h6 class="text-muted">Συνολικά Κυλικεία</h6>
+                                                <div class="text-primary fw-semibold h4">
+                                                    {{canteens.length}}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="text-center">
-                                                <h4 class="text-success mb-0">{{submittedCount}}</h4>
-                                                <small class="text-muted">Υποβλήθηκαν</small>
+                                            <div class="col-md-4">
+                                                <h6 class="text-muted">Υποβλήθηκαν</h6>
+                                                <h2 class="text-success display-6 fw-semibold">{{submittedCount}}</h2>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="text-center">
-                                                <h4 class="text-warning mb-0">{{pendingCount}}</h4>
-                                                <small class="text-muted">Εκκρεμούν</small>
+                                            <div class="col-md-4">
+                                                <h6 class="text-muted">Εκκρεμούν</h6>
+                                                <h2 class="text-warning display-6 fw-semibold">{{pendingCount}}</h2>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div>
                     {{/if}}
+
+                    <hr>
                     
                     <div class="table-responsive">
                         <table class="dim-table table table-striped table-hover align-middle">
