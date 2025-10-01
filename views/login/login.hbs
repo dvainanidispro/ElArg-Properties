@@ -11,18 +11,20 @@
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-4">
                     <div class="card shadow-sm">
-                        <div class="card-body">
+                        <div class="card-body" >
                             <h2 class="card-title text-center mb-4">Είσοδος</h2>
+                            <div id="login-text">
                                 <p>Πληκτρολογήστε τη διεύθυνση e-mail σας και κάντε κλικ στο κουμπί "Αποστολή συνδέσμου". <br>
                                     Θα λάβετε ένα σύνδεσμο (link) στο e-mail σας, με τον οποίο θα συνδεθείτε στην εφαρμογή.
                                 </p>
-                            <form action="/magiclink" method="POST" autocomplete="off">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">E-mail</label>
-                                    <input type="email" class="form-control" id="email" name="email" required autofocus>
-                                </div>
-                                <button type="submit" class="btn btn-success w-100">Αποστολή συνδέσμου</button>
-                            </form>
+                                <form id="magiclink-form" autocomplete="off">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">E-mail</label>
+                                        <input type="email" class="form-control" id="email" name="email" required autofocus>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">Αποστολή συνδέσμου</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -38,10 +40,9 @@
 
 
         <script type="module">
-
             const error = {{check error 'true' 'false'}};
             const token = Q.url.get('{{tokenCookieName}}');
-            if (error) { Q('#error').show() } 
+            if (error) { Q('#error').show() }
             if (token) {
                 Q('#verifying').show();
                 // Έλεγχος εγκυρότητας του JWT token
@@ -62,6 +63,34 @@
                 }
             } else {
                 Q('#login-modal').show();
+            }
+
+            // Magic link form AJAX submit
+            const form = document.getElementById('magiclink-form');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = form.email.value;
+                    // Προαιρετικά: disable κουμπί
+                    form.querySelector('button[type="submit"]').disabled = true;
+                    try {
+                        const res = await fetch('/magiclink', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: `email=${encodeURIComponent(email)}`
+                        });
+                        const html = await res.text();
+                        Q('#login-text').innerHTML = html;
+                    } catch (err) {
+                        Q('#error').set('Σφάλμα σύνδεσης με τον server.');
+                        Q('#error').show();
+                    } finally {
+                        form.querySelector('button[type="submit"]').disabled = false;
+                    }
+                });
             }
         </script>
 

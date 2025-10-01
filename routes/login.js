@@ -29,8 +29,12 @@ router.post('/magiclink', async (req, res) => {
     let email = req.body.email;
     let magicLink = await createAndSendMagicLink(email);
     if (magicLink) {
-        // Send the magic link to the user's email
-        res.status(200).send( magicLink );
+        // res.status(200).send( `
+        //     <div class="alert alert-success text-center" role="alert">
+        //         O σύνδεσμος για την είσοδο στην Εφαρμογή έχει σταλεί στο email σας.
+        //     </div>
+        // ` );
+        res.status(200).send(magicLink);
     } else {
         res.status(404).json({ message: "User not found." });
     }
