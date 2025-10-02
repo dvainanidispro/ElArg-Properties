@@ -174,7 +174,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
                 {
                     model: Models.Principal,
                     as: 'principal',
-                    attributes: ['id', 'name']
+                    attributes: ['id', 'name','email'],
                 },
                 {
                     model: Models.Lease,

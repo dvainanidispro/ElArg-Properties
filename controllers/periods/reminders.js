@@ -151,7 +151,13 @@ async function sendRemindersForPendingSubmissions () {
                     code: period.code
                 },
                 status: "sent",
-                canteens: canteensWithResults
+                results: {
+                    all: emailResults.length,
+                    sent: emailResults.filter(r => r.success && !r.skipped).length,
+                    failed: emailResults.filter(r => !r.success && !r.skipped).length,
+                    skipped: emailResults.filter(r => r.skipped).length
+                },
+                canteens: canteensWithResults,
             },
         });
 

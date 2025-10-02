@@ -64,12 +64,14 @@
                         <table id="submissions" class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    {{!-- <th class="sortable" data-sort-type="number">ID</th> --}}
+                                    <th class="sortable d-none" data-sort-type="number">ID</th>
                                     <th class="sortable">Όνομα Κυλικείου</th>
                                     <th>Διευθυντής</th>
+                                    <th class="d-none">email Διευθυντή</th>
                                     <th>Μισθωτής</th>
+                                    <th class="d-none">ΑΦΜ Μισθωτή</th>
                                     {{!-- <th>Κατάσταση Κυλικείου</th> --}}
-                                    {{!-- <th class="d-none d-xxl-table-cell">Λήξη<br>Μίσθωσης</th> --}}
+                                    <th class="d-none d-xxl-table-cell">Λήξη <br> Μίσθωσης</th>
                                     <th class="sortable">Υποβολή <br>Στοιχείων</th>
                                     <th class="sortable">Ημερομηνία <br>Υποβολής</th>
                                     <th class="sortable d-none d-xxl-table-cell" data-sort-type="number">Κόστος <br>Ρεύματος</th>
@@ -80,7 +82,7 @@
                             <tbody>
                                 {{#each canteens}}
                                 <tr>
-                                    {{!-- <td>{{this.id}}</td> --}}
+                                    <td class="d-none">{{this.id}}</td>
                                     <td>
                                         <a href="/canteens/canteens/{{this.id}}" class="text-primary text-decoration-none">
                                             <strong>{{this.name}}</strong>
@@ -93,12 +95,14 @@
                                             <span class="text-muted">-</span>
                                         {{/if}}
                                     </td>
+                                    <td class="d-none">
+                                        {{this.principal.email}}
+                                    </td>
                                     <td>
-                                        {{#if this.party}}
-                                            <a href="/properties/parties/{{this.party.id}}" class="text-primary text-decoration-none">{{this.party.name}} <br> <span class="text-muted"> - {{this.party.afm}}</span></a>
-                                        {{else}}
-                                            <span class="text-muted">-</span>
-                                        {{/if}}
+                                        {{this.party.name}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{this.party.afm}}
                                     </td>
                                     {{!-- <td>
                                         {{#if this.active}}
@@ -107,13 +111,13 @@
                                             <span class="badge bg-secondary fs-6">Ανενεργό</span>
                                         {{/if}}
                                     </td> --}}
-                                    {{!-- <td class="d-none d-xxl-table-cell">
+                                    <td class="d-none d-xxl-table-cell" data-value="{{this.lease.lease_end}}">
                                         {{#if this.lease.lease_end}}
                                             {{date this.lease.lease_end}}
                                         {{else}}
                                             <span class="text-muted">-</span>
                                         {{/if}}
-                                    </td> --}}
+                                    </td>
                                     <td>
                                         {{#if this.hasSubmission}}
                                             <span class="badge bg-success fs-6">
