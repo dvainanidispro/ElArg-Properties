@@ -123,6 +123,36 @@ function periodDescription(startDate, endDate) {
 
 
 
+/**
+ * Κατεβάζει έναν HTML πίνακα ως αρχείο Excel
+ * Απαιτεί το SheetJS (xlsx) library - https://docs.sheetjs.com/docs/getting-started/installation/standalone
+ * @param {string} tableID - Το ID του HTML table στοιχείου
+ * @param {string} filename - Το όνομα του αρχείου Excel που θα δημιουργηθεί (προαιρετικό)
+ */
+function downloadTableAsExcel(tableID, filename = 'table.xlsx', sheetname = 'Sheet1') {
+    const table = document.getElementById(tableID);
+    if (!table) { console.error('Table not found:', tableID); return; }
+
+    // Clone για να μην πειραχτεί το DOM
+    const clone = table.cloneNode(true);
+
+    // Αν υπάρχει data-value χρησιμοποιείται, αλλιώς το textContent
+    clone.querySelectorAll('td, th').forEach(cell => {
+      const dataValue = cell.getAttribute('data-value') ?? cell.getAttribute('data-sort-value');
+      if (dataValue !== null && dataValue !== "") {
+        cell.textContent = dataValue;
+      } else {
+        cell.textContent = cell.textContent;
+      }
+    });
+
+    const wb = XLSX.utils.table_to_book(clone, { sheet: sheetname });
+    XLSX.writeFile(wb, filename);
+}
+
+
+
+
 // Μεταβλητή για αποθήκευση του onClose callback
 let currentOnCloseCallback = null;
 
@@ -155,13 +185,6 @@ function showSuccessModal(message, autoCloseDelay = null, onClose = null) {
         }, autoCloseDelay);
     }
 }
-
-
-
-
-
-
-
 
 /**
  * Εμφανίζει ένα error modal με μήνυμα

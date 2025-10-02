@@ -159,13 +159,13 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
     try {
         const periodId = parseInt(req.params.periodId);
         
-        // Βρίσκουμε την περίοδο
+        //# 1 Βρίσκουμε την περίοδο
         const period = await Models.Period.findByPk(periodId);
         if (!period || period.property_type !== 'canteen') {
             return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
         }
         
-        // Βρίσκουμε όλα τα ενεργά canteens  TODO: Περιορισμός μόνο σε canteens με ενεργό lease
+        //# 2 Βρίσκουμε όλα τα ενεργά canteens
         const canteens = await Models.Canteen.findAll({
             where: {
                 active: true
@@ -183,7 +183,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
                         {
                             model: Models.Party,
                             as: 'party',
-                            attributes: ['id', 'name']
+                            attributes: ['id', 'name', 'afm']
                         }
                     ],
                     where: {
@@ -196,7 +196,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
                 {
                     model: Models.Submission,
                     as: 'submissions',
-                    attributes: ['id', 'period_id', 'property_id', 'property_type', 'updatedAt', 'rent'],
+                    attributes: ['id', 'period_id', 'property_id', 'property_type', 'updatedAt', 'rent', 'electricity_cost'],
                     where: {
                         period_id: periodId,
                         property_type: 'canteen'
@@ -207,7 +207,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             order: [['name', 'ASC']]
         });
 
-        // Μετασχηματίζουμε τα δεδομένα για το view
+        //# 3 Μετασχηματίζουμε τα δεδομένα για το view
         const canteensWithSubmissions = canteens.map(canteen => ({
             id: canteen.id,
             name: canteen.name,
@@ -219,10 +219,28 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             submission: canteen.submissions?.[0] || null
         }));
 
-        // Υπολογισμός στατιστικών
+        //# 4 Ταξινόμηση με βάση τις υποβολές
+        // Καντίνες χωρίς υποβολή πρώτες. Μετά, ταξινόμιση κατά submission.updatedAt (χρονική σειρά).
+        canteensWithSubmissions.sort((a, b) => {
+            const aHas = !!(a.submission);
+            const bHas = !!(b.submission);
+
+            // καντίνες χωρίς υποβολή πρώτες
+            if (!aHas && bHas) return -1;
+            if (aHas && !bHas) return 1;
+
+            // και οι δύο δεν έχουν υποβολή -> διατηρούμε την τρέχουσα σειρά (δεν μας νοιάζει σειρά)
+            if (!aHas && !bHas) return 0;
+
+            // και οι δύο έχουν υποβολή - assume updatedAt υπάρχει, oldest first
+            return new Date(a.submission.updatedAt) - new Date(b.submission.updatedAt);
+        });
+
+        //# 5 Υπολογισμός στατιστικών
         const submittedCount = canteensWithSubmissions.filter(c => c.hasSubmission).length;
         const pendingCount = canteensWithSubmissions.length - submittedCount;
 
+        //# 6 Render
         res.render('periods/submissions', {
             period,
             canteens: canteensWithSubmissions,
@@ -231,6 +249,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             user: req.user,
             title: `Υποβολές Στοιχείων - ${period.code}`
         });
+
     } catch (error) {
         log.error(`Σφάλμα κατά την ανάκτηση υποβολών: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση υποβολών' });

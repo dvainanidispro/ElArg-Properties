@@ -54,8 +54,14 @@ table.dim-table td {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+/* Να συρρικνώνονται τα κελιά αντί να εμφανίζεται η μπάρα κύλισης */
+table.dim-table {
+    max-width:100%;
+    table-layout:fixed;         
+    border-collapse:collapse;
+}
+/* Μόνο για την παρούσα εφαρμογή, επειδή δεν έχουν όλες οι γραμμές κουμπιά (πχ viewer periods) */
 table.dim-table tr{ 
-    /* Μόνο για την παρούσα εφαρμογή, επειδή δεν έχουν όλες οι γραμμές κουμπιά (πχ viewer periods) */
     height: 3.5rem; 
 }
 
