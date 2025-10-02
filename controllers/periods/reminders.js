@@ -11,6 +11,7 @@ import { greekdate } from '../utils.js';
 
 const appName = process.env.APPNAME || "Εφαρμογή Ακινήτων Δήμου Ελληνικού - Αργυρούπολης";
 const appUrl = process.env.LISTENINGURL || "http://localhost";
+const emailUser = process.env.EMAILUSERNAME ?? process.env.EMAILUSER ?? "";
 
 
 let reminderBodyTemplate = (canteen, period) => {
@@ -21,7 +22,7 @@ let reminderBodyTemplate = (canteen, period) => {
         <p>Παρακαλούμε, όπως υποβάλετε τα απαραίτητα στοιχεία το συντομότερο δυνατό.</p>
         <p>Η προθεσμία υποβολής λήγει στις ${greekdate(period.submission_deadline)}.</p>
         <br>
-        <p>Μπορείτε να συνδεθείτε στην Εφαρμογή <a href="${appUrl}">εδώ</a> χρησιμοποιώντας την παρούσα διεύθυνση email.</p>
+        <p>Μπορείτε να συνδεθείτε στην Εφαρμογή <a href="${appUrl}">εδώ</a> χρησιμοποιώντας την παρούσα διεύθυνση email (${canteen.principal.email}).</p>
         <p></p>
         <p>Ευχαριστούμε για τη συνεργασία σας.</p>
         <br>
@@ -36,7 +37,7 @@ let reminderBodyTemplate = (canteen, period) => {
  *
  * @async
  * @function
- * @returns {Promise<void>} Δεν επιστρέφει τιμή. Καταγράφει αποτελέσματα και σφάλματα μέσω log και βάσης δεδομένων.
+ * @returns {Promise<void>} Δεν επιστρέφει τιμή. Καταγράφει αποτελέσματα μέσω log και βάσης δεδομένων.
  */
 async function sendRemindersForPendingSubmissions () {
     try {
@@ -177,20 +178,20 @@ async function sendRemindersForPendingSubmissions () {
  */
 function sendEmailForPendingCanteen (canteen, period) {
     return new Promise((resolve) => {
+        let mailOptions = {
+            from: `"${appName}" <${emailUser}>`,
+            to: canteen.principal.email,
+            subject: `Υπενθύμιση υποβολής στοιχείων για το Σχολικό Κυλικείο`,
+            html: reminderBodyTemplate(canteen, period),
+        };
+        log.dev(mailOptions);
         try {
             if (process.env.SENDACTUALEMAILS == 'false') {      // Μόνο αν έχει τεθεί false
                 // Προσομοίωση αποστολής email με καθυστέρηση
                 setTimeout(() => {
                     resolve(true);
-                }, Math.random() * 20000); // 20000ms delay
+                }, Math.random() * 10000); // 10000ms delay max
             } else {
-                let mailOptions = {
-                    from: `"${process.env.APPNAME}" <${process.env.EMAILUSER}>`,
-                    to: canteen.principal.email,
-                    subject: `Υπενθύμιση υποβολής στοιχείων για το Σχολικό Κυλικείο`,
-                    html: reminderBodyTemplate(canteen, period)
-                };
-                log.dev(mailOptions);
                 transporter.sendMail(mailOptions, (error, info) => {
                     if (error) {
                         log.error(`Σφάλμα αποστολής email: ${error.message}`);
@@ -202,7 +203,7 @@ function sendEmailForPendingCanteen (canteen, period) {
                 });
             }
         } catch (error) {
-            log.error(`Σφάλμα στη sendEmailForPendingCanteen: ${error.message}`);
+            log.error(`Σφάλμα στην εκτέλεση της sendEmailForPendingCanteen: ${error.message}`);
             resolve(false);
         }
     });

@@ -56,8 +56,7 @@ async function generatePeriod(date = dateForPeriodGeneration) {
         log.error(`Σφάλμα κατά τη δημιουργία περιόδου: ${error.message}`);
         throw error;
     } finally {
-        log.system("Ολοκληρώθηκε η διαδικασία δημιουργίας περιόδων.");
-        process.exit(0);
+        log.system("Ολοκληρώθηκε η διαδικασία δημιουργίας περιόδου.");
     }
 }
 
@@ -95,10 +94,8 @@ async function generatePeriodsForYear(year) {
 
     } catch (error) {
         log.error(`Σφάλμα κατά τη δημιουργία περιόδων για το έτος ${year}: ${error.message}`);
-        throw error;
     } finally {
         log.system("Ολοκληρώθηκε η διαδικασία δημιουργίας περιόδων.");
-        process.exit(0);
     }
 }
 

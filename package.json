@@ -10,8 +10,10 @@
     "dev": "node --env-file=.env --watch server.js",
     "start": "node server.js",
     "start:local": "node --env-file=.env server.js",
-    "generate:period": "node --env-file=.env controllers/actions/generate-period.js",
-    "remind:principals": "node --env-file=.env controllers/actions/remind-principals.js"
+    "generate:period:local": "node --env-file=.env controllers/actions/generate-period.js",
+    "remind:principals:local": "node --env-file=.env controllers/actions/remind-principals.js",
+    "generate:period": "node controllers/actions/generate-period.js",
+    "remind:principals": "node controllers/actions/remind-principals.js"
   },
   "keywords": [],
   "author": "",
