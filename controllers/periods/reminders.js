@@ -183,7 +183,7 @@ function sendEmailForPendingCanteen (canteen, period) {
                 setTimeout(() => {
                     resolve(true);
                 }, Math.random() * 20000); // 20000ms delay
-            } else {    // TODO: Εδώ θα μπει η πραγματική αποστολή email
+            } else {
                 let mailOptions = {
                     from: `"${process.env.APPNAME}" <${process.env.EMAILUSER}>`,
                     to: canteen.principal.email,
@@ -209,7 +209,5 @@ function sendEmailForPendingCanteen (canteen, period) {
 }
 
 
-await sendRemindersForPendingSubmissions ();  // Για δοκιμή, αφαιρείται στην παραγωγή
-process.exit(0);  // Τερματισμός του script
 
 export { sendRemindersForPendingSubmissions };

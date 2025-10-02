@@ -105,8 +105,6 @@ async function generatePeriodsForYear(year) {
 
 
 
-await generatePeriod();
-
 
 export { generatePeriod };
 
