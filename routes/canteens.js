@@ -723,7 +723,7 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
     try {
         const { 
             canteen_id, party_id, lease_start, lease_end, rent, 
-            rent_adjustment_info, guarantee_letter, notes, active 
+            rent_adjustment_info, guarantee_letter, revision_number, notes, active 
         } = req.body;
         
         // Βασικός έλεγχος δεδομένων
@@ -763,9 +763,10 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
             lease_end: lease_end || null,
             rent: rent ? parseFloat(rent) : null,
             rent_frequency: 'quarterly', // Κυλικεία είναι πάντα τριμηνιαία
-            rent_adjustment_info: rent_adjustment_info || '',
-            guarantee_letter: guarantee_letter || '',
-            notes: notes || '',
+            rent_adjustment_info,
+            guarantee_letter,
+            revision_number,
+            notes,
             active: active !== undefined ? active : true
         });
         
@@ -793,7 +794,7 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
         const leaseId = parseInt(req.params.id);
         const { 
             lease_start, lease_end, rent, 
-            rent_adjustment_info, guarantee_letter, notes, active 
+            rent_adjustment_info, guarantee_letter, revision_number, notes, active 
         } = req.body;
         
         const lease = await Models.Lease.findByPk(leaseId);
@@ -810,9 +811,10 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
             lease_end: lease_end || lease.lease_end,
             rent: rent ? parseFloat(rent) : lease.rent,
             rent_frequency: 'quarterly', // Κυλικεία είναι πάντα τριμηνιαία
-            rent_adjustment_info: rent_adjustment_info || lease.rent_adjustment_info,
-            guarantee_letter: guarantee_letter || lease.guarantee_letter,
-            notes: notes !== undefined ? notes : lease.notes,
+            rent_adjustment_info,
+            guarantee_letter,
+            revision_number,
+            notes,
             active: active !== undefined ? active : lease.active
         };
         

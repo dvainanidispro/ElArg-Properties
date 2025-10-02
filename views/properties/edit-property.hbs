@@ -40,10 +40,10 @@
                                            readonly>
                                     {{#if propertyDetails}}
                                         {{#if propertyDetails.lease}}
-                                            <a href="/properties/leases/{{propertyDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή Μίσθωσης</a>
+                                            <a href="/properties/leases/{{propertyDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή<br>Μίσθωσης</a>
                                         {{/if}}
                                         {{#if (can 'edit:content')}}
-                                            <a href="/properties/leases/new?property_id={{propertyDetails.id}}&redirect=/properties/properties/{{propertyDetails.id}}" class="btn btn-success " type="button">Δημιουργία Μίσθωσης</a>
+                                            <a href="/properties/leases/new?property_id={{propertyDetails.id}}&redirect=/properties/properties/{{propertyDetails.id}}" class="btn btn-success " type="button">Δημιουργία<br>Μίσθωσης</a>
                                         {{/if}}
                                     {{/if}}
                                 </div>
