@@ -30,6 +30,7 @@ function calculateRentFields(canteen, students, workingDays) {
     
     // Υπολογισμός rent: (1/189) * rent_offer * students * working_days
     const rent = (1/189) * rentOffer * students * workingDays;
+    //NOTE: Σε περίπτωση αλλαγής, θα πρέπει να γίνει αλλαγή και στο edit-submission.hbs (προβολή submission από user)
     
     // Υπολογισμός tax_stamp: rent * 0.036
     const taxStamp = rent * 0.036;

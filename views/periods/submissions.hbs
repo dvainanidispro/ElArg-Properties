@@ -27,22 +27,26 @@
                                             <span>Στατιστικά Υποβολών για την περίοδο</span>
                                         </h5>
                                     </div>
-                                    <div class="card-body">
-                                        <div class="row text-center align-items-center">
-                                            <div class="col-md-4">
-                                                <h6 class="text-muted">Συνολικά Κυλικεία</h6>
-                                                <div class="text-primary fw-semibold h4">
-                                                    {{canteens.length}}
-                                                </div>
+                                    <div class="card-body d-flex justify-content-around align-items-center flex-wrap text-center">
+                                        <div class="">
+                                            <h6 class="text-muted">Συνολικά Κυλικεία</h6>
+                                            <div class="text-primary fw-semibold display-6">
+                                                {{canteens.length}}
                                             </div>
-                                            <div class="col-md-4">
-                                                <h6 class="text-muted">Υποβλήθηκαν</h6>
-                                                <h2 class="text-success display-6 fw-semibold">{{submittedCount}}</h2>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <h6 class="text-muted">Εκκρεμούν</h6>
-                                                <h2 class="text-warning display-6 fw-semibold">{{pendingCount}}</h2>
-                                            </div>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="text-muted">Υποβλήθηκαν</h6>
+                                            <h2 class="text-success display-6 fw-semibold">{{submittedCount}}</h2>
+                                        </div>
+                                        <div class="">
+                                            <h6 class="text-muted">Εκκρεμούν</h6>
+                                            <h2 class="text-warning display-6 fw-semibold">{{pendingCount}}</h2>
+                                        </div>
+                                        <div class="">
+                                            <button id="exportExcelBtn" class="btn btn-success btn-icon my-2">
+                                                <i class="ti-file me-1"></i>
+                                                <span>Εξαγωγή υποβολών σε Excel</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -50,12 +54,6 @@
                     </div>
                     {{/if}}
 
-                    <div class="d-flex justify-content-end">
-                        <button id="exportExcelBtn" class="btn btn-success button-icon my-2">
-                            <i class="ti-file me-1"></i>
-                            <span>Εξαγωγή υποβολών σε Excel</span>
-                        </button>
-                    </div>
                     
                     <div class="table-responsive">
                         <table id="submissions" class="dim-table table table-striped table-hover align-middle">
