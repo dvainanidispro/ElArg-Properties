@@ -67,7 +67,7 @@
                         <table class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th class="sortable" data-sort-type="number">ID</th>
+                                    {{!-- <th class="sortable" data-sort-type="number">ID</th> --}}
                                     <th>Συμβαλλόμενος</th>
                                     <th class="sortable" data-sort-type="date-gr">Έναρξη</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη</th>
@@ -80,7 +80,7 @@
                             <tbody>
                                 {{#each leases}}
                                 <tr>
-                                    <td>{{this.id}}</td>
+                                    {{!-- <td>{{this.id}}</td> --}}
                                     <td>
                                         {{#if this.party}}
                                             <div>

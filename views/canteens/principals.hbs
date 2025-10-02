@@ -21,7 +21,7 @@
                         <table class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th class="sortable" data-sort-type="number">ID</th>
+                                    {{!-- <th class="sortable" data-sort-type="number">ID</th> --}}
                                     <th class="sortable">Όνομα</th>
                                     <th>Email</th>
                                     <th>Επικοινωνία</th>
@@ -33,7 +33,7 @@
                             <tbody>
                                 {{#each principals}}
                                 <tr>
-                                    <td>{{this.id}}</td>
+                                    {{!-- <td>{{this.id}}</td> --}}
                                     <td>
                                         <a href="/canteens/principals/{{this.id}}" class="text-primary text-decoration-none">{{this.name}}</a>
                                     </td>

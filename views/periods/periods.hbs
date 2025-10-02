@@ -13,7 +13,7 @@
                         <table class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>ID</th>
+                                    {{!-- <th>ID</th> --}}
                                     <th>Κωδικός</th>
                                     <th>Έναρξη περιόδου</th>
                                     <th>Λήξη περιόδου</th>
@@ -27,7 +27,7 @@
                             <tbody>
                                 {{#each periods}}
                                 <tr>
-                                    <td>{{this.id}}</td>
+                                    {{!-- <td>{{this.id}}</td> --}}
                                     <td>
                                         <a href="/canteens/periods/{{this.id}}" class="text-primary text-decoration-none">
                                             <strong>{{this.code}}</strong>

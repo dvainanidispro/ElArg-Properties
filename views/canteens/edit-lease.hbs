@@ -32,12 +32,12 @@
                     <form id="leaseForm">
                         <div class="row">
                             {{#if leaseDetails}}
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-3 d-none">
                                 <label for="leaseId" class="form-label fw-bold">ID Μίσθωσης</label>
                                 <input type="text" class="form-control" id="leaseId" name="id" value="{{leaseDetails.id}}" readonly>
                                 <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
                             </div>
-                            <div class="col-md-6 mb-3"></div>
+                            <div class="col-md-6 mb-3 d-none"></div>
                             {{/if}}
                             
                             <div class="col-md-6 mb-3">

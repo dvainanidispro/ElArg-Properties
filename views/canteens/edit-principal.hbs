@@ -24,12 +24,12 @@
                     <form id="principalForm">
                         <div class="row">
                             {{#if principalDetails}}
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-3 d-none">
                                 <label for="principalId" class="form-label fw-bold">ID Διευθυντή</label>
                                 <input type="text" class="form-control" id="principalId" name="id" value="{{principalDetails.id}}" readonly>
                                 <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
                             </div>
-                            <div class="col-md-6 mb-3"></div>
+                            <div class="col-md-6 mb-3 d-none"></div>
                             {{/if}}
                             <div class="col-md-6 mb-3">
                                 <label for="principalName" class="form-label fw-bold">Όνομα</label>

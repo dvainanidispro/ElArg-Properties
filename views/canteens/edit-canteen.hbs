@@ -24,12 +24,12 @@
                     <form id="canteenForm">
                         <div class="row">
                             {{#if canteenDetails}}
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-3 d-none">
                                 <label for="canteenId" class="form-label fw-bold">ID Κυλικείου</label>
                                 <input type="text" class="form-control" id="canteenId" name="id" value="{{canteenDetails.id}}" readonly>
                                 <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
                             </div>
-                            <div class="col-md-6 mb-3"></div>
+                            <div class="col-md-6 mb-3 d-none"></div>
                             {{/if}}
                             <div class="col-md-6 mb-3">
                                 <label for="canteenName" class="form-label fw-bold">Όνομα Σχολείου ή Κυλικείου *</label>
