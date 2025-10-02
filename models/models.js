@@ -6,6 +6,7 @@ import { Lease } from "./lease.js";
 import { Party } from "./party.js";
 import { Period } from "./period.js";
 import { Submission } from "./submission.js";
+import { Log } from "./log.js";
 import { db, databaseConnectionTest } from '../config/database.js';
 import log from '../controllers/logger.js';
 
@@ -151,5 +152,6 @@ export default {
     Lease,
     Period,
     Submission,
-    syncModels
+    Log,
+    syncModels,
 };

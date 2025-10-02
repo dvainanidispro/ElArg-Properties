@@ -6,6 +6,7 @@ import { createAccessToken } from './auth.js';
 
 
 const appName = process.env.APPNAME || "Εφαρμογή Ακινήτων Δήμου Ελληνικού - Αργυρούπολης";
+const appUrl = process.env.LISTENINGURL || "http://localhost";
 
 const emailConfig = {
     host: process.env.EMAILHOST,
@@ -17,7 +18,12 @@ const emailConfig = {
     auth: {
         user: process.env.EMAILUSER,
         pass: process.env.EMAILPASS
-    }
+    },
+    pool: true,
+    // maxConnections: 5,  // 5 = default
+    // maxMessages: 100,    // 100 = default
+    // rateLimit: 5,        // 5 messages per second = default, deprecated για μελλοντικές εκδόσεις nodemailer
+
 };
 const transporter = nodemailer.createTransport(emailConfig);
 
