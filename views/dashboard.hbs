@@ -99,28 +99,39 @@
                                 <div class="card-header">
                                     <h5 class="card-title mb-0 d-flex align-items-center gap-3">
                                         <i class="ti-calendar me-2"></i>
-                                        <span>Ενεργή περίοδος υποβολής για Κυλικεία</span>
+                                        <span>Ενεργή περίοδος υποβολών για Κυλικεία</span>
                                     </h5>
                                 </div>
-                                <div class="card-body">
-                                    <div class="row text-center align-items-center">
-                                        <div class="col-md-4">
-                                            <h6 class="text-muted">Περίοδος</h6>
-                                            <div class="text-primary fw-semibold h4">
-                                                <div>{{activeCanteenPeriod.code}}</div>
-                                                <div class="ms-2 text-muted" data-variable="period-description"></div>
-                                            </div>
+                                {{#if activeCanteenPeriod.code}}
+                                <div class="card-body d-flex justify-content-around align-items-center flex-wrap text-center">
+                                    <div class="">
+                                        <h6 class="text-muted">Περίοδος</h6>
+                                        <div class="text-primary fw-semibold h4">
+                                            <div>{{activeCanteenPeriod.code}}</div>
+                                            <div class="ms-2 text-muted" data-variable="period-description"></div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <h6 class="text-muted">Ολοκληρωμένες υποβολές</h6>
-                                            <h2 class="text-success display-6 fw-semibold">{{activeCanteenPeriod.completed}}</h2>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6 class="text-muted">Εκκρεμείς υποβολές</h6>
-                                            <h2 class="text-warning display-6 fw-semibold">{{activeCanteenPeriod.pending}}</h2>
+                                    </div>
+                                    <div class="">
+                                        <h6 class="text-muted">Ολοκληρωμένες υποβολές</h6>
+                                        <h2 class="text-success display-6 fw-semibold">{{activeCanteenPeriod.completed}}</h2>
+                                    </div>
+                                    <div class="">
+                                        <h6 class="text-muted">Εκκρεμείς υποβολές</h6>
+                                        <h2 class="text-warning display-6 fw-semibold">{{activeCanteenPeriod.pending}}</h2>
+                                    </div>
+                                    <div>
+                                        <div class="easy-pie-chart" data-percent="{{activeCanteenPeriod.submittedPercent}}" data-bar-color="ForestGreen" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="80" data-animate="1000">
+                                            <span class="fw-bold"></span>
                                         </div>
                                     </div>
                                 </div>
+                                {{else}}
+                                <div class="card-body">
+                                    <div class="alert alert-info mb-0">
+                                        Δεν υπάρχει ενεργή περίοδος υποβολών για Κυλικεία.
+                                    </div>
+                                </div>
+                                {{/if}}
                             </a>
                         </div>
                     </div>

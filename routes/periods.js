@@ -239,12 +239,14 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
         //# 5 Υπολογισμός στατιστικών
         const submittedCount = canteensWithSubmissions.filter(c => c.hasSubmission).length;
         const pendingCount = canteensWithSubmissions.length - submittedCount;
+        const submittedPercent = canteensWithSubmissions.length > 0 ? Math.round((submittedCount / canteensWithSubmissions.length) * 100) : 0;
 
         //# 6 Render
         res.render('periods/submissions', {
             period,
             canteens: canteensWithSubmissions,
             submittedCount,
+            submittedPercent,
             pendingCount,
             user: req.user,
             title: `Υποβολές Στοιχείων - ${period.code}`

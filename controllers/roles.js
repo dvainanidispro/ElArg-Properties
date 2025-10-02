@@ -36,7 +36,7 @@ const extenderRoles = {
     principal: {
         name: 'principal',
         user: false,
-        description: 'Διευθυντής με δικαιώματα υποβολής στοιχείων κυλικείου',
+        description: 'Διευθυντής με δικαιώματα υποβολών στοιχείων κυλικείου',
         permissions: ['edit:ownschool']
     },
 }

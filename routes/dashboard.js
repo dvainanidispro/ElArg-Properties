@@ -70,7 +70,7 @@ dashboard.get(['/', '/dashboard'],
         leasesExpiringSoon.sum = leasesExpiringSoon.canteens + leasesExpiringSoon.properties;
 
 
-        //# 3 Αριθμοί για το card για την τρέχουσα περίοδο υποβολής
+        //# 3 Αριθμοί για το card για την τρέχουσα περίοδο υποβολών
         const currentPeriod = await getActiveCanteenPeriod();
 
         if (currentPeriod) {
@@ -83,6 +83,7 @@ dashboard.get(['/', '/dashboard'],
                 where: { period_id: currentPeriod.id, property_type: 'canteen' }
             });
             activeCanteenPeriod.pending = activeCanteens - activeCanteenPeriod.completed;
+            activeCanteenPeriod.submittedPercent = activeCanteens > 0 ? Math.round((activeCanteenPeriod.completed / activeCanteens) * 100) : 0;
         }
 
 
