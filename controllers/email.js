@@ -117,4 +117,4 @@ const emailBodyTemplate = (purpose, user) => {
 
 
 
-export { createAndSendMagicLink };
+export { createAndSendMagicLink, transporter, emailBodyTemplate };

@@ -460,6 +460,26 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
 
         log.info(`Νέο submission δημιουργήθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principalId} (ID: ${newSubmission.id})`);
 
+        // Δημιουργία Log εγγραφής για την υποβολή
+        await Models.Log.create({
+            type: 'submission',
+            severity: 'info',
+            body: {
+                action: 'create',
+                submissionId: newSubmission.id,
+                periodId: periodId,
+                canteenId: canteenId,
+                canteenName: canteen.name,
+                principalId: principalId,
+                principalEmail: req.user.email,
+                data: {
+                    students: parseInt(students),
+                    working_days: parseInt(working_days),
+                    electricity_cost: parseFloat(electricity_cost),
+                }
+            }
+        });
+
         res.status(201).json({
             success: true,
             message: 'Η υποβολή στοιχείων δημιουργήθηκε επιτυχώς',
@@ -579,6 +599,26 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         await submission.update(updateData);
 
         log.info(`Το Submission ενημερώθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principalId} (ID: ${submission.id})`);
+
+        // Δημιουργία Log εγγραφής για την ενημέρωση υποβολής
+        await Models.Log.create({
+            type: 'submission',
+            severity: 'info',
+            body: {
+                action: 'update',
+                submissionId: submission.id,
+                periodId: periodId,
+                canteenId: canteenId,
+                canteenName: canteen.name,
+                principalId: principalId,
+                principalEmail: req.user.email,
+                data: {
+                    students: parseInt(students),
+                    working_days: parseInt(working_days),
+                    electricity_cost: parseFloat(electricity_cost),
+                },
+            }
+        });
 
         res.json({
             success: true,

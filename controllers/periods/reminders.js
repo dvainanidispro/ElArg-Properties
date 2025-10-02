@@ -4,8 +4,31 @@
  */
 
 import Models from '../../models/models.js';
+import { transporter } from '../email.js';
 import log from '../logger.js';
 import { getActiveCanteenPeriod } from './periods.js';
+import { greekdate } from '../utils.js';
+
+const appName = process.env.APPNAME || "Εφαρμογή Ακινήτων Δήμου Ελληνικού - Αργυρούπολης";
+const appUrl = process.env.LISTENINGURL || "http://localhost";
+
+
+let reminderBodyTemplate = (canteen, period) => {
+    return `
+        <p>Αγαπητέ/ή Διευθυντή/Διευθύντρια του σχολείου ${canteen.name},</p>
+        <br>
+        <p>Σας υπενθυμίζουμε ότι εκκρεμεί η υποβολή στοιχείων για το Κυλικείο της ευθύνης σας.</p>
+        <p>Παρακαλούμε, όπως υποβάλετε τα απαραίτητα στοιχεία το συντομότερο δυνατό.</p>
+        <p>Η προθεσμία υποβολής λήγει στις ${greekdate(period.submission_deadline)}.</p>
+        <br>
+        <p>Μπορείτε να συνδεθείτε στην Εφαρμογή <a href="${appUrl}">εδώ</a> χρησιμοποιώντας την παρούσα διεύθυνση email.</p>
+        <p></p>
+        <p>Ευχαριστούμε για τη συνεργασία σας.</p>
+        <br>
+        <p>Με εκτίμηση,</p>
+        <p>Η ομάδα διαχείρισης της Εφαρμογής</p>
+    `;
+};
 
 
 /**
@@ -155,7 +178,22 @@ function sendEmailForPendingCanteen (canteen, period) {
                     resolve(true);
                 }, Math.random() * 20000); // 20000ms delay
             } else {    // TODO: Εδώ θα μπει η πραγματική αποστολή email
-                resolve(true);
+                let mailOptions = {
+                    from: `"${process.env.APPNAME}" <${process.env.EMAILUSER}>`,
+                    to: canteen.principal.email,
+                    subject: `Υπενθύμιση υποβολής στοιχείων για το Σχολικό Κυλικείο`,
+                    html: reminderBodyTemplate(canteen, period)
+                };
+                log.dev(mailOptions);
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        log.error(`Σφάλμα αποστολής email: ${error.message}`);
+                        resolve(false);
+                    } else {
+                        log.info(`Email στάλθηκε: ${info.response}`);
+                        resolve(true);
+                    }
+                });
             }
         } catch (error) {
             log.error(`Σφάλμα στη sendEmailForPendingCanteen: ${error.message}`);
