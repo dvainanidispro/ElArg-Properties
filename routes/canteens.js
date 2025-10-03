@@ -979,7 +979,7 @@ canteens.get('/pending', can('view:content'), async (req, res) => {
     try {
         const period = await getActiveCanteenPeriod();
         if (period) {
-            return res.redirect(`/canteens/periods/${period.id}/submissions`);
+            return res.redirect(`/canteens/periods/${period.id}/submissions?nav=/canteens/pending`);
         } else {
             return res.render('periods/submissions', {
                 submissions: [],

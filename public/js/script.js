@@ -7,13 +7,17 @@ window.addEventListener('pageshow', function (event) {
 });
 
 /**
- * Ένδειξη στο sidebar για το link που αντιστοιχεί στην τρέχουσα σελίδα
+ * Ένδειξη στο sidebar για το link που αντιστοιχεί στην τρέχουσα σελίδα.
+ * Χρησιμοποιούμε every αντί για forEach γιατι το forEach δεν έχει break, 
+ * ενώ το every σταματάει όταν επιστραφεί false.
  */
-[...document.querySelectorAll(".sidebar .sidebar-link")].forEach(link => {
+[...document.querySelectorAll(".sidebar .sidebar-link")].every(link => {
     const href = link.getAttribute("href");
-    if (href && window.location.pathname.includes(href)) {
+    if (href?.length>=3 && (Q.url.path.includes(href) || Q.url.get('nav')==href)) {
         link.classList.add("active");
+        return false; // σταματάμε το every
     }
+    return true; // συνεχίζουμε το every
 });
 
 /**
