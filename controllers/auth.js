@@ -45,7 +45,7 @@ const tokenRefreshThreshold = ms(process.env.TOKENREFRESHTHRESHOLD)/1000;
 const cookieOptions = { 
     httpOnly: true, 
     secure: (process.env.TOKENHTTPS=="false")?false:true, 
-    sameSite: 'strict',
+    sameSite: 'lax',    // Αν βάλω 'strict', δεν δουλεύουν τα cookies από link σε email.
     maxAge: ms(tokenExpirationTime),
 };
 
