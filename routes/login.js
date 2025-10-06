@@ -31,7 +31,7 @@ router.post('/magiclink', async (req, res) => {
     if (magicLink) {    // είτε βρέθηκε ο χρήστης, είτε όχι (magicLink=false μόνο αν έγινε σφάλμα)
         res.status(200).send( `
             <div class="alert alert-success text-center" role="alert">
-                O σύνδεσμος για την είσοδο στην Εφαρμογή έχει σταλεί στο email σας.
+                O σύνδεσμος για την είσοδο στην Εφαρμογή έχει σταλεί στο email σας. Μπορείτε να κλείσετε αυτό το παράθυρο.
             </div>
         ` );
     } else {
