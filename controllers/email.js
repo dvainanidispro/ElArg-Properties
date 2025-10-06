@@ -1,4 +1,3 @@
-
 import Models from '../models/models.js';
 import nodemailer from 'nodemailer';
 import log from './logger.js';
@@ -26,6 +25,18 @@ const emailConfig = {
 
 };
 const transporter = nodemailer.createTransport(emailConfig);
+
+// Επιβεβαίωση σύνδεσης με τον SMTP server κατά την εκκίνηση
+transporter.verify((error, success) => {
+    if (error) {
+        log.error(`SMTP transporter verification failed: ${error}`);
+    } else {
+        log.system('SMTP transporter verified and ready to send emails');
+    }
+});
+
+
+
 
 
 /**
