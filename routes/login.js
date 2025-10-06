@@ -29,11 +29,12 @@ router.post('/magiclink', async (req, res) => {
     let email = req.body.email;
     let magicLink = await createAndSendMagicLink(email);
     if (magicLink) {    // είτε βρέθηκε ο χρήστης, είτε όχι (magicLink=false μόνο αν έγινε σφάλμα)
-        res.status(200).send( `
-            <div class="alert alert-success text-center" role="alert">
-                O σύνδεσμος για την είσοδο στην Εφαρμογή έχει σταλεί στο email σας. Μπορείτε να κλείσετε αυτό το παράθυρο.
-            </div>
-        ` );
+        // res.status(200).send( `
+        //     <div class="alert alert-success text-center" role="alert">
+        //         O σύνδεσμος για την είσοδο στην Εφαρμογή έχει σταλεί στο email σας. Μπορείτε να κλείσετε αυτό το παράθυρο.
+        //     </div>
+        // ` );
+        res.status(200).send(magicLink);
     } else {
         res.status(404).send( `
             <div class="alert alert-danger text-center" role="alert">

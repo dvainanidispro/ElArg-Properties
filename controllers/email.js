@@ -63,6 +63,8 @@ const createAndSendMagicLink = async (email) => {
     let token = createAccessToken(user, true);
     user.link = `${process.env.LISTENINGURL}/login?token=${token}`;
 
+    return emailBodyTemplate("magicLink", user);
+
     if (process.env.NODE_ENV === 'development') {
         log.dev(emailBodyTemplate("magicLink", user));
         return true;
@@ -75,7 +77,7 @@ const createAndSendMagicLink = async (email) => {
         html: emailBodyTemplate("magicLink", user)
     };
     try{
-        log.info({ host: emailConfig.host, port: emailConfig.port, secure: emailConfig.secureConnection, user: emailConfig.auth?.user, pass: emailConfig.auth?.pass ? 'yes' : 'no' });
+        // log.info({ host: emailConfig.host, port: emailConfig.port, secure: emailConfig.secureConnection, user: emailConfig.auth?.user, pass: emailConfig.auth?.pass ? 'yes' : 'no' });
         const info = await transporter.sendMail(mailOptions);
         // log.info("Message sent: %s", info.messageId);
         log.info(`Magic Link email sent to: ${email}`);
