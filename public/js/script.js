@@ -11,14 +11,21 @@ window.addEventListener('pageshow', function (event) {
  * Χρησιμοποιούμε every αντί για forEach γιατι το forEach δεν έχει break, 
  * ενώ το every σταματάει όταν επιστραφεί false.
  */
-[...document.querySelectorAll(".sidebar .sidebar-link")].every(link => {
-    const href = link.getAttribute("href");
-    if (href?.length>=3 && (Q.url.path.includes(href) || Q.url.get('nav')==href)) {
-        link.classList.add("active");
-        return false; // σταματάμε το every
-    }
-    return true; // συνεχίζουμε το every
-});
+(() => {
+    const nav = Q.url.get('nav');
+    const path = Q.url.path;
+    Q(".sidebar .sidebar-link").every(link => {
+        const href = link.getAttribute("href");
+        if (!href || href.length < 3) {
+            return true; // συνεχίζουμε το every
+        }
+        if ((nav && href === nav) || (!nav && href === path)) {
+            link.classList.add("active");
+            return false; // σταματάμε το every
+        } 
+        return true; // συνεχίζουμε το every
+    });
+})();
 
 /**
  * Προσθήκη validation classes (is-valid, is-invalid) σε input πεδία με pattern ή minlength

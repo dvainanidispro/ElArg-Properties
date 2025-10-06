@@ -31,7 +31,7 @@ const transporter = nodemailer.createTransport(emailConfig);
 /**
  * Δημιουργεί και επιστρέφει το Magic Link για τον χρήστη
  * @param {string} email - Το email του χρήστη
- * @returns {Promise<string|false>} Το HTML link ή false αν έγινε σφάλμα
+ * @returns {Promise<string|false>} false αν έγινε σφάλμα, true είτε βρέθηκε ο χρήστης, είτε όχι
  */
 const createAndSendMagicLink = async (email) => {
     const userModels = [Models.Principal, Models.User];
@@ -52,8 +52,10 @@ const createAndSendMagicLink = async (email) => {
     let token = createAccessToken(user, true);
     user.link = `${process.env.LISTENINGURL}/login?token=${token}`;
 
-    // Απλή εμφάνιση του email Body στη σελίδα προς το παρόν
-    return emailBodyTemplate("magicLink", user);
+    if (process.env.NODE_ENV === 'development') {
+        log.dev(emailBodyTemplate("magicLink", user));
+        return true;
+    }
 
     const mailOptions = {
         from: `"${appName}" <${process.env.EMAILUSER}>`,
@@ -63,7 +65,7 @@ const createAndSendMagicLink = async (email) => {
     };
     try{
         const info = await transporter.sendMail(mailOptions);
-        console.log("Message sent: %s", info.messageId);
+        // log.info("Message sent: %s", info.messageId);
         log.info(`Magic Link email sent to: ${email}`);
         return true;
     } catch (error) {
