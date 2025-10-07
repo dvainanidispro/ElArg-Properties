@@ -21,7 +21,7 @@
                         <table class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th class="sortable" data-sort-type="number">ID</th>
+                                    <th class="sortable d-none" data-sort-type="number">ID</th>
                                     <th class="sortable">Όνομα/Επωνυμία</th>
                                     <th>ΑΦΜ</th>
                                     <th>Email</th>
@@ -33,7 +33,7 @@
                             <tbody>
                                 {{#each parties}}
                                 <tr>
-                                    <td>{{this.id}}</td>
+                                    <td class="d-none">{{this.id}}</td>
                                     <td>
                                         <a href="/properties/parties/{{this.id}}" class="text-primary text-decoration-none">{{this.name}}</a>
                                     </td>

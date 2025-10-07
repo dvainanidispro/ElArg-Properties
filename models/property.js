@@ -14,7 +14,7 @@ const Property = db.define('property',
             comment: 'ΚΑΕΚ - Κωδικός Αναγνώρισης Ειδικής Κατασκευής'
         },
         address: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING,
             comment: 'Διεύθυνση ακινήτου'
         },
         description: {

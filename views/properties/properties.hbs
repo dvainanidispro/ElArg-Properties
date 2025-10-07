@@ -21,7 +21,7 @@
                         <table class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th class="sortable" data-sort-type="number">ID</th>
+                                    <th class="sortable d-none" data-sort-type="number">ID</th>
                                     <th>Διεύθυνση</th>
                                     <th>ΚΑΕΚ</th>
                                     <th class="sortable">Τύπος</th>
@@ -34,7 +34,7 @@
                             <tbody>
                                 {{#each properties}}
                                 <tr>
-                                    <td>{{this.id}}</td>
+                                    <td class="d-none">{{this.id}}</td>
                                     <td>
                                         {{#if this.address}}
                                             <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">{{this.address}}</a>

@@ -47,7 +47,7 @@
                         <table class="dim-table table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th class="sortable" data-sort-type="number">ID</th>
+                                    <th class="sortable d-none" data-sort-type="number">ID</th>
                                     {{#unless property}}
                                     <th>Ακίνητο</th>
                                     {{/unless}}
@@ -65,7 +65,7 @@
                             <tbody>
                                 {{#each leases}}
                                 <tr>
-                                    <td>{{this.id}}</td>
+                                    <td class="d-none">{{this.id}}</td>
                                     {{#unless ../property}}
                                     <td>
                                         {{#if this.property}}
