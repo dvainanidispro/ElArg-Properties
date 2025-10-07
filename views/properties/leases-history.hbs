@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <h1 class="card-title h3">
                         <i class="ti-archive me-2"></i>
-                        Ιστορικό Μισθώσεων: {{canteen.name}}
+                        Ιστορικό Μισθώσεων: {{property.address}}{{#unless property.address}}{{property.kaek}}{{/unless}}
                     </h1>
                     <div class="card-actions">
                         <button type="button" class="btn btn-secondary me-2" onclick="history.back()">
@@ -13,7 +13,7 @@
                             Πίσω
                         </button>
                         {{#if (can 'edit:content')}}
-                        <a href="/canteens/leases/new?canteen_id={{canteen.id}}&redirect=/canteens/canteens/{{canteen.id}}/leases/history" class="btn btn-primary">
+                        <a href="/properties/leases/new?property_id={{property.id}}&redirect=/properties/properties/{{property.id}}/leases/history" class="btn btn-primary">
                             <i class="ti-plus me-1"></i>
                             Νέα Μίσθωση
                         </a>
@@ -24,36 +24,48 @@
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb" class="mb-4">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/canteens/canteens">Κυλικεία</a></li>
-                            <li class="breadcrumb-item"><a href="/canteens/canteens/{{canteen.id}}">{{canteen.name}}</a></li>
-                            <li class="breadcrumb-item"><a href="/canteens/canteens/{{canteen.id}}/leases">Μισθώσεις</a></li>
+                            <li class="breadcrumb-item"><a href="/properties/properties">Ακίνητα</a></li>
+                            <li class="breadcrumb-item"><a href="/properties/properties/{{property.id}}">{{property.address}}{{#unless property.address}}{{property.kaek}}{{/unless}}</a></li>
+                            <li class="breadcrumb-item"><a href="/properties/properties/{{property.id}}/leases">Μισθώσεις</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Ιστορικό</li>
                         </ol>
                     </nav>
 
 
 
-                    <!-- Πληροφορίες Κυλικείου -->
+                    <!-- Πληροφορίες Ακινήτου -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h5 class="card-title">Στοιχεία Κυλικείου</h5>
+                                    <h5 class="card-title">Στοιχεία Ακινήτου</h5>
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <strong>Όνομα:</strong> {{canteen.name}}
+                                            <strong>Διεύθυνση:</strong> {{property.address}}
                                         </div>
                                         <div class="col-md-4">
-                                            <strong>Επιφάνεια (τ.μ.):</strong> {{canteen.area}}
+                                            <strong>ΚΑΕΚ:</strong> {{property.kaek}}
                                         </div>
                                         <div class="col-md-4">
-                                            <strong>Τρέχων Διευθυντής:</strong> 
-                                            {{#if canteen.principal}}
-                                                <a href="/canteens/principals/{{canteen.principal.id}}" class="text-primary text-decoration-none">
-                                                    {{canteen.principal.name}}
-                                                </a>
+                                            <strong>Επιφάνεια (τ.μ.):</strong> {{property.area}}
+                                        </div>
+                                    </div>
+                                    <div class="row mt-2">
+                                        <div class="col-md-4">
+                                            <strong>Τύπος Ακινήτου:</strong> 
+                                            {{#if (eq property.asset_type 'owned')}}Ιδιόκτητο{{/if}}
+                                            {{#if (eq property.asset_type 'leased_out')}}Εκμισθωμένο{{/if}}
+                                            {{#if (eq property.asset_type 'rented')}}Μισθωμένο{{/if}}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Έτος Κατασκευής:</strong> {{property.construction_year}}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Κατάσταση:</strong> 
+                                            {{#if property.active}}
+                                                <span class="badge bg-success">Ενεργό</span>
                                             {{else}}
-                                                <span class="text-muted">Δεν έχει οριστεί</span>
+                                                <span class="badge bg-secondary">Ανενεργό</span>
                                             {{/if}}
                                         </div>
                                     </div>
@@ -73,6 +85,7 @@
                                     <th class="sortable" data-sort-type="date-gr">Λήξη</th>
                                     <th>Διάρκεια</th>
                                     <th class="sortable" data-sort-type="number">Μίσθωμα</th>
+                                    <th class="sortable">Κατεύθυνση</th>
                                     <th class="sortable">Κατάσταση</th>
                                     <th>Ενέργειες</th>
                                 </tr>
@@ -125,6 +138,15 @@
                                         {{/if}}
                                     </td>
                                     <td>
+                                        {{#if (eq this.lease_direction 'incoming')}}
+                                            <span class="badge bg-info">Εισερχόμενη</span>
+                                        {{else if (eq this.lease_direction 'outgoing')}}
+                                            <span class="badge bg-warning">Εξερχόμενη</span>
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
                                         {{#if this.active}}
                                             <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease_end}}">Ενεργό</span>
                                         {{else}}
@@ -132,7 +154,7 @@
                                         {{/if}}
                                     </td>
                                     <td>
-                                        <a href="/canteens/leases/{{this.id}}" class="btn btn-sm btn-outline-primary" title="Προβολή/Επεξεργασία">
+                                        <a href="/properties/leases/{{this.id}}" class="btn btn-sm btn-outline-primary" title="Προβολή/Επεξεργασία">
                                             <i class="ti-eye"></i>
                                         </a>
                                     </td>
@@ -146,9 +168,9 @@
                     <div class="text-center py-5">
                         <i class="ti-archive text-muted" style="font-size: 4rem;"></i>
                         <h4 class="text-muted mt-3">Δεν υπάρχουν μισθώσεις</h4>
-                        <p class="text-muted">Δεν έχουν καταχωρηθεί μισθώσεις για αυτό το κυλικείο.</p>
+                        <p class="text-muted">Δεν έχουν καταχωρηθεί μισθώσεις για αυτό το ακίνητο.</p>
                         {{#if (can 'edit:content')}}
-                        <a href="/canteens/leases/new?canteen_id={{canteen.id}}&redirect=/canteens/canteens/{{canteen.id}}/leases/history" class="btn btn-primary mt-2">
+                        <a href="/properties/leases/new?property_id={{property.id}}&redirect=/properties/properties/{{property.id}}/leases/history" class="btn btn-primary mt-2">
                             <i class="ti-plus me-1"></i>
                             Δημιουργία Πρώτης Μίσθωσης
                         </a>

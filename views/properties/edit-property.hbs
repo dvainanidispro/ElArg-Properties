@@ -42,12 +42,15 @@
                                            value="{{#if propertyDetails.lease}}[{{leaseDirectionText propertyDetails.lease.lease_direction}}] {{propertyDetails.lease.party.name}} - Λήξη: {{date propertyDetails.lease.lease_end}}{{else}}Χωρίς ενεργή μίσθωση{{/if}}" 
                                            readonly>
                                     {{#if propertyDetails}}
-                                        {{#if propertyDetails.lease}}
-                                            <a href="/properties/leases/{{propertyDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή<br>Μίσθωσης</a>
-                                        {{/if}}
-                                        {{#if (can 'edit:content')}}
-                                            <a href="/properties/leases/new?property_id={{propertyDetails.id}}&redirect=/properties/properties/{{propertyDetails.id}}" class="btn btn-success " type="button">Δημιουργία<br>Μίσθωσης</a>
-                                        {{/if}}
+                                        <div class="btn-group">
+                                            {{#if propertyDetails.lease}}
+                                                <a href="/properties/leases/{{propertyDetails.lease.id}}" class="btn btn-primary" type="button">Προβολή<br>Μίσθωσης</a>
+                                            {{/if}}
+                                            <a href="/properties/properties/{{propertyDetails.id}}/leases/history" class="btn btn-secondary" type="button">Ιστορικό<br>Μισθώσεων</a>
+                                            {{#if (can 'edit:content')}}
+                                                <a href="/properties/leases/new?property_id={{propertyDetails.id}}&redirect=/properties/properties/{{propertyDetails.id}}" class="btn btn-success" type="button">Δημιουργία<br>Μίσθωσης</a>
+                                            {{/if}}
+                                        </div>
                                     {{/if}}
                                 </div>
                                 {{#unless propertyDetails}}

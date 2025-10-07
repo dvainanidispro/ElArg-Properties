@@ -896,6 +896,62 @@ properties.get('/parties/:id/leases', can('view:content'), async (req, res) => {
     }
 });
 
+/**
+ * GET /properties/properties/:id/leases/history - Ιστορικό όλων των μισθώσεων συγκεκριμένου property
+ */
+properties.get('/properties/:id/leases/history', can('view:content'), async (req, res) => {
+    try {
+        const propertyId = parseInt(req.params.id);
+        
+        const property = await Models.Property.findByPk(propertyId);
+        
+        if (!property) {
+            return res.status(404).render('errors/404', { message: 'Το Ακίνητο δεν βρέθηκε' });
+        }
+        
+        // Ανάκτηση όλων των μισθώσεων με πλήρη στοιχεία
+        const leases = await Models.Lease.findAll({
+            where: { 
+                property_id: propertyId,
+                property_type: 'property'
+            },
+            include: [{
+                model: Models.Party,
+                as: 'party',
+                attributes: ['id', 'name', 'email', 'afm', 'contact']
+            }],
+            order: [['lease_start', 'DESC']]
+        });
+        
+        // Στατιστικά για το ιστορικό
+        const stats = {
+            totalLeases: leases.length,
+            activeLeases: leases.filter(lease => lease.active && (!lease.lease_end || new Date(lease.lease_end) >= new Date())).length,
+            expiredLeases: leases.filter(lease => lease.lease_end && new Date(lease.lease_end) < new Date()).length,
+            totalRevenue: leases.reduce((sum, lease) => {
+                if (!lease.rent || !lease.lease_start) return sum;
+                const startDate = new Date(lease.lease_start);
+                const endDate = lease.lease_end ? new Date(lease.lease_end) : new Date();
+                const months = Math.max(0, (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30));
+                return sum + (parseFloat(lease.rent) * months);
+            }, 0),
+            averageRent: leases.length > 0 ? 
+                leases.reduce((sum, lease) => sum + (parseFloat(lease.rent) || 0), 0) / leases.length : 0
+        };
+        
+        res.render('properties/leases-history', { 
+            leases,
+            property,
+            stats,
+            user: req.user,
+            title: `Ιστορικό Μισθώσεων: ${property.address || property.kaek}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση ιστορικού leases του property: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση ιστορικού μισθώσεων' });
+    }
+});
+
 
 
 export default properties;

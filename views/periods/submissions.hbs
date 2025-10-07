@@ -13,11 +13,10 @@
                         Περίοδος: {{date period.start_date}} - {{date period.end_date}}
                         <span class="mx-2">|</span>
                         <i class="ti-alarm-clock me-1"></i>
-                        Προθεσμία: {{date period.submission_deadline}}
+                        Προθεσμία υποβολών: {{date period.submission_deadline}}
                     </div>
                 </div>
                 <div class="card-body">
-                    {{#if canteens}}
                     <div class="row mb-4">
                             <div class="col-12 my-3">
                                 <div class="card border-secondary" href="#">
@@ -28,6 +27,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body d-flex justify-content-around align-items-center flex-wrap text-center">
+                                        {{#if canteens}}
                                         <div class="">
                                             <h6 class="text-muted">Συνολικά Κυλικεία</h6>
                                             <div class="text-primary fw-semibold display-6">
@@ -64,11 +64,18 @@
                                                 <span>Εξαγωγή υποβολών σε Excel</span>
                                             </button>
                                         </div>
+                                        {{else}}
+                                            <div class="card-body">
+                                                <div class="alert alert-info mb-0">
+                                                    Δεν υπάρχει ενεργή περίοδος υποβολών για Κυλικεία.
+                                                </div>
+                                            </div>
+                                        {{/if}}
                                     </div>
                                 </div>
                             </div>
                     </div>
-                    {{/if}}
+                    
 
                     
                     <div class="table-responsive">
@@ -168,13 +175,6 @@
                                         {{/if}}
                                     </td>
                                 </tr>
-                                {{else}}
-                                <tr>
-                                    <td colspan="9" class="text-center text-muted py-4">
-                                        <i class="ti-files fa-2x mb-2"></i><br>
-                                        Δεν βρέθηκαν κυλικεία για αυτήν την περίοδο
-                                    </td>
-                                </tr>
                                 {{/each}}
                             </tbody>
                         </table>
@@ -191,7 +191,7 @@
 <script type="module">
     Q('~period-description').set(`(${periodDescription('{{period.start_date}}' , '{{period.end_date}}')})`);
 
-    Q('#exportExcelBtn').on('click', function() {
+    Q('#exportExcelBtn') && Q('#exportExcelBtn').on('click', function() {
         downloadTableAsExcel('submissions', 'Υποβολές Στοιχείων Κυλικείων - Περίοδος {{period.code}}.xlsx', '{{period.code}}');
     });
 </script>
