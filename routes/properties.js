@@ -588,7 +588,7 @@ properties.get('/leases', can('view:content'), async (req, res) => {
                 {
                     model: Models.Property,
                     as: 'property',
-                    attributes: ['id', 'kaek', 'address', 'asset_type']
+                    attributes: ['id', 'appartment_number', 'address', 'asset_type']
                 },
                 {
                     model: Models.Party,
@@ -898,7 +898,7 @@ properties.get('/parties/:id/leases', can('view:content'), async (req, res) => {
                 {
                     model: Models.Property,
                     as: 'property',
-                    attributes: ['id', 'kaek', 'address', 'asset_type']
+                    attributes: ['id', 'appartment_number', 'address', 'asset_type']
                 }
             ],
             order: [['lease_start', 'DESC']]

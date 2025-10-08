@@ -22,7 +22,7 @@
                     <h4 class="card-title">
                         <i class="{{#if leaseDetails}}ti-pencil{{else}}ti-plus{{/if}} me-2"></i>
                         {{#if leaseDetails}}
-                            Μίσθωση: {{#if leaseDetails.property}}{{leaseDetails.property.address}}{{/if}}{{#if leaseDetails.party}} - {{leaseDetails.party.name}}{{/if}}
+                            Μίσθωση: {{#if leaseDetails.property}}{{leaseDetails.property.address}}{{#if leaseDetails.property.appartment_number}}, {{leaseDetails.property.appartment_number}}{{/if}}{{/if}}{{#if leaseDetails.party}} - {{leaseDetails.party.name}}{{/if}}
                         {{else}}
                             Νέα Μίσθωση
                         {{/if}}

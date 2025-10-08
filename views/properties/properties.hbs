@@ -36,7 +36,9 @@
                                 <tr>
                                     <td class="d-none">{{this.id}}</td>
                                     <td>
-                                        {{this.address}}{{#if this.appartment_number}}, {{this.appartment_number}}{{/if}}
+                                        <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">
+                                            {{this.address}}{{#if this.appartment_number}}, {{this.appartment_number}}{{/if}}
+                                        </a>
                                     </td>
                                     <td class="d-none">
                                         {{#if this.kaek}}

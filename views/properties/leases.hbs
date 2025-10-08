@@ -6,7 +6,7 @@
                     <h1 class="card-title h3">
                         <i class="ti-files me-2"></i>
                         {{#if property}}
-                            Μισθώσεις Ακινήτου: {{property.address}}{{property.kaek}} 
+                            Μισθώσεις Ακινήτου: {{property.address}}
                         {{else if party}}
                             Μισθώσεις Συμβαλλομένου: {{party.name}}
                         {{else}}
@@ -28,7 +28,7 @@
                     <nav aria-label="breadcrumb" class="mb-3">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="/properties/properties">Ακίνητα</a></li>
-                            <li class="breadcrumb-item"><a href="/properties/properties/{{property.id}}">{{property.address}}{{property.kaek}}</a></li>
+                            <li class="breadcrumb-item"><a href="/properties/properties/{{property.id}}">{{property.address}}</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Μισθώσεις</li>
                         </ol>
                     </nav>
@@ -49,15 +49,15 @@
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
                                     {{#unless property}}
-                                    <th style="width: 40ch">Ακίνητο</th>
+                                    <th class="sortable" style="width: 40ch">Ακίνητο</th>
                                     {{/unless}}
                                     {{#unless party}}
-                                    <th>Συμβαλλόμενος</th>
+                                    <th >Συμβαλλόμενος</th>
                                     {{/unless}}
-                                    <th>Κατεύθυνση</th>
+                                    <th class="sortable">Κατεύθυνση</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη</th>
                                     <th class="sortable" data-sort-type="number">Μίσθωμα</th>
-                                    <th class="sortable">Συχνότητα</th>
+                                    <th class="sortable" data-sort-type="number">Αναπροσαρμογή</th>
                                     <th class="sortable">Κατάσταση</th>
                                     <th>Λεπτομέρειες</th>
                                 </tr>
@@ -70,7 +70,7 @@
                                     <td>
                                         {{#if this.property}}
                                             <a href="/properties/properties/{{this.property.id}}" class="text-primary text-decoration-none">
-                                                {{this.property.address}}
+                                                {{this.property.address}}{{#if this.property.appartment_number}}, {{this.property.appartment_number}}{{/if}}
                                             </a>
                                         {{else}}
                                             <span class="text-muted">-</span>
@@ -87,20 +87,26 @@
                                     </td>
                                     {{/unless}}
                                     <td>
-                                        {{leaseDirectionShortText this.lease_direction}}
+                                        {{#if (eq this.lease_direction 'incoming')}}
+                                            <span class="badge bg-pink fs-6">{{leaseDirectionShortText 'incoming'}}</span>
+                                        {{else if (eq this.lease_direction 'outgoing')}}
+                                            <span class="badge bg-purple fs-6">{{leaseDirectionShortText 'outgoing'}}</span>
+                                        {{else if (eq this.lease_direction 'grant')}}
+                                            <span class="badge bg-info fs-6">{{leaseDirectionShortText 'grant'}}</span>
+                                        {{/if}}
                                     </td>
                                     <td>{{date this.lease_end}}</td>
                                     <td>
                                         {{euro this.rent}}
                                     </td>
-                                    <td>
-                                        {{rentFrequencyText this.rent_frequency}}
+                                    <td class="adjustment-month" data-sort-value="{{this.rent_adjustment_month}}">
+                                        <span>{{greekMonthText this.rent_adjustment_month}}</span>
                                     </td>
                                     <td>
                                         {{#if this.active}}
-                                            <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease_end}}">Ενεργό</span>
+                                            <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease_end}}">Ενεργή</span>
                                         {{else}}
-                                            <span class="badge bg-secondary fs-6">Ανενεργό</span>
+                                            <span class="badge bg-secondary fs-6">Ανενεργή</span>
                                         {{/if}}
                                     </td>
                                     <td>
@@ -119,8 +125,10 @@
     </div>
 </div>
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     // Ελέγχει όλα τα ενεργά leases για ληγμένες μισθώσεις και μισθώσεις που λήγουν σύντομα
     const statusBadges = document.querySelectorAll('.status-badge');
     const today = new Date();
@@ -148,5 +156,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+
+    // Έλεγχος Μήνα Αναπροσαρμογής. Αν είναι ο τρεχών μήνας, χρωματίζει το κελί
+    const currentMonth = new Date().getMonth() + 1; // getMonth()
+    const rentAdjustmentCells = document.querySelectorAll('.adjustment-month');
+    rentAdjustmentCells.forEach(cell => {
+        const cellMonth = parseInt(cell.getAttribute('data-sort-value'), 10);
+        if (cellMonth === currentMonth) {
+            cell.querySelector('span').classList.add('badge', 'fs-6', 'bg-warning', 'fw-bold');
+        }
+    });
+
 });
 </script>
