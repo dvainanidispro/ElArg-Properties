@@ -33,7 +33,7 @@ const Lease = db.define('lease', {
 		type: DataTypes.STRING,
 		allowNull: false,
 		defaultValue: 'incoming',
-		comment: 'Κατεύθυνση μίσθωσης από άποψη δήμου - incoming (Μίσθωση - ο δήμος μισθώνει από τρίτους), outgoing (Εκμίσθωση - ο δήμος εκμισθώνει σε τρίτους)',
+		comment: 'Κατεύθυνση μίσθωσης από πλευράς δήμου - incoming (Μίσθωση - ο δήμος μισθώνει από τρίτους), outgoing (Εκμίσθωση - ο δήμος εκμισθώνει σε τρίτους), grant (Παραχώρηση)',
 	},
 	// Στοιχεία μίσθωσης
 	lease_start: {
@@ -46,17 +46,25 @@ const Lease = db.define('lease', {
 	},
 	rent: {
 		type: DataTypes.DECIMAL(10, 2),
-		comment: 'Μηνιαίο τίμημα (ή τριμηνιαίο ανάλογα την μίσθωση)'
+		comment: 'Μηνιαίο (ή άλλης συχνότητας) τίμημα'
 	},
 	rent_frequency: {
 		type: DataTypes.STRING,
 		defaultValue: 'monthly',
-		comment: 'Συχνότητα πληρωμής μισθώματος - Επιτρεπόμενες τιμές: monthly (μηνιαία), quarterly (τριμηνιαία)'
+		comment: 'Συχνότητα πληρωμής μισθώματος - monthly, quarterly, semiannually, annually'
 	},
+    number_of_payments: {
+        type: DataTypes.SMALLINT,
+        comment: 'Αριθμός ετήσιων δόσεων (π.χ. 12 για μηνιαία, 4 για τριμηνιαία)'
+    },
 	rent_adjustment_info: {
 		type: DataTypes.TEXT,
 		comment: 'Πληροφορίες αναπροσαρμογής μισθώματος'
 	},
+    rent_adjustment_month: {
+        type: DataTypes.SMALLINT,
+        comment: 'Μήνας αναπροσαρμογής μισθώματος (1-12)'
+    },
 	guarantee_letter: {
 		type: DataTypes.STRING,
 		comment: 'Εγγυητική Επιστολή (για μισθωμένα από δήμο)'
@@ -65,10 +73,10 @@ const Lease = db.define('lease', {
 		type: DataTypes.STRING,
 		comment: 'Αριθμός γνωστοποίησης (canteen)'
 	},
-	landlord_offer: {
-		type: DataTypes.SMALLINT,
-		comment: 'Οικονομική προσφορά μισθωτή/εκμισθωτή (δεν χρησιμοποιείται)'
-	},
+	// landlord_offer: {
+	// 	type: DataTypes.SMALLINT,
+	// 	comment: 'Οικονομική προσφορά μισθωτή/εκμισθωτή (δεν χρησιμοποιείται)'
+	// },
 	notes: {
 		type: DataTypes.TEXT,
 		comment: 'Σημειώσεις για τη μίσθωση'
@@ -85,6 +93,7 @@ const Lease = db.define('lease', {
 		{ fields: ['party_id'] },
 		{ fields: ['property_type'] },
 		{ fields: ['lease_direction'] },
+        { fields: ['rent_adjustment_month'] },
 		{ fields: ['lease_end'] }
 	]
 });

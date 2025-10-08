@@ -103,6 +103,10 @@ const handlebarsConfig = {
         },
         leaseDirectionText: descriptions.leaseDirection,
         rentFrequencyText: descriptions.rentFrequency,
+        periodStatusText: descriptions.periodStatus,
+        greekMonthText: descriptions.greekMonths,
+        ownershipStatusText: descriptions.ownershipStatus,
+        assetTypeText: descriptions.assetType,
     }
 };
 

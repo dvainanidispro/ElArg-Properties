@@ -12,10 +12,28 @@ let greekdate = (inputDate) => {
 
 
 let descriptions = {
+    ownershipStatus: (status) => {
+        const statuses = {
+            not_owned: 'Δεν ανήκει στο Δήμο',
+            sole_ownership: 'Ιδιόκτητο',
+            shared_ownership: 'Συνιδιόκτητο',
+        };
+        return statuses[status] || status;
+    },
+    assetType: (type) => {
+        const types = {
+            owned: 'Ιδιόκτητο',
+            leased_out: 'Εκμισθωμένο',
+            rented: 'Μισθωμένο',
+            granted: 'Παραχωρημένο',
+        };
+        return types[type] || type;
+    },
     leaseDirection: (direction) => {
         const directions = {
             incoming: 'Μίσθωση',
-            outgoing: 'Εκμίσθωση'
+            outgoing: 'Εκμίσθωση',
+            grant: 'Παραχώρηση',
         };
         return directions[direction] || direction;
     },
@@ -23,7 +41,8 @@ let descriptions = {
         const frequencies = {
             monthly: 'Μηνιαία',
             quarterly: 'Τριμηνιαία',
-            yearly: 'Ετήσια'
+            semiannually: 'Εξαμηνιαία',
+            yearly: 'Ετήσια',
         };
         return frequencies[frequency] || frequency;
     },
@@ -32,9 +51,26 @@ let descriptions = {
             planned: 'Προγραμματισμένη',
             open: 'Ανοιχτή',
             closed: 'Κλειστή',
-            inactive: 'Ανενεργή'
+            inactive: 'Ανενεργή',
         };
         return statuses[status] || status;
+    },
+    greekMonths: (monthNumber) => {
+        const months = {
+            1: 'Ιανουάριος',
+            2: 'Φεβρουάριος',
+            3: 'Μάρτιος',
+            4: 'Απρίλιος',
+            5: 'Μάιος',
+            6: 'Ιούνιος',
+            7: 'Ιούλιος',
+            8: 'Αύγουστος',
+            9: 'Σεπτέμβριος',
+            10: 'Οκτώβριος',
+            11: 'Νοέμβριος',
+            12: 'Δεκέμβριος',
+        };
+        return months[monthNumber] || monthNumber;
     },
 };
 
