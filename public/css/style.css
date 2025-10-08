@@ -13,7 +13,9 @@
 
     --bs-btn-bg: green;
     --bs-orange: hsl(39, 100%, 46%);
+    --bs-warning2: hsl(28, 100%, 50%);
     --bs-warning-rgb: 235, 152, 0;
+    /* --bs-btn-bg: hsl(39, 100%, 36%); */
     --bs-pink: hsl(332, 100%, 60%);
 
     --card-gradient: radial-gradient(circle at center, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
@@ -47,18 +49,19 @@ html {
 /* Για να μην πηδάει στο φόρτωμα */
 table.dim-table:not([data-dimtables-initialized="1"]) { margin-top: 3rem }
 .dim-table-bar { height: 2rem }
-/* Περιορισμός κελιών σε 50 χαρακτήρες με ellipsis (...) */
-table.dim-table td {
+/* Περιορισμός κελιών σε 50 χαρακτήρες με ellipsis (...) και κατακόρυφη στοίχηση στο κέντρο */
+table.dim-table :is(th, td) {
     max-width: 50ch;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    vertical-align: middle;
 }
 /* Να συρρικνώνονται τα κελιά αντί να εμφανίζεται η μπάρα κύλισης */
 table.dim-table {
-    max-width:100%;
-    table-layout:fixed;         
-    border-collapse:collapse;
+    max-width: 100%;
+    table-layout: fixed;         
+    border-collapse: collapse;
 }
 /* Μόνο για την παρούσα εφαρμογή, επειδή δεν έχουν όλες οι γραμμές κουμπιά (πχ viewer periods) */
 table.dim-table tr{ 
@@ -140,6 +143,10 @@ input::placeholder{
     max-width: 30ch;
 }
 
+.bg-warning2{
+    background-color: var(--bs-warning2) !important;
+    color: var(--bs-light) !important;
+}
 .bg-orange{
     background-color: var(--bs-orange) !important;
     color: var(--bs-light) !important;
@@ -163,6 +170,16 @@ input::placeholder{
 a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     color: #04c !important;
     border-color: #04c !important;
+}
+
+.btn-warning{
+    background-color: var(--bs-orange) !important;
+    border-color: var(--bs-orange) !important;
+    color: var(--bs-light) !important;
+}
+.btn-warning2{
+    background-color: var(--bs-warning2) !important;
+    color: var(--bs-light) !important;
 }
 
 

@@ -181,7 +181,7 @@ function checkRentAdjustmentMonth() {
         if (cellMonth === currentMonth) {
             const span = cell.querySelector('span');
             if (span) {
-                span.classList.add('badge', 'fs-6', 'bg-warning', 'fw-bold');
+                span.classList.add('badge', 'fs-6', 'bg-warning2', 'fw-bold');
             }
         }
     });

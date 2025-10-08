@@ -7,9 +7,27 @@
                         <i class="ti-home me-2"></i>
                         Ακίνητα
                     </h1>
-                    <div class="card-actions">
+                    <div class="card-actions d-flex gap-2 ">
+                         <a href="/properties/properties" class="btn btn-success ">
+                            {{!-- <i class="ti-plus me-1"></i> --}}
+                            <span>Όλα</span>
+                        </a>
+                        <a href="/properties/properties?asset_type=leased_out" class="btn bg-purple">
+                            {{!-- <i class="ti-plus me-1"></i> --}}
+                            <span>Εκμισθωμένα</span>
+                        </a>
+                        <a href="/properties/properties?asset_type=rented" class="btn bg-pink">
+                            {{!-- <i class="ti-plus me-1"></i> --}}
+                            <span>Μισθωμένα</span>
+                        </a>
+                        <a href="/properties/properties?is_part_of_other=false" class="btn btn-secondary">
+                            {{!-- <i class="ti-plus me-1"></i> --}}
+                            <span>Όχι τμήματα άλλων ακινήτων</span>
+                        </a>
+                    </div>
+                    <div class="card-actions d-flex my-3">
                         {{#if (can 'edit:content')}}
-                        <a href="/properties/properties/new" class="btn btn-primary">
+                        <a href="/properties/properties/new" class="btn btn-primary fw-bold">
                             <i class="ti-plus me-1"></i>
                             Νέο Ακίνητο
                         </a>

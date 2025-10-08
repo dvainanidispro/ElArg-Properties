@@ -13,11 +13,24 @@
                             Μισθώσεις Ακινήτων
                         {{/if}}
                     </h1>
-                    <div class="card-actions">
+                    <div class="card-actions d-flex gap-2 ">
+                        <a href="/properties/leases" class="btn btn-success ">
+                            <span></span>Όλες οι μισθώσεις</span>
+                        </a>
+                        <a href="/properties/leases?expiring=true" class="btn btn-warning ">
+                            <i class="ti-alarm-clock me-1"></i>
+                            <span></span>Μισθώσεις που λήγουν</span>
+                        </a>
+                        <a href="/properties/leases?adjustments=true" class="btn btn-warning2 ">
+                            <i class="ti-split-v me-1"></i>
+                            <span></span>Μισθώσεις με αναπροσαρμογές</span>
+                        </a>
+                    </div>
+                    <div class="card-actions d-flex my-3">
                         {{#if (can 'edit:content')}}
-                        <a href="/properties/leases/new" class="btn btn-primary">
+                        <a href="/properties/leases/new" class="btn btn-primary fw-bold">
                             <i class="ti-plus me-1"></i>
-                            Νέα Μίσθωση
+                            <span>Νέα Μίσθωση</span>
                         </a>
                         {{/if}}
                     </div>
