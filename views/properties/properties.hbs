@@ -106,34 +106,7 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Ελέγχει όλα τα ενεργά ακίνητα για ληγμένες μισθώσεις και μισθώσεις που λήγουν σύντομα
-    const statusBadges = document.querySelectorAll('.status-badge');
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD format
-    
-    // Υπολογισμός ημερομηνίας 6 μηνών από σήμερα
-    const sixMonthsFromNow = new Date(today);
-    sixMonthsFromNow.setMonth(today.getMonth() + 6);
-    const sixMonthsFromNowStr = sixMonthsFromNow.toISOString().split('T')[0];
-    
-    statusBadges.forEach(badge => {
-        const leaseEndStr = badge.getAttribute('data-lease-end');
-        
-        if (leaseEndStr) {
-            if (leaseEndStr < todayStr) {
-                // Ληγμένη μίσθωση
-                badge.textContent = 'Έχει λήξει';
-                badge.classList.remove('bg-success');
-                badge.classList.add('bg-danger', 'text-light');
-            } else if (leaseEndStr <= sixMonthsFromNowStr) {
-                // Μίσθωση που λήγει σύντομα (σε λιγότερο από 6 μήνες)
-                badge.textContent = 'Λήγει σύντομα';
-                badge.classList.remove('bg-success');
-                badge.classList.add('bg-warning');
-            }
-        }
-    });
-});
+<script type="module">
+// Έλεγχος λήξης μισθώσεων ακινήτων
+checkLeaseExpiry();
 </script>
