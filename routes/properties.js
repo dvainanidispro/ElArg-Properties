@@ -277,7 +277,15 @@ properties.get('/', can('view:content'), async (req, res) => {
  */
 properties.get('/properties', can('view:content'), async (req, res) => {
     try {
+        const filter = {};
+        if (req.query.asset_type) {
+            filter.asset_type = req.query.asset_type;
+        } else if (req.query.is_part_of_other) {
+            filter.is_part_of_other = req.query.is_part_of_other === 'true';    // Μετατροπή string σε boolean
+        } 
+
         const propertiesList = await Models.Property.findAll({
+            where: filter,
             include: [{
                 model: Models.Lease,
                 as: 'leases',
@@ -580,9 +588,23 @@ properties.delete('/properties/:id', can('edit:content'), async (req, res) => {
  */
 properties.get('/leases', can('view:content'), async (req, res) => {
     try {
+        const filter = {};
+        if (req.query.adjustments) {
+            filter.rent_adjustment_month = new Date().getMonth() + 1; // Τρέχων μήνας (1-12)
+        } else if (req.query.expiring) {
+            const expiringSoonMonths = 6;
+            const expiringSoonMs = expiringSoonMonths * 30 * 24 * 60 * 60 * 1000; // περίπου 6 μήνες
+            filter.lease_end = {
+                [Op.lt]: new Date(Date.now() + expiringSoonMs)
+            };
+        }
+
         const leases = await Models.Lease.findAll({
             where: {
-                property_type: 'property'
+                ...{    // βασικό φίλτρο
+                    property_type: 'property'
+                }, 
+                ...filter   // επιπλέον φίλτρα με get parameters
             },
             include: [
                 {

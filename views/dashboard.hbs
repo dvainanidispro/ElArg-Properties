@@ -63,12 +63,12 @@
                         </div>
 
                         <div class="col-md-6 col-xl-3">
-                            <a class="card bg-warning text-white h-100 dashboard-card" href="/properties/leases">
+                            <a class="card bg-warning text-white h-100 dashboard-card" href="/properties/leases?adjustments=true">
                                 <div class="card-body px-4">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <h2 class="mb-0 display-4 text-white fw-semibold">{{leaseAdjustments}}</h2>
-                                            <p class="mb-0">Τρέχουσες Αναπροσαρμογές μισθώσεων</p>
+                                            <p class="mb-0">Τρέχουσες Αναπροσαρμογές Μισθώσεων</p>
                                         </div>
                                         <div class="display-6">
                                             <i class="ti-split-v"></i>
@@ -94,11 +94,11 @@
                                 <hr>
                                 <div class="card-body pt-2">
                                     <div class="row text-center">
-                                        <a class="col-6" href="/canteens/leases">
+                                        <a class="col-6" href="/canteens/leases?expiring=true">
                                             <h6 class="text-light mb-1">Κυλικεία</h6>
                                             <h3 class="text-white mb-0">{{leasesExpiringSoon.canteens}}</h3>
                                         </a>
-                                        <a class="col-6" href="/properties/leases">
+                                        <a class="col-6" href="/properties/leases?expiring=true">
                                             <h6 class="text-light mb-1">Ακίνητα</h6>
                                             <h3 class="text-white mb-0">{{leasesExpiringSoon.properties}}</h3>
                                         </a>

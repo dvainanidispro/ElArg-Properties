@@ -2,8 +2,6 @@ import { Router } from 'express';
 import Models from '../models/models.js';
 import { getActiveCanteenPeriod } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
-import log from '../controllers/logger.js';
-import { Op } from 'sequelize';
 
 const dashboard = Router();
 
