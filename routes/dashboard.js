@@ -29,12 +29,14 @@ dashboard.get(['/', '/dashboard'],
         // Αρχικοποίηση αντικειμένων για τα cards
         const activeProperties = { sum: 0, rented: 0, leasedOut: 0 };
         const leasesExpiringSoon = { sum: 0, canteens: 0, properties: 0 };
+        let leaseAdjustments = 0;
         const activeCanteenPeriod = { code: null, start: null, end: null, completed: 0, pending: 0 };
         
         //# 1 Πόσους μήνες θεωρούμε "σύντομα" για λήξη μίσθωσης
         const expiringSoonMonths = 6;
         const expiringSoonMs = expiringSoonMonths * 30 * 24 * 60 * 60 * 1000; // περίπου 6 μήνες
         const expiringSoonDate = new Date(Date.now() + expiringSoonMs);
+        const currentMonth = new Date().getMonth() + 1; // 1-12
 
         
         // Metrics for dashboard
@@ -43,20 +45,17 @@ dashboard.get(['/', '/dashboard'],
         const [
             activeCanteens,
             activePropertiesAll,
-            leasesExpiringSoonAll,
+            activeLeases,
         ] = await Promise.all([
             Models.Canteen.count({ where: { active: true } }),
             Models.Property.findAll({
                 where: { active: true },
                 attributes: ['asset_type'],
-                raw: true
+                raw: true,
             }),
             Models.Lease.findAll({
-                where: {
-                    active: true,
-                    lease_end: { [Op.lte]: expiringSoonDate }
-                },
-                attributes: ['property_type'],
+                where: { active: true },
+                attributes: ['property_type', 'rent_adjustment_month', 'lease_end'],
                 raw: true
             }),
         ]);
@@ -64,10 +63,20 @@ dashboard.get(['/', '/dashboard'],
         // Populate objects
         activeProperties.rented = activePropertiesAll.filter(p => p.asset_type === 'rented').length;
         activeProperties.leasedOut = activePropertiesAll.filter(p => p.asset_type === 'leased_out').length;
-        activeProperties.sum = activeProperties.rented + activeProperties.leasedOut;
-        leasesExpiringSoon.canteens = leasesExpiringSoonAll.filter(l => l.property_type === 'canteen').length;
-        leasesExpiringSoon.properties = leasesExpiringSoonAll.filter(l => l.property_type === 'property').length;
+        activeProperties.sum = activePropertiesAll.length;   // Δεν είναι το άθροισμα των παραπάνω. 
+        
+        // Filter leases expiring soon
+        const leasesExpiringSoonFiltered = activeLeases.filter(l => 
+            l.lease_end && new Date(l.lease_end) <= expiringSoonDate
+        );
+        leasesExpiringSoon.canteens = leasesExpiringSoonFiltered.filter(l => l.property_type === 'canteen').length;
+        leasesExpiringSoon.properties = leasesExpiringSoonFiltered.filter(l => l.property_type === 'property').length;
         leasesExpiringSoon.sum = leasesExpiringSoon.canteens + leasesExpiringSoon.properties;
+        
+        // Filter leases with rent adjustments this month
+        leaseAdjustments = activeLeases.filter(l => 
+            l.property_type === 'property' && l.rent_adjustment_month === currentMonth
+        ).length;
 
 
         //# 3 Αριθμοί για το card για την τρέχουσα περίοδο υποβολών
@@ -92,6 +101,7 @@ dashboard.get(['/', '/dashboard'],
             activeCanteens,
             activeProperties,
             leasesExpiringSoon,
+            leaseAdjustments,
             activeCanteenPeriod
         });
     }
