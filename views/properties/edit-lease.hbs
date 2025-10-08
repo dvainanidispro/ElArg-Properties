@@ -22,7 +22,7 @@
                     <h4 class="card-title">
                         <i class="{{#if leaseDetails}}ti-pencil{{else}}ti-plus{{/if}} me-2"></i>
                         {{#if leaseDetails}}
-                            Μίσθωση: {{#if leaseDetails.property}}{{leaseDetails.property.address}}{{#if leaseDetails.property.kaek}} [{{leaseDetails.property.kaek}}]{{/if}}{{/if}}{{#if leaseDetails.party}} - {{leaseDetails.party.name}}{{/if}}
+                            Μίσθωση: {{#if leaseDetails.property}}{{leaseDetails.property.address}}{{/if}}{{#if leaseDetails.party}} - {{leaseDetails.party.name}}{{/if}}
                         {{else}}
                             Νέα Μίσθωση
                         {{/if}}
@@ -48,7 +48,7 @@
                                             {{#if ../leaseDetails}}
                                                 {{#if (eq this.id ../leaseDetails.property_id)}}selected{{/if}}
                                             {{/if}}>
-                                        {{this.address}}{{#if this.kaek}} [{{this.kaek}}]{{/if}}
+                                        {{this.address}}{{#if this.appartment_number}}, {{this.appartment_number}}{{/if}}
                                     </option>
                                     {{/each}}
                                 </select>
@@ -76,39 +76,58 @@
                             <div class="col-md-12 mb-3">
                                 <label for="leaseDirection" class="form-label fw-bold">Κατεύθυνση Μίσθωσης *</label>
                                 <select class="form-select" id="leaseDirection" name="lease_direction" required {{#if leaseDetails}}disabled{{/if}}>
-                                    <option value="incoming" {{#if (eq leaseDetails.lease_direction 'incoming')}}selected{{/if}}>Μίσθωση (Ο Δήμος μισθώνει)</option>
-                                    <option value="outgoing" {{#if (eq leaseDetails.lease_direction 'outgoing')}}selected{{/if}}>Εκμίσθωση (Ο Δήμος εκμισθώνει)</option>
+                                    <option value="incoming" {{#if (eq leaseDetails.lease_direction 'incoming')}}selected{{/if}}>{{leaseDirectionText 'incoming'}}</option>
+                                    <option value="outgoing" {{#if (eq leaseDetails.lease_direction 'outgoing')}}selected{{/if}}>{{leaseDirectionText 'outgoing'}}</option>
+                                    <option value="grant" {{#if (eq leaseDetails.lease_direction 'grant')}}selected{{/if}}>{{leaseDirectionText 'grant'}}</option>
                                 </select>
-                                <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία της κατεύθυνσης {{else}}Επιλέξτε αν ο Δήμος μισθώνει ("Μίσθωση") ή εκμισθώνει ("Εκμίσθωση") το ακίνητο.{{/if}}</div>
+                                <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία της κατεύθυνσης {{else}}Επιλέξτε τον τύπο της σύμβασης από την πλευρά του Δήμου.{{/if}}</div>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="leaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης *</label>
                                 <input type="date" class="form-control" id="leaseStart" name="lease_start" value="{{#if leaseDetails}}{{dateInput leaseDetails.lease_start}}{{/if}}" required>
                                 <div class="form-text text-muted">Ημερομηνία έναρξης της μίσθωσης</div>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="leaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
                                 <input type="date" class="form-control" id="leaseEnd" name="lease_end" value="{{#if leaseDetails.lease_end}}{{dateInput leaseDetails.lease_end}}{{/if}}">
                                 <div class="form-text text-muted">Ημερομηνία λήξης της μίσθωσης (προαιρετικό)</div>
                             </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="rentAdjustmentMonth" class="form-label fw-bold">Μήνας Αναπροσαρμογής</label>
+                                <select class="form-select" id="rentAdjustmentMonth" name="rent_adjustment_month">
+                                    <option value="">Δεν έχει οριστεί</option>
+                                    {{#each (array 1 2 3 4 5 6 7 8 9 10 11 12)}}
+                                    <option value="{{this}}" {{#if (eq ../leaseDetails.rent_adjustment_month this)}}selected{{/if}}>{{greekMonthText this}}</option>
+                                    {{/each}}
+                                </select>
+                                <div class="form-text text-muted">Μήνας κατά τον οποίο γίνεται η αναπροσαρμογή του μισθώματος</div>
+                            </div>
                             
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="monthlyRent" class="form-label fw-bold">Μίσθωμα (€)</label>
                                 <input type="number" step="0.01" class="form-control" id="monthlyRent" name="rent" value="{{check leaseDetails.rent leaseDetails.rent ''}}">
                                 <div class="form-text text-muted">Ποσό μισθώματος σε ευρώ</div>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="rentFrequency" class="form-label fw-bold">Συχνότητα Πληρωμής</label>
                                 <select class="form-select" id="rentFrequency" name="rent_frequency">
-                                    <option value="monthly" {{#if (eq leaseDetails.rent_frequency 'monthly')}}selected{{/if}}>Μηνιαίο</option>
-                                    <option value="quarterly" {{#if (eq leaseDetails.rent_frequency 'quarterly')}}selected{{/if}}>Τριμηνιαίο</option>
-                                    <option value="annual" {{#if (eq leaseDetails.rent_frequency 'annual')}}selected{{/if}}>Ετήσιο</option>
+                                    <option value="monthly" {{#if (eq leaseDetails.rent_frequency 'monthly')}}selected{{/if}}>{{rentFrequencyText 'monthly'}}</option>
+                                    <option value="quarterly" {{#if (eq leaseDetails.rent_frequency 'quarterly')}}selected{{/if}}>{{rentFrequencyText 'quarterly'}}</option>
+                                    <option value="semiannually" {{#if (eq leaseDetails.rent_frequency 'semiannually')}}selected{{/if}}>{{rentFrequencyText 'semiannually'}}</option>
+                                    <option value="yearly" {{#if (eq leaseDetails.rent_frequency 'yearly')}}selected{{/if}}>{{rentFrequencyText 'yearly'}}</option>
                                 </select>
                                 <div class="form-text text-muted">Πόσο συχνά πληρώνεται το μίσθωμα</div>
                             </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="numberOfPayments" class="form-label fw-bold">Αριθμός Ετήσιων Δόσεων</label>
+                                <input type="number" min="1" max="12" class="form-control" id="numberOfPayments" name="number_of_payments" value="{{check leaseDetails.number_of_payments leaseDetails.number_of_payments ''}}">
+                                <div class="form-text text-muted">Αριθμός δόσεων ανά έτος (π.χ. 12 για μηνιαία, 4 για τριμηνιαία)</div>
+                            </div>
+                            
                             
                             <div class="col-md-12 mb-3">
                                 <label for="rentAdjustmentInfo" class="form-label fw-bold">Πληροφορίες Αναπροσαρμογής Μισθώματος</label>
@@ -235,7 +254,7 @@
                         
                         {{#if leaseDetails.property}}
                         <p><strong>Ακίνητο:</strong><br>
-                        {{leaseDetails.property.address}}{{#if leaseDetails.property.kaek}} [{{leaseDetails.property.kaek}}]{{/if}}</p>
+                        {{leaseDetails.property.address}}{{#if leaseDetails.property.appartment_number}}, {{leaseDetails.property.appartment_number}}{{/if}}</p>
                         {{/if}}
                         
                         {{#if leaseDetails.party}}
@@ -251,8 +270,10 @@
     </div>
 </div>
 
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     // Form για επεξεργασία/δημιουργία lease
     document.getElementById('leaseForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -272,6 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data.lease_end === '') data.lease_end = null;
         if (data.property_id === '') data.property_id = null;
         if (data.party_id === '') data.party_id = null;
+        if (data.number_of_payments === '') data.number_of_payments = null;
+        if (data.rent_adjustment_month === '') data.rent_adjustment_month = null;
         
         // Μετατροπή string boolean σε boolean
         data.active = data.active === 'true';
@@ -342,6 +365,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    });
+
+    // Αυτόματη συμπλήρωση του Μήνα Αναπροσαρμογής με βάση την Έναρξη Μίσθωσης
+    Q('#leaseStart').on('blur', function() { // blur: όταν φύγει το focus από το πεδίο
+        const startDate = new Date(this.value);
+        if (!isNaN(startDate) && Q('#rentAdjustmentMonth').value === '') {
+            const month = startDate.getMonth() + 1; // getMonth() επιστρέφει 0-11 αντί για 1-12
+            Q('#rentAdjustmentMonth').value = month;
+        }
     });
 });
 </script>

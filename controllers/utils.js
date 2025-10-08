@@ -31,8 +31,16 @@ let descriptions = {
     },
     leaseDirection: (direction) => {
         const directions = {
+            incoming: 'Μίσθωση - Ο δήμος μισθώνει από τρίτους',
+            outgoing: 'Εκμίσθωση - Ο δήμος εκμισθώνει σε τρίτους',
+            grant: 'Παραχώρηση - Ο δήμος παραχωρεί σε τρίτους',
+        };
+        return directions[direction] || direction;
+    },
+    leaseDirectionShort: (direction) => {
+        const directions = {
             incoming: 'Μίσθωση',
-            outgoing: 'Εκμίσθωση',
+            outgoing: 'Εκμισθωση',
             grant: 'Παραχώρηση',
         };
         return directions[direction] || direction;

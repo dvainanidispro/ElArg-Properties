@@ -27,6 +27,8 @@ const handlebarsConfig = {
         /* example: <script> let obj = {{{objectify obj}}}; </script> */      
         objectify: (object) => JSON.stringify(object),  
         inflect: (number, singular, plural) => number + ' ' + (number==1 ? singular : plural),
+        /* example: {{#each (array 1 2 3)}} */
+        array: (...items) => items.slice(0, -1), // -1: Remove the Handlebars context object
         euro: (price) => new Intl.NumberFormat('el-GR', {style: 'currency', currency: 'EUR'}).format(price),
         time: (date) => {
             if (!date) return '';
@@ -102,6 +104,7 @@ const handlebarsConfig = {
             return userHasPermission(user, permission);
         },
         leaseDirectionText: descriptions.leaseDirection,
+        leaseDirectionShortText: descriptions.leaseDirectionShort,
         rentFrequencyText: descriptions.rentFrequency,
         periodStatusText: descriptions.periodStatus,
         greekMonthText: descriptions.greekMonths,

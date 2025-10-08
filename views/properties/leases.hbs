@@ -49,7 +49,7 @@
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
                                     {{#unless property}}
-                                    <th>Ακίνητο</th>
+                                    <th style="width: 40ch">Ακίνητο</th>
                                     {{/unless}}
                                     {{#unless party}}
                                     <th>Συμβαλλόμενος</th>
@@ -87,7 +87,7 @@
                                     </td>
                                     {{/unless}}
                                     <td>
-                                        {{leaseDirectionText this.lease_direction}}
+                                        {{leaseDirectionShortText this.lease_direction}}
                                     </td>
                                     <td>{{date this.lease_end}}</td>
                                     <td>

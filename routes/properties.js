@@ -618,7 +618,7 @@ properties.get('/leases/new', can('edit:content'), async (req, res) => {
         // Ανάκτηση properties και parties για τα dropdowns
         const [propertiesList, parties] = await Promise.all([
             Models.Property.findAll({
-                attributes: ['id', 'kaek', 'address', 'asset_type'],
+                attributes: ['id', 'appartment_number', 'address', 'asset_type'],
                 order: [['id', 'DESC']],
                 raw: true
             }),
@@ -653,7 +653,7 @@ properties.get('/leases/:id', can('view:content'), async (req, res) => {
                 {
                     model: Models.Property,
                     as: 'property',
-                    attributes: ['id', 'kaek', 'address', 'asset_type']
+                    attributes: ['id', 'appartment_number', 'address', 'asset_type']
                 },
                 {
                     model: Models.Party,
@@ -670,7 +670,7 @@ properties.get('/leases/:id', can('view:content'), async (req, res) => {
         // Ανάκτηση properties και parties για τα dropdowns
         const [propertiesList, parties] = await Promise.all([
             Models.Property.findAll({
-                attributes: ['id', 'kaek', 'address', 'asset_type'],
+                attributes: ['id', 'appartment_number', 'address', 'asset_type'],
                 order: [['id', 'DESC']],
                 raw: true
             }),
@@ -701,7 +701,8 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
     try {
         const { 
             property_id, party_id, lease_direction, lease_start, lease_end, rent, 
-            rent_frequency, rent_adjustment_info, guarantee_letter, notes, active 
+            rent_frequency, number_of_payments, rent_adjustment_month, rent_adjustment_info, 
+            guarantee_letter, notes, active 
         } = req.body;
         // Βασικός έλεγχος δεδομένων
         if (!property_id || !party_id || !lease_direction || !lease_start) {
@@ -736,6 +737,8 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
             lease_end: lease_end || null,
             rent: rent ? parseFloat(rent) : null,
             rent_frequency: rent_frequency || 'monthly',
+            number_of_payments: number_of_payments ? parseInt(number_of_payments) : null,
+            rent_adjustment_month: rent_adjustment_month ? parseInt(rent_adjustment_month) : null,
             rent_adjustment_info: rent_adjustment_info || '',
             guarantee_letter: guarantee_letter || '',
             notes: notes || '',
@@ -764,7 +767,8 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
         const leaseId = parseInt(req.params.id);
         const { 
             lease_start, lease_end, rent, 
-            rent_frequency, rent_adjustment_info, guarantee_letter, notes, active 
+            rent_frequency, number_of_payments, rent_adjustment_month, rent_adjustment_info, 
+            guarantee_letter, notes, active 
         } = req.body;
         
         const lease = await Models.Lease.findByPk(leaseId);
@@ -781,8 +785,10 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
             lease_end: lease_end || lease.lease_end,
             rent: rent ? parseFloat(rent) : lease.rent,
             rent_frequency: rent_frequency || lease.rent_frequency,
-            rent_adjustment_info: rent_adjustment_info || lease.rent_adjustment_info,
-            guarantee_letter: guarantee_letter || lease.guarantee_letter,
+            number_of_payments: number_of_payments ? parseInt(number_of_payments) : lease.number_of_payments,
+            rent_adjustment_month: rent_adjustment_month ? parseInt(rent_adjustment_month) : lease.rent_adjustment_month,
+            rent_adjustment_info: rent_adjustment_info !== undefined ? rent_adjustment_info : lease.rent_adjustment_info,
+            guarantee_letter: guarantee_letter !== undefined ? guarantee_letter : lease.guarantee_letter,
             notes: notes !== undefined ? notes : lease.notes,
             active: active !== undefined ? active : lease.active
         };

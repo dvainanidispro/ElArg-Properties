@@ -68,7 +68,7 @@
                                 <label class="form-label fw-bold">Μίσθωση</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" 
-                                           value="{{#if propertyDetails.lease}}[{{leaseDirectionText propertyDetails.lease.lease_direction}}] {{propertyDetails.lease.party.name}} - Λήξη: {{date propertyDetails.lease.lease_end}}{{else}}Χωρίς ενεργή μίσθωση{{/if}}" 
+                                           value="{{#if propertyDetails.lease}}[{{leaseDirectionShortText propertyDetails.lease.lease_direction}}] {{propertyDetails.lease.party.name}} - Λήξη: {{date propertyDetails.lease.lease_end}}{{else}}Χωρίς ενεργή μίσθωση{{/if}}" 
                                            readonly>
                                     {{#if propertyDetails}}
                                         <div class="btn-group">
