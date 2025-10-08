@@ -22,8 +22,8 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
-                                    <th>Διεύθυνση</th>
-                                    <th>ΚΑΕΚ</th>
+                                    <th style="width: 50ch">Διεύθυνση</th>
+                                    <th class="d-none">ΚΑΕΚ</th>
                                     <th class="sortable">Τύπος</th>
                                     <th>Συμβαλλόμενος</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη Μίσθωσης</th>
@@ -36,13 +36,9 @@
                                 <tr>
                                     <td class="d-none">{{this.id}}</td>
                                     <td>
-                                        {{#if this.address}}
-                                            <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">{{this.address}}</a>
-                                        {{else}}
-                                            <span class="text-muted">-</span>
-                                        {{/if}}
+                                        {{this.address}}{{#if this.appartment_number}}, {{this.appartment_number}}{{/if}}
                                     </td>
-                                    <td>
+                                    <td class="d-none">
                                         {{#if this.kaek}}
                                             <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">{{this.kaek}}</a>
                                         {{else}}
@@ -51,11 +47,13 @@
                                     </td>
                                     <td>
                                         {{#if (eq this.asset_type 'leased_out')}}
-                                            <span class="badge bg-purple fs-6">Εκμισθωμένο</span>
+                                            <span class="badge bg-purple fs-6">{{assetTypeText 'leased_out'}}</span>
                                         {{else if (eq this.asset_type 'rented')}}
-                                            <span class="badge bg-pink fs-6">Μισθωμένο</span>
-                                        {{else}}
-                                            <span class="badge bg-dark fs-6">Ιδιόκτητο</span>
+                                            <span class="badge bg-pink fs-6">{{assetTypeText 'rented'}}</span>
+                                        {{else if (eq this.asset_type 'owned')}}
+                                            <span class="badge bg-dark fs-6">{{assetTypeText 'owned'}}</span>
+                                        {{else if (eq this.asset_type 'granted')}}
+                                            <span class="badge bg-info fs-6">{{assetTypeText 'granted'}}</span>
                                         {{/if}}
                                     </td>
                                     <td>

@@ -389,7 +389,8 @@ properties.get('/properties/:id', can('view:content'), async (req, res) => {
 properties.post('/properties', can('edit:content'), async (req, res) => {
     try {
         const { 
-            kaek, address, description, area, construction_year, file_server_link,
+            kaek, address, department, appartment_number, is_part_of_other, usage, description, 
+            area, construction_year, file_server_link, ownership_status, ownership_details,
             asset_type, active 
         } = req.body;
         
@@ -418,10 +419,16 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
         const newProperty = await Models.Property.create({
             kaek: kaek || '',
             address: address || '',
+            department: department || '',
+            appartment_number: appartment_number || '',
+            is_part_of_other: is_part_of_other === 'true' || is_part_of_other === true,
+            usage: usage || '',
             description: description || '',
             area: area ? parseInt(area) : null,
             construction_year: construction_year ? parseInt(construction_year) : null,
             file_server_link: file_server_link || '',
+            ownership_status: ownership_status || '',
+            ownership_details: ownership_details || '',
             asset_type: asset_type || 'owned',
             active: active !== undefined ? active : true
         });
@@ -449,7 +456,8 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
     try {
         const propertyId = parseInt(req.params.id);
         const { 
-            kaek, address, description, area, construction_year, file_server_link,
+            kaek, address, department, appartment_number, is_part_of_other, usage, description, 
+            area, construction_year, file_server_link, ownership_status, ownership_details,
             asset_type, active 
         } = req.body;
         
@@ -482,10 +490,16 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
         const updateData = {
             kaek: kaek || property.kaek,
             address: address || property.address,
-            description: description || property.description,
+            department: department !== undefined ? department : property.department,
+            appartment_number: appartment_number !== undefined ? appartment_number : property.appartment_number,
+            is_part_of_other: is_part_of_other !== undefined ? (is_part_of_other === 'true' || is_part_of_other === true) : property.is_part_of_other,
+            usage: usage !== undefined ? usage : property.usage,
+            description: description !== undefined ? description : property.description,
             area: area ? parseInt(area) : property.area,
             construction_year: construction_year ? parseInt(construction_year) : property.construction_year,
-            file_server_link: file_server_link || property.file_server_link,
+            file_server_link: file_server_link !== undefined ? file_server_link : property.file_server_link,
+            ownership_status: ownership_status !== undefined ? ownership_status : property.ownership_status,
+            ownership_details: ownership_details !== undefined ? ownership_details : property.ownership_details,
             asset_type: asset_type || property.asset_type,
             active: active !== undefined ? active : property.active
         };

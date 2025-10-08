@@ -28,7 +28,7 @@ const Property = db.define('property',
         is_part_of_other: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
-            comment: 'Το ακίνητο είναι μέρος άλλου ακινήτου (π.χ. διαμέρισμα, κατάστημα) που ανήκει στο Δήμο'
+            comment: 'Το ακίνητο είναι τμήμα άλλου ακινήτου (π.χ. διαμέρισμα, κατάστημα) που ανήκει στο Δήμο'
         },
         usage: {
             type: DataTypes.STRING,

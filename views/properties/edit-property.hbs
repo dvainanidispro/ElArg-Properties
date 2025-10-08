@@ -31,11 +31,40 @@
                             </div>
                             {{/if}}
 
-                            <div class="col-md-12 mb-3">
+                            <div class="col-md-6 mb-3">
                               <label for="propertyAddress" class="form-label fw-bold">Διεύθυνση *</label>
                               <input type="text" class="form-control" id="propertyAddress" name="address" value="{{or propertyDetails.address '' ''}}" required>
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="propertyAppartmentNumber" class="form-label fw-bold">Αριθμός Διαμερίσματος</label>
+                                <input type="text" class="form-control" id="propertyAppartmentNumber" name="appartment_number" value="{{or propertyDetails.appartment_number '' ''}}">
+                                <div class="form-text text-muted">Αριθμός διαμερίσματος εντός κτιρίου (αν διατίθεται)</div>
+                            </div>
                             <div class="col-md-12 mb-3">
+                                <label for="propertyDepartment" class="form-label fw-bold">Δημοτικό Διαμέρισμα</label>
+                                <input type="text" class="form-control" id="propertyDepartment" name="department" value="{{or propertyDetails.department '' ''}}">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="isPartOfOther" class="form-label fw-bold">Αποτελεί τμήμα άλλου ακινήτου του Δήμου</label>
+                                <select class="form-select" id="isPartOfOther" name="is_part_of_other">
+                                    <option value="false" {{#unless propertyDetails.is_part_of_other}}selected{{/unless}}>Όχι</option>
+                                    <option value="true" {{#if propertyDetails.is_part_of_other}}selected{{/if}}>Ναι</option>
+                                </select>
+                                <div class="form-text text-muted">Το ακίνητο είναι τμήμα άλλου ακινήτου (π.χ. διαμέρισμα, κατάστημα) το οποίο ανήκει στο Δήμο</div>
+                            </div>
+
+                            <hr>
+                            
+                            <div class="col-12 mb-3">
+                                <label for="propertyType" class="form-label fw-bold">Τύπος Ακινήτου</label>
+                                <select class="form-select" id="propertyType" name="asset_type">
+                                    <option value="owned" {{#if (eq propertyDetails.asset_type 'owned')}}selected{{/if}}>{{assetTypeText 'owned'}}</option>
+                                    <option value="leased_out" {{#if (eq propertyDetails.asset_type 'leased_out')}}selected{{/if}}>{{assetTypeText 'leased_out'}}</option>
+                                    <option value="rented" {{#if (eq propertyDetails.asset_type 'rented')}}selected{{/if}}>{{assetTypeText 'rented'}}</option>
+                                    <option value="granted" {{#if (eq propertyDetails.asset_type 'granted')}}selected{{/if}}>{{assetTypeText 'granted'}}</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mb-3">
                                 <label class="form-label fw-bold">Μίσθωση</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" 
@@ -57,7 +86,13 @@
                                 <div class="form-text text-muted">Θα πρέπει να αποθηκεύσετε το νέο ακίνητο πριν μπορέσετε να προσθέσετε πληροφορίες μίσθωσης</div>
                                 {{/unless}}
                             </div>
+
+                            <hr>
                             
+                            <div class="col-md-6 mb-3">
+                                <label for="constructionYear" class="form-label fw-bold">Έτος Κατασκευής</label>
+                                <input type="number" class="form-control" id="constructionYear" name="construction_year" value="{{or propertyDetails.construction_year '' ''}}">
+                            </div>
                             <div class="col-md-6 mb-3">
                                 <label for="propertyKaek" class="form-label fw-bold">ΚΑΕΚ</label>
                                 <input type="text" class="form-control" id="propertyKaek" name="kaek" value="{{or propertyDetails.kaek '' ''}}">
@@ -67,6 +102,11 @@
                                 <label for="propertyArea" class="form-label fw-bold">Επιφάνεια (τ.μ.)</label>
                                 <input type="number" class="form-control" id="propertyArea" name="area" value="{{or propertyDetails.area '' ''}}">
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="propertyUsage" class="form-label fw-bold">Χρήση Ακινήτου</label>
+                                <input type="text" class="form-control" id="propertyUsage" name="usage" value="{{or propertyDetails.usage '' ''}}">
+                            </div>
+                            
                             
                             
                             <div class="col-md-12 mb-3">
@@ -74,22 +114,35 @@
                                 <textarea class="form-control" id="propertyDescription" name="description" rows="3">{{or propertyDetails.description '' ''}}</textarea>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
-                                <label for="constructionYear" class="form-label fw-bold">Έτος Κατασκευής</label>
-                                <input type="number" class="form-control" id="constructionYear" name="construction_year" value="{{or propertyDetails.construction_year '' ''}}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="propertyType" class="form-label fw-bold">Τύπος Ακινήτου</label>
-                                <select class="form-select" id="propertyType" name="asset_type">
-                                    <option value="owned" {{#if (eq propertyDetails.asset_type 'owned')}}selected{{/if}}>Ιδιόκτητο</option>
-                                    <option value="leased_out" {{#if (eq propertyDetails.asset_type 'leased_out')}}selected{{/if}}>Εκμισθωμένο</option>
-                                    <option value="rented" {{#if (eq propertyDetails.asset_type 'rented')}}selected{{/if}}>Μισθωμένο</option>
+                            <hr>
+                            <div class="col-12 mb-3">
+                                <label for="ownershipStatus" class="form-label fw-bold">Ιδιοκτησιακό Καθεστώς</label>
+                                <select class="form-select" id="ownershipStatus" name="ownership_status">
+                                    <option value="">Επιλέξτε...</option>
+                                    <option value="not_owned" {{#if (eq propertyDetails.ownership_status 'not_owned')}}selected{{/if}}>{{ownershipStatusText 'not_owned'}}</option>
+                                    <option value="sole_ownership" {{#if (eq propertyDetails.ownership_status 'sole_ownership')}}selected{{/if}}>{{ownershipStatusText 'sole_ownership'}}</option>
+                                    <option value="shared_ownership" {{#if (eq propertyDetails.ownership_status 'shared_ownership')}}selected{{/if}}>{{ownershipStatusText 'shared_ownership'}}</option>
                                 </select>
                             </div>
+                            
+                            <div class="col-md-12 mb-3">
+                                <label for="ownershipDetails" class="form-label fw-bold">Λεπτομέρειες Ιδιοκτησίας</label>
+                                <textarea class="form-control" id="ownershipDetails" name="ownership_details" rows="2">{{or propertyDetails.ownership_details '' ''}}</textarea>
+                                <div class="form-text text-muted">Περιγραφή ιδιοκτησιακού καθεστώτος, ποσοστά συνιδιοκτησίας κλπ.</div>
+                            </div>
+                            
+                            <hr>
                                                        
                             <div class="col-12 mb-3">
                                 <label for="fileServerLink" class="form-label fw-bold">Link Αρχείων</label>
-                                <input type="text" class="form-control" id="fileServerLink" name="file_server_link" value="{{or propertyDetails.file_server_link '' ''}}">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="fileServerLink" name="file_server_link" value="{{or propertyDetails.file_server_link '' ''}}" placeholder="\\\\server\\path\\...">
+                                    <button class="btn btn-secondary btn-icon" type="button" id="copyFileLinkBtn" title="Αντιγραφή διαδρομής">
+                                        <i class="ti-clipboard me-1"></i>
+                                        <span>Αντιγραφή</span>
+                                    </button>
+                                </div>
+                                <div class="form-text text-muted">Διαδρομή αρχείων στον file server. Κάντε επικόλληση στον Windows Explorer.</div>
                             </div>
                             
                             <div class="col-md-12 mb-3">
@@ -198,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Μετατροπή string boolean σε boolean
         data.active = data.active === 'true';
+        data.is_part_of_other = data.is_part_of_other === 'true';
         
         try {
             const url = isEdit ? `/properties/properties/${propertyId}` : '/properties/properties';
@@ -265,6 +319,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    });
+    
+    // Κουμπί αντιγραφής link αρχείων
+    document.getElementById('copyFileLinkBtn').addEventListener('click', async function() {
+        const fileLinkInput = document.getElementById('fileServerLink');
+        const fileLink = fileLinkInput.value;
+        
+        try {
+            await navigator.clipboard.writeText(fileLink);
+            
+            // Αλλαγή κειμένου κουμπιού για feedback
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="ti-check me-1"></i>Αντιγράφηκε!';
+            this.classList.add('btn-success');
+            this.classList.remove('btn-secondary');
+            
+            // Επαναφορά μετά από 2 δευτερόλεπτα
+            setTimeout(() => {
+                this.innerHTML = originalHTML;
+                this.classList.remove('btn-success');
+                this.classList.add('btn-secondary');
+            }, 2000);
+            
+        } catch (error) {
+            console.log('Αποτυχία αντιγραφής:', error);
+        }
     });
 });
 </script>
