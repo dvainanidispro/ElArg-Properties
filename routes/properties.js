@@ -61,7 +61,7 @@ properties.get('/parties/:id', can('view:content'), async (req, res) => {
     try {
         const partyId = parseInt(req.params.id);
         const party = await Models.Party.findByPk(partyId, {
-            attributes: ['id', 'name', 'afm', 'email', 'contact', 'contracts', 'createdAt', 'updatedAt'],
+            attributes: ['id', 'name', 'afm', 'email', 'contact', 'createdAt', 'updatedAt'],
             raw: true
         });
         
@@ -184,9 +184,9 @@ properties.put('/parties/:id', can('edit:content'), async (req, res) => {
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
             name: name || party.name,
-            afm: afm || party.afm,
-            email: email || party.email,
-            contact: contact || party.contact
+            afm,
+            email,
+            contact,
         };
         
         await party.update(updateData);
@@ -429,7 +429,7 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
             address: address || '',
             department: department || '',
             appartment_number: appartment_number || '',
-            is_part_of_other: is_part_of_other === 'true' || is_part_of_other === true,
+            is_part_of_other: (is_part_of_other==='true') || (is_part_of_other===true),
             usage: usage || '',
             description: description || '',
             area: area ? parseInt(area) : null,
@@ -438,7 +438,7 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
             ownership_status: ownership_status || '',
             ownership_details: ownership_details || '',
             asset_type: asset_type || 'owned',
-            active: active !== undefined ? active : true
+            active: (active!==undefined) ? active : true
         });
         
         log.info(`Νέο property δημιουργήθηκε: ${newProperty.address || newProperty.kaek} (ID: ${newProperty.id})`);
@@ -496,20 +496,20 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
         
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
-            kaek: kaek || property.kaek,
-            address: address || property.address,
-            department: department !== undefined ? department : property.department,
-            appartment_number: appartment_number !== undefined ? appartment_number : property.appartment_number,
-            is_part_of_other: is_part_of_other !== undefined ? (is_part_of_other === 'true' || is_part_of_other === true) : property.is_part_of_other,
-            usage: usage !== undefined ? usage : property.usage,
-            description: description !== undefined ? description : property.description,
-            area: area ? parseInt(area) : property.area,
-            construction_year: construction_year ? parseInt(construction_year) : property.construction_year,
-            file_server_link: file_server_link !== undefined ? file_server_link : property.file_server_link,
-            ownership_status: ownership_status !== undefined ? ownership_status : property.ownership_status,
-            ownership_details: ownership_details !== undefined ? ownership_details : property.ownership_details,
-            asset_type: asset_type || property.asset_type,
-            active: active !== undefined ? active : property.active
+            kaek,
+            address,
+            department,
+            appartment_number,
+            is_part_of_other: (is_part_of_other === 'true') || (is_part_of_other === true),
+            usage,
+            description,
+            area: area ? parseInt(area) : null,
+            construction_year: construction_year ? parseInt(construction_year) : null,
+            file_server_link,
+            ownership_status,
+            ownership_details,
+            asset_type,
+            active,
         };
         
         await property.update(updateData);
@@ -764,7 +764,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
             rent_adjustment_info: rent_adjustment_info || '',
             guarantee_letter: guarantee_letter || '',
             notes: notes || '',
-            active: active !== undefined ? active : true
+            active: (active!==undefined) ? active : true
         });
         log.info(`Νέο lease δημιουργήθηκε: Property ${property_id} - Party ${party_id} (ID: ${newLease.id})`);
         res.status(201).json({ 
@@ -803,16 +803,16 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
         
         // Δημιουργία αντικειμένου ενημέρωσης (χωρίς property_id, party_id, lease_direction)
         const updateData = {
-            lease_start: lease_start || lease.lease_start,
-            lease_end: lease_end || lease.lease_end,
-            rent: rent ? parseFloat(rent) : lease.rent,
-            rent_frequency: rent_frequency || lease.rent_frequency,
-            number_of_payments: number_of_payments ? parseInt(number_of_payments) : lease.number_of_payments,
-            rent_adjustment_month: rent_adjustment_month ? parseInt(rent_adjustment_month) : lease.rent_adjustment_month,
-            rent_adjustment_info: rent_adjustment_info !== undefined ? rent_adjustment_info : lease.rent_adjustment_info,
-            guarantee_letter: guarantee_letter !== undefined ? guarantee_letter : lease.guarantee_letter,
-            notes: notes !== undefined ? notes : lease.notes,
-            active: active !== undefined ? active : lease.active
+            lease_start,
+            lease_end,
+            rent: rent ? parseFloat(rent) : null,
+            rent_frequency,
+            number_of_payments: number_of_payments ? parseInt(number_of_payments) : null,
+            rent_adjustment_month: rent_adjustment_month ? parseInt(rent_adjustment_month) : null,
+            rent_adjustment_info,
+            guarantee_letter,
+            notes,
+            active,
         };
         
         await lease.update(updateData);

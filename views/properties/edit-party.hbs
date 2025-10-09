@@ -52,41 +52,6 @@
                             </div>
                         </div>
                         
-                        {{#if partyDetails.contracts}}
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <h5>Συμβάσεις</h5>
-                                <div class="form-text text-muted mb-3">Λίστα συμβάσεων στις οποίες συμμετέχει ο συμβαλλόμενος</div>
-                                <div class="table-responsive">
-                                    <table class="table table-sm table-bordered">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>ID Σύμβασης</th>
-                                                <th>Τύπος</th>
-                                                <th>Κατάσταση</th>
-                                                <th>Ημερομηνία</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {{#each partyDetails.contracts}}
-                                            <tr>
-                                                <td>{{this.id}}</td>
-                                                <td>{{this.type}}</td>
-                                                <td>{{this.status}}</td>
-                                                <td>{{this.date}}</td>
-                                            </tr>
-                                            {{else}}
-                                            <tr>
-                                                <td colspan="4" class="text-center text-muted">Δεν υπάρχουν συμβάσεις</td>
-                                            </tr>
-                                            {{/each}}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        {{/if}}
-                        
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex gap-2">

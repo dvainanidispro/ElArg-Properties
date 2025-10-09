@@ -340,6 +340,10 @@
             <td>{{leaseDetails.notes}}</td>
         </tr>
         <tr>
+            <td>Ενημέρωση μίσθωσης στην Εφαρμογή</td>
+            <td>{{date leaseDetails.updatedAt}}</td>
+        </tr>
+        <tr>
             <td>Κατάσταση Μίσθωσης</td>
             <td>{{check leaseDetails.active 'Ενεργή' 'Ανενεργή'}}</td>
         </tr>
@@ -455,9 +459,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Button για εξαγωγή καρτέλας μίσθωσης σε Excel
     Q('#exportExcelBtn') && Q('#exportExcelBtn').on('click', function() {
             const propertyAddress = '{{join leaseDetails.property.address leaseDetails.property.appartment_number}}';
-            const filename = `Καρτέλα Μίσθωσης - ${propertyAddress}.xlsx`.replace(/[/\\?%*:|"<>]/g, '_');
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            const filename = `Καρτέλα Μίσθωσης - ${propertyAddress} - ${today}.xlsx`.replace(/[/\\?%*:|"<>]/g, '_');
             
-            downloadTableAsExcel('leaseExportTable', filename, 'Καρτέλα Μίσθωσης');
+            downloadTableAsExcel('leaseExportTable', filename, propertyAddress);
         });
 });
 </script>

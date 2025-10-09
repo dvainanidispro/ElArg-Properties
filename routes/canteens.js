@@ -114,7 +114,7 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
             contact: contact || '',
             notes: notes || '',
             role: 'principal',
-            active: active !== undefined ? active : true // Default true για νέους principals
+            active: (active!==undefined) ? active : true // Default true για νέους principals
         });
         
         log.info(`Νέος principal δημιουργήθηκε: ${newPrincipal.email} (ID: ${newPrincipal.id})`);
@@ -178,9 +178,9 @@ canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
         const updateData = {
             email: email || principal.email,
             name: name || principal.name,
-            contact: contact || principal.contact,
-            notes: notes !== undefined ? notes : principal.notes,
-            active: active !== undefined ? active : principal.active
+            contact: contact,
+            notes: notes,
+            active: active,
         };
         
         await principal.update(updateData);
@@ -434,7 +434,7 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
             name,
             area: area || null,
             principal_id: principal_id || null,
-            active: active !== undefined ? active : true
+            active: (active!==undefined) ? active : true
         });
         
         log.info(`Νέο canteen δημιουργήθηκε: ${newCanteen.name} (ID: ${newCanteen.id})`);
@@ -495,9 +495,9 @@ canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
             name: name || canteen.name,
-            area: area !== undefined ? area : canteen.area,
-            principal_id: principal_id !== undefined ? principal_id : canteen.principal_id,
-            active: active !== undefined ? active : canteen.active
+            area: area,
+            principal_id: principal_id,
+            active: active
         };
         
         await canteen.update(updateData);
@@ -767,7 +767,7 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
             guarantee_letter,
             revision_number,
             notes,
-            active: active !== undefined ? active : true
+            active: (active!==undefined) ? active : true
         });
         
         log.info(`Νέο lease κυλικείου δημιουργήθηκε: Canteen ${canteen_id} - Party ${party_id} (ID: ${newLease.id})`);
@@ -807,15 +807,15 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
         
         // Δημιουργία αντικειμένου ενημέρωσης (χωρίς canteen_id, party_id, lease_direction)
         const updateData = {
-            lease_start: lease_start || lease.lease_start,
-            lease_end: lease_end || lease.lease_end,
-            rent: rent ? parseFloat(rent) : lease.rent,
+            lease_start: lease_start,
+            lease_end: lease_end,
+            rent: rent ? parseFloat(rent) : null,
             rent_frequency: 'quarterly', // Κυλικεία είναι πάντα τριμηνιαία
             rent_adjustment_info,
             guarantee_letter,
             revision_number,
             notes,
-            active: active !== undefined ? active : lease.active
+            active: active
         };
         
         await lease.update(updateData);
