@@ -83,10 +83,10 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
-                                    <th class="sortable" style="width: 35ch">Όνομα Κυλικείου</th>
-                                    <th style="width: 25ch">Διευθυντής</th>
+                                    <th class="sortable wide-cell-l" >Όνομα Κυλικείου</th>
+                                    <th class="wide-cell-m">Διευθυντής</th>
                                     <th class="d-none" >email Διευθυντή</th>
-                                    <th style="width: 25ch">Μισθωτής</th>
+                                    <th class="wide-cell-m">Μισθωτής</th>
                                     <th class="d-none">ΑΦΜ Μισθωτή</th>
                                     {{!-- <th>Κατάσταση Κυλικείου</th> --}}
                                     <th class="d-none d-xxl-table-cell">Λήξη <br> Μίσθωσης</th>
@@ -94,16 +94,16 @@
                                     <th class="sortable">Ημερομηνία <br>Υποβολής</th>
                                     <th class="sortable d-none d-xxl-table-cell" data-sort-type="number">Κόστος <br>Ρεύματος</th>
                                     <th class="sortable" data-sort-type="number">Μίσθωμα</th>
-                                    <th style="width: 18ch">Ενέργειες</th>
+                                    <th class="">Ενέργειες</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each canteens}}
                                 <tr>
                                     <td class="d-none">{{this.id}}</td>
-                                    <td>
+                                    <td class="fw-semibold">
                                         <a href="/canteens/canteens/{{this.id}}" class="text-primary text-decoration-none">
-                                            <strong>{{this.name}}</strong>
+                                            {{this.name}}
                                         </a>
                                     </td>
                                     <td>

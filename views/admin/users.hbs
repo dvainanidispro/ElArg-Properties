@@ -32,7 +32,7 @@
                                 {{#each users}}
                                 <tr>
                                     <td>{{this.id}}</td>
-                                    <td>{{this.name}}</td>
+                                    <td class="fw-semibold">{{this.name}}</td>
                                     <td>{{this.email}}</td>
                                     <td>
                                         <span class="badge bg-{{deepLookup @root.roles this.role 'color'}} fs-6">

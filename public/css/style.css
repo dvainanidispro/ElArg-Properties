@@ -275,3 +275,13 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
 table i{
     font-size: 1.2rem;
 }
+
+.wide-cell-m{
+    width: 25ch;
+}
+.wide-cell, .wide-cell-l{
+    width: 40ch;
+}
+.wide-cell-xl{
+    width: 50ch;
+}

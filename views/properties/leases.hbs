@@ -62,7 +62,7 @@
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
                                     {{#unless property}}
-                                    <th class="sortable" style="width: 40ch">Ακίνητο</th>
+                                    <th class="sortable wide-cell">Ακίνητο</th>
                                     {{/unless}}
                                     {{#unless party}}
                                     <th >Συμβαλλόμενος</th>
@@ -80,7 +80,7 @@
                                 <tr>
                                     <td class="d-none">{{this.id}}</td>
                                     {{#unless ../property}}
-                                    <td>
+                                    <td class="fw-semibold">
                                         {{#if this.property}}
                                             <a href="/properties/properties/{{this.property.id}}" class="text-primary text-decoration-none">
                                                 {{this.property.address}}{{#if this.property.appartment_number}}, {{this.property.appartment_number}}{{/if}}

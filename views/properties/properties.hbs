@@ -40,7 +40,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
-                                    <th style="width: 50ch">Διεύθυνση</th>
+                                    <th class="wide-cell">Διεύθυνση</th>
                                     <th class="d-none">ΚΑΕΚ</th>
                                     <th class="sortable">Τύπος</th>
                                     <th>Συμβαλλόμενος</th>
@@ -53,7 +53,7 @@
                                 {{#each properties}}
                                 <tr>
                                     <td class="d-none">{{this.id}}</td>
-                                    <td>
+                                    <td class="fw-semibold">
                                         <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">
                                             {{this.address}}{{#if this.appartment_number}}, {{this.appartment_number}}{{/if}}
                                         </a>

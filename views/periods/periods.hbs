@@ -21,16 +21,16 @@
                                     <th>Κατάσταση υποβολών</th>
                                     <th>Ενεργή</th>
                                     <th>Λεπτομέρειες</th>
-                                    <th>Υποβολές στοιχείων Κυλικείων</th>
+                                    <th>Υποβολές στοιχείων</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each periods}}
                                 <tr>
                                     {{!-- <td>{{this.id}}</td> --}}
-                                    <td>
+                                    <td class="fw-semibold">
                                         <a href="/canteens/periods/{{this.id}}" class="text-primary text-decoration-none">
-                                            <strong>{{this.code}}</strong>
+                                            {{this.code}}
                                         </a>
                                     </td>
                                     <td>{{date this.start_date}}</td>

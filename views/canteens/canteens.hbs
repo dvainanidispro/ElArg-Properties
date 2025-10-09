@@ -22,7 +22,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     {{!-- <th class="sortable" data-sort-type="number">ID</th> --}}
-                                    <th class="sortable">Όνομα Κυλικείου</th>
+                                    <th class="sortable wide-cell">Όνομα Κυλικείου</th>
                                     <th>Διευθυντής</th>
                                     <th>Μισθωτής</th>
                                     <th class="sortable" data-sort-type="date-gr">Λήξη Μίσθωσης</th>
@@ -34,7 +34,7 @@
                                 {{#each canteens}}
                                 <tr>
                                     {{!-- <td>{{this.id}}</td> --}}
-                                    <td>
+                                    <td class="fw-semibold">
                                         <a href="/canteens/canteens/{{this.id}}" class="text-primary text-decoration-none">{{this.name}}</a>
                                     </td>
                                     <td>
