@@ -22,7 +22,7 @@ let reminderBodyTemplate = (canteen, period) => {
         <p>Παρακαλούμε, όπως υποβάλετε τα απαραίτητα στοιχεία το συντομότερο δυνατό.</p>
         <p>Η προθεσμία υποβολής λήγει στις ${greekdate(period.submission_deadline)}.</p>
         <br>
-        <p>Μπορείτε να συνδεθείτε στην Εφαρμογή <a href="${appUrl}">εδώ</a> χρησιμοποιώντας την παρούσα διεύθυνση email (${canteen.principal.email}).</p>
+        <p>Μπορείτε να συνδεθείτε στην Εφαρμογή Ακινήτων <a href="${appUrl}">εδώ</a> χρησιμοποιώντας την διεύθυνση email σας (${canteen.principal.email}).</p>
         <p></p>
         <p>Ευχαριστούμε για τη συνεργασία σας.</p>
         <br>
@@ -70,7 +70,7 @@ async function sendRemindersForPendingSubmissions () {
                     as: 'principal',
                     attributes: ['id', 'name', 'email'],
                     where: { active: true },
-                    required: true
+                    required: false
                 },
             ],
             raw: true, // Με αυτό, τα submissions έρχονται σαν ένα αντικείμενο, όχι array
@@ -117,7 +117,7 @@ async function sendRemindersForPendingSubmissions () {
         const emailPromises = pendingCanteens.map(async (canteen) => {
             const principal = canteen.principal;
             if (!principal || !principal.email) {
-                log.warn(`Το κυλικείο με ID ${canteen.id} δεν έχει διευθυντή με email. Παράλειψη υπενθύμισης.`);
+                log.warn(`Το κυλικείο με ${canteen.id} - ${canteen.name} δεν έχει διευθυντή με email. Παράλειψη αποστολής υπενθύμισης.`);
                 return { canteen, success: true, skipped: true };
             }
 
@@ -187,6 +187,7 @@ function sendEmailForPendingCanteen (canteen, period) {
         log.dev(mailOptions);
         try {
             if (process.env.SENDACTUALEMAILS == 'false') {      // Μόνο αν έχει τεθεί false
+                log.warn(`ΠΡΟΣΟΧΗ: Η αποστολή email είναι απενεργοποιημένη (SENDACTUALEMAILS=false).`);
                 // Προσομοίωση αποστολής email με καθυστέρηση
                 setTimeout(() => {
                     resolve(true);

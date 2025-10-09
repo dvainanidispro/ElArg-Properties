@@ -114,9 +114,9 @@ properties.post('/parties', can('edit:content'), async (req, res) => {
         }
         
         const newParty = await Models.Party.create({
-            name: name || email.split('@')[0],
-            afm: afm || '',
-            email: email || '',
+            name: name.trim() || email.split('@')[0],
+            afm: afm.trim() || '',
+            email: email.trim() || '',
             contact: contact || '',
             contracts: []
         });
@@ -183,9 +183,9 @@ properties.put('/parties/:id', can('edit:content'), async (req, res) => {
         
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
-            name: name || party.name,
-            afm,
-            email,
+            name: name.trim() || party.name,
+            afm: afm.trim(),
+            email: email.trim(),
             contact,
         };
         
@@ -425,10 +425,10 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
         }
         
         const newProperty = await Models.Property.create({
-            kaek: kaek || '',
-            address: address || '',
-            department: department || '',
-            appartment_number: appartment_number || '',
+            kaek: kaek.trim() || '',
+            address: address.trim() || '',
+            department: department.trim() || '',
+            appartment_number: appartment_number.trim() || '',
             is_part_of_other: (is_part_of_other==='true') || (is_part_of_other===true),
             usage: usage || '',
             description: description || '',
@@ -496,10 +496,10 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
         
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
-            kaek,
-            address,
-            department,
-            appartment_number,
+            kaek: kaek.trim(),
+            address: address.trim(),
+            department: department.trim(),
+            appartment_number: appartment_number.trim(),
             is_part_of_other: (is_part_of_other === 'true') || (is_part_of_other === true),
             usage,
             description,

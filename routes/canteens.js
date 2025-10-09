@@ -109,8 +109,8 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
         }
         
         const newPrincipal = await Models.Principal.create({
-            email,
-            name: name || email.split('@')[0],
+            email: email.trim(),
+            name: name.trim() || email.split('@')[0],
             contact: contact || '',
             notes: notes || '',
             role: 'principal',
@@ -176,8 +176,8 @@ canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
         
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
-            email: email || principal.email,
-            name: name || principal.name,
+            email: email.trim() || principal.email,
+            name: name.trim() || principal.name,
             contact: contact,
             notes: notes,
             active: active,
@@ -431,7 +431,7 @@ canteens.post('/canteens', can('edit:content'), async (req, res) => {
         }
         
         const newCanteen = await Models.Canteen.create({
-            name,
+            name: name.trim(),
             area: area || null,
             principal_id: principal_id || null,
             active: (active!==undefined) ? active : true
@@ -494,7 +494,7 @@ canteens.put('/canteens/:id', can('edit:content'), async (req, res) => {
         
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
-            name: name || canteen.name,
+            name: name.trim() || canteen.name,
             area: area,
             principal_id: principal_id,
             active: active
