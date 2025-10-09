@@ -96,7 +96,7 @@ account.post('/profile', async (req, res) => {
 });
 
 /**
- * GET /account/settings - Εμφάνιση ρυθμίσεων χρήστη
+ * GET /account/settings - Εμφάνιση ρυθμίσεων χρήστη (δεν εφαρμόζεται)
  */
 account.get('/settings', async (req, res) => {
     res.render('account/settings');

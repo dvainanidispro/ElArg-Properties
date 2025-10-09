@@ -36,8 +36,18 @@ import Models from './models/models.js';
 /////////////////        ΕΛΕΥΘΕΡΑ ROUTES      /////////////////
 
 
-server.get('/status', (req, res) => {
-   res.status(200).send('OK');
+server.get(['/status', '/health'], async (req, res) => {
+    let infoText = `Web server: OK<br>`;
+    try {  
+        await db.authenticate();    // ώστε να μην κάνει console log
+        infoText += `Database connection: OK`;
+        res.status(200).send(infoText);
+    } catch (error) {
+        infoText += `Database connection: FAILED!`;
+        log.error(`Database connection test failed: ${error}`);
+        res.status(500).send(infoText);
+    }
+     //TODO: implement SMTP connection test
 });
 
 

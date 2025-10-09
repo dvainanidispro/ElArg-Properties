@@ -1,6 +1,7 @@
 
 
 const permissions = {
+    'edit:settings': 'Τροποποίηση ρυθμίσεων συστήματος',
     'edit:users': 'Προβολή και επεξεργασία χρηστών',
     'view:content': 'Προβολή περιεχομένου',
     'edit:content': 'Επεξεργασία περιεχομένου',
@@ -32,7 +33,7 @@ const roles = {
 
 };
 
-const extenderRoles = {
+const extendedRoles = {
     principal: {
         name: 'principal',
         user: false,
@@ -41,7 +42,7 @@ const extenderRoles = {
     },
 }
 
-const allRoles = { ...roles, ...extenderRoles };
+const allRoles = { ...roles, ...extendedRoles };
 
 
 /** Middleware to check permissions for routes */
@@ -56,7 +57,7 @@ let can = (permission) => {
     };
 };
 
-
+/** Used by Handlebars helpers to check user permissions */
 let userHasPermission = (user, permission) => {
     const userRole = user?.role;
     const userPermissions = allRoles?.[userRole]?.permissions || [];
@@ -65,4 +66,4 @@ let userHasPermission = (user, permission) => {
 
 
 
-export { roles, allRoles, permissions, can, userHasPermission };
+export { roles, permissions, can, userHasPermission };
