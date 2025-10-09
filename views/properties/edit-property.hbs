@@ -6,7 +6,11 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/properties/properties">Ακίνητα</a></li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        {{or propertyDetails.address propertyDetails.kaek "Νέο Ακίνητο" ""}}
+                        {{#if propertyDetails}}
+                            {{join propertyDetails.address propertyDetails.appartment_number}}
+                        {{else}}
+                            Νέο Ακίνητο
+                        {{/if}}
                     </li>
                 </ol>
             </nav>
@@ -17,7 +21,11 @@
                 <div class="card-header">
                     <h4 class="card-title">
                         <i class="{{or propertyDetails 'ti-pencil' 'ti-plus'}} me-2"></i>
-                        {{or propertyDetails.address propertyDetails.kaek "Νέο Ακίνητο" ""}}
+                        {{#if propertyDetails}}
+                            {{join propertyDetails.address propertyDetails.appartment_number}}
+                        {{else}}
+                            Νέο Ακίνητο
+                        {{/if}}
                     </h4>
                 </div>
                 <div class="card-body">

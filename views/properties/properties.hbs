@@ -25,7 +25,7 @@
                                 {{!-- <i class="ti-plus me-1"></i> --}}
                                 <span>Όχι τμήματα άλλων ακινήτων</span>
                             </a>
-                            <button id="exportExcelBtn" class="btn btn-icon" style="background-color: #177b45; color: white;">
+                            <button id="exportExcelBtn" class="btn btn-excel btn-icon">
                                 <i class="excel-icon"></i>
                                 <span>Εξαγωγή σε Excel</span>
                             </button>
@@ -63,7 +63,7 @@
                                     <td class="d-none">{{this.id}}</td>
                                     <td class="fw-semibold">
                                         <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">
-                                            {{this.address}}{{#if this.appartment_number}}, {{this.appartment_number}}{{/if}}
+                                            {{join this.address this.appartment_number}}
                                         </a>
                                     </td>
                                     <td>

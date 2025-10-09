@@ -22,7 +22,7 @@
                     <h4 class="card-title">
                         <i class="{{#if leaseDetails}}ti-pencil{{else}}ti-plus{{/if}} me-2"></i>
                         {{#if leaseDetails}}
-                            Μίσθωση: {{#if leaseDetails.property}}{{leaseDetails.property.address}}{{#if leaseDetails.property.appartment_number}}, {{leaseDetails.property.appartment_number}}{{/if}}{{/if}}{{#if leaseDetails.party}} - {{leaseDetails.party.name}}{{/if}}
+                            Μίσθωση: {{join leaseDetails.property.address leaseDetails.property.appartment_number}} - {{leaseDetails.party.name}}
                         {{else}}
                             Νέα Μίσθωση
                         {{/if}}
@@ -48,7 +48,7 @@
                                             {{#if ../leaseDetails}}
                                                 {{#if (eq this.id ../leaseDetails.property_id)}}selected{{/if}}
                                             {{/if}}>
-                                        {{this.address}}{{#if this.appartment_number}}, {{this.appartment_number}}{{/if}}
+                                        {{join this.address this.appartment_number}}
                                     </option>
                                     {{/each}}
                                 </select>
@@ -190,6 +190,12 @@
                 <div class="card-body">
                     <div class="d-grid gap-5">
                         {{#if leaseDetails}}
+
+                        <button id="exportExcelBtn" class="btn btn-excel btn-icon">
+                            <i class="excel-icon"></i>
+                            <span>Εξαγωγή καρτέλας μίσθωσης σε Excel</span>
+                        </button>
+
                         <button type="button" class="btn btn-danger delete-lease-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-lease-id="{{leaseDetails.id}}" 
                                 data-lease-name="Μίσθωση #{{leaseDetails.id}}">
@@ -270,6 +276,76 @@
     </div>
 </div>
 
+
+{{#if leaseDetails}}
+<!-- Κρυφός πίνακας για εξαγωγή σε Excel -->
+<table id="leaseExportTable" class="d-none">
+    <thead>
+        <tr>
+            <th>Πεδίο</th>
+            <th>Τιμή</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>ID Μίσθωσης</td>
+            <td>{{leaseDetails.id}}</td>
+        </tr>
+        <tr>
+            <td>Ακίνητο</td>
+            <td>{{join leaseDetails.property.address leaseDetails.property.appartment_number}}</td>
+        </tr>
+        <tr>
+            <td>Συμβαλλόμενος</td>
+            <td>{{join leaseDetails.party.name leaseDetails.party.afm}}</td>
+        </tr>
+        <tr>
+            <td>Κατεύθυνση Μίσθωσης</td>
+            <td>{{leaseDirectionText leaseDetails.lease_direction}}</td>
+        </tr>
+        <tr>
+            <td>Έναρξη Μίσθωσης</td>
+            <td>{{leaseDetails.lease_start}}</td>
+        </tr>
+        <tr>
+            <td>Λήξη Μίσθωσης</td>
+            <td>{{leaseDetails.lease_end}}</td>
+        </tr>
+        <tr>
+            <td>Μήνας Αναπροσαρμογής</td>
+            <td>{{greekMonthText leaseDetails.rent_adjustment_month}}</td>
+        </tr>
+        <tr>
+            <td>Μίσθωμα (€)</td>
+            <td>{{or leaseDetails.rent '-'}}</td>
+        </tr>
+        <tr>
+            <td>Συχνότητα Πληρωμής</td>
+            <td>{{rentFrequencyText leaseDetails.rent_frequency}}</td>
+        </tr>
+        <tr>
+            <td>Αριθμός Ετήσιων Δόσεων</td>
+            <td>{{or leaseDetails.number_of_payments '-'}}</td>
+        </tr>
+        <tr>
+            <td>Πληροφορίες Αναπροσαρμογής</td>
+            <td>{{leaseDetails.rent_adjustment_info}}</td>
+        </tr>
+        <tr>
+            <td>Εγγυητική Επιστολή</td>
+            <td>{{leaseDetails.guarantee_letter}}</td>
+        </tr>
+        <tr>
+            <td>Σημειώσεις</td>
+            <td>{{leaseDetails.notes}}</td>
+        </tr>
+        <tr>
+            <td>Κατάσταση Μίσθωσης</td>
+            <td>{{check leaseDetails.active 'Ενεργή' 'Ανενεργή'}}</td>
+        </tr>
+    </tbody>
+</table>
+{{/if}}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -375,5 +451,13 @@ document.addEventListener('DOMContentLoaded', function() {
             Q('#rentAdjustmentMonth').value = month;
         }
     });
+
+    // Button για εξαγωγή καρτέλας μίσθωσης σε Excel
+    Q('#exportExcelBtn') && Q('#exportExcelBtn').on('click', function() {
+            const propertyAddress = '{{join leaseDetails.property.address leaseDetails.property.appartment_number}}';
+            const filename = `Καρτέλα Μίσθωσης - ${propertyAddress}.xlsx`.replace(/[/\\?%*:|"<>]/g, '_');
+            
+            downloadTableAsExcel('leaseExportTable', filename, 'Καρτέλα Μίσθωσης');
+        });
 });
 </script>

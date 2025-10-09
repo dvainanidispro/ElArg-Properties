@@ -287,6 +287,13 @@ table i{
 }
 
 /* Excel Icon - SVG ως CSS icon */
+.btn-excel{
+    background-color: #177b45; 
+    color: var(--bs-light);
+    &:hover{
+        background-color: #146c3f;
+    }
+}
 .excel-icon {
     display: inline-block;
     width: 20px;

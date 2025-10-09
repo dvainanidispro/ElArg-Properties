@@ -29,6 +29,8 @@ const handlebarsConfig = {
         inflect: (number, singular, plural) => number + ' ' + (number==1 ? singular : plural),
         /* example: {{#each (array 1 2 3)}} */
         array: (...items) => items.slice(0, -1), // -1: Remove the Handlebars context object
+        /* example {{join 'a' 'b' 'c'}} => a, b, c */
+        join: (...items) => items.slice(0, -1).filter(Boolean).join(', '),
         euro: (price) => new Intl.NumberFormat('el-GR', {style: 'currency', currency: 'EUR'}).format(price),
         time: (date) => {
             if (!date) return '';
