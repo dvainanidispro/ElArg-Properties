@@ -1,0 +1,133 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title h3">
+                        <i class="ti-receipt me-2"></i>
+                        Αποστολές υπενθυμίσεων σε Διευθυντές Σχολείων - {{period.code}}
+                    </h1>
+                    <div class="mt-2">
+                        <a href="/canteens/periods" class="btn btn-secondary btn-sm">
+                            <i class="ti-arrow-left me-1"></i>
+                            Επιστροφή στις Περιόδους
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{#if logs.length}}
+                    <div class="alert alert-info mb-4" role="alert">
+                        <i class="ti-info-alt me-2"></i>
+                        <strong>Σημείωση:</strong> Οι επιτυχημένες αποστολές υποδεικνύουν ότι η εφαρμογή έστειλε επιτυχώς τα email στον διακομιστή αποστολής. 
+                        Δεν εγγυώνται την παράδοση στον τελικό παραλήπτη. Για λεπτομερή στοιχεία παράδοσης (delivery status, bounces, opens κ.λπ.), 
+                        συμβουλευτείτε την πλατφόρμα αποστολής email που χρησιμοποιείτε (email server ή υπηρεσία αποστολής email).
+                    </div>
+                    <div class="table-responsive">
+                        <table class="dim-table table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Ημερομηνία Αποστολής</th>
+                                    <th>Ενεργά Κυλικεία</th>
+                                    <th>Αποστολές</th>
+                                    <th>Αποτυχίες</th>
+                                    <th>Παραλείψεις</th>
+                                    <th>Λεπτομέρειες</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each logs}}
+                                <tr>
+                                    <td class="fw-semibold">
+                                        {{datetime this.createdAt}}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary fs-6">{{this.results.all}}</span>
+                                    </td>
+                                    <td>
+                                        {{#if this.results.sent}}
+                                            <span class="badge bg-success fs-6">{{this.results.sent}}</span>
+                                        {{else}}
+                                            <span class="badge bg-light text-dark fs-6">0</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.results.failed}}
+                                            <span class="badge bg-danger fs-6">{{this.results.failed}}</span>
+                                        {{else}}
+                                            <span class="badge bg-light text-dark fs-6">0</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.results.skipped}}
+                                            <span class="badge bg-warning fs-6">{{this.results.skipped}}</span>
+                                        {{else}}
+                                            <span class="badge bg-light text-dark fs-6">0</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#details-{{this.id}}" 
+                                                aria-expanded="false"
+                                                title="Προβολή Λεπτομερειών">
+                                            <i class="ti-list"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="collapse p-5" id="details-{{this.id}}">
+                                    <td colspan="6" class="bg-blue-light" style="padding:1.5rem;">
+                                        <div class="p-3">
+                                            <h6 class="mb-3">Λεπτομέρειες Αποστολής:</h6>
+                                            {{#if this.canteens.length}}
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Κυλικείο</th>
+                                                            <th>Διευθυντής</th>
+                                                            <th>Email</th>
+                                                            <th>Κατάσταση</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {{#each this.canteens}}
+                                                        <tr>
+                                                            <td>{{this.name}}</td>
+                                                            <td>{{this.principal.name}}</td>
+                                                            <td>{{this.principal.email}}</td>
+                                                            <td>
+                                                                {{#if this.skipped}}
+                                                                    <span class="badge bg-warning">Παράλειψη</span>
+                                                                {{else if this.success}}
+                                                                    <span class="badge bg-success">Επιτυχία</span>
+                                                                {{else}}
+                                                                    <span class="badge bg-danger">Αποτυχία</span>
+                                                                {{/if}}
+                                                            </td>
+                                                        </tr>
+                                                        {{/each}}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {{else}}
+                                            <p class="text-muted mb-0">Δεν υπάρχουν λεπτομέρειες για αυτό το log.</p>
+                                            {{/if}}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{else}}
+                    <div class="text-center text-muted py-5">
+                        <i class="ti-receipt fa-3x mb-3"></i>
+                        <h5>Δεν υπάρχουν Υπεθυμίσεις</h5>
+                        <p>Δεν έχουν σταλεί ακόμα υπενθυμίσεις για την περίοδο <strong>{{period.code}}</strong></p>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

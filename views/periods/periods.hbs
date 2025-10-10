@@ -21,6 +21,7 @@
                                     <th>Κατάσταση υποβολών</th>
                                     <th>Ενεργή</th>
                                     <th>Λεπτομέρειες</th>
+                                    <th>Υπενθυμίσεις</th>
                                     <th>Υποβολές στοιχείων</th>
                                 </tr>
                             </thead>
@@ -60,6 +61,11 @@
                                         </a>
                                     </td>
                                     <td>
+                                        <a href="/canteens/periods/{{this.id}}/logs" class="btn btn-outline-info" title="Reminders Logs">
+                                            <i class="ti-receipt text-info" ></i>
+                                        </a>
+                                    </td>
+                                    <td>
                                         <a href="/canteens/periods/{{this.id}}/submissions" class="btn btn-primary" title="Υποβολές Στοιχείων">
                                             <i class="ti-files text-light" ></i>
                                         </a>
@@ -67,7 +73,7 @@
                                 </tr>
                                 {{else}}
                                 <tr>
-                                    <td colspan="9" class="text-center text-muted py-4">
+                                    <td colspan="10" class="text-center text-muted py-4">
                                         <i class="ti-calendar fa-2x mb-2"></i><br>
                                         Δεν βρέθηκαν περίοδοι κυλικείων
                                     </td>

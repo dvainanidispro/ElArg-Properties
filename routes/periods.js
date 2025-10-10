@@ -153,6 +153,50 @@ periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (
 });
 
 /**
+ * GET /periods/:periodId/logs - Εμφάνιση logs reminders για συγκεκριμένη περίοδο
+ */
+periods.get('/:periodId/logs', can('view:content'), async (req, res) => {
+    try {
+        const periodId = parseInt(req.params.periodId);
+        
+        // Βρίσκουμε την περίοδο
+        const period = await Models.Period.findByPk(periodId);
+        if (!period || period.property_type !== 'canteen') {
+            return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
+        }
+        
+        // Βρίσκουμε τα logs reminders για την περίοδο με JSONB queries
+        const logs = await Models.Log.findAll({
+            where: {
+                type: 'reminder',
+                'body.period.id': periodId,
+                'body.status': 'sent'
+            },
+            attributes: ['id', 'type', 'severity', 'body', 'createdAt'],
+            order: [['createdAt', 'DESC']]
+        });
+        
+        // Μετασχηματίζουμε τα logs για το view
+        const reminderLogs = logs.map(log => ({
+            id: log.id,
+            createdAt: log.createdAt,
+            results: log.body.results,
+            canteens: log.body.canteens || []
+        }));
+        
+        res.render('periods/logs', {
+            period,
+            logs: reminderLogs,
+            user: req.user,
+            title: `Υπενθυμίσεις - ${period.code}`
+        });
+    } catch (error) {
+        log.error(`Σφάλμα κατά την ανάκτηση logs: ${error}`);
+        res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση υπενθυμίσεων' });
+    }
+});
+
+/**
  * GET /periods/:periodId/submissions - Εμφάνιση υποβολών στοιχείων για συγκεκριμένη περίοδο
  */
 periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
