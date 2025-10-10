@@ -16,7 +16,7 @@
             </nav>
         </div>
         
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">
@@ -41,33 +41,39 @@
                             
                             <div class="col-md-6 mb-3">
                                 <label for="propertySelect" class="form-label fw-bold">Ακίνητο *</label>
-                                <select class="form-select" id="propertySelect" name="property_id" required {{#if leaseDetails}}disabled{{/if}}>
-                                    <option value="">Επιλέξτε ακίνητο</option>
-                                    {{#each properties}}
-                                    <option value="{{this.id}}" 
-                                            {{#if ../leaseDetails}}
-                                                {{#if (eq this.id ../leaseDetails.property_id)}}selected{{/if}}
-                                            {{/if}}>
-                                        {{join this.address this.appartment_number}}
-                                    </option>
-                                    {{/each}}
-                                </select>
+                                <div class="input-group" x-data="{ searchQuery: '', propertyId: '{{leaseDetails.property_id}}' }">
+                                    <select class="form-select" x-model="propertyId" id="propertySelect" name="property_id" required {{#if leaseDetails}}disabled{{/if}}>
+                                        <option value="" x-show="!searchQuery">- - - Ακίνητο - - -</option>
+                                        {{#each properties}}
+                                        <option value="{{this.id}}" 
+                                                x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
+                                            {{join this.address this.appartment_number}}
+                                        </option>
+                                        {{/each}}
+                                    </select>
+                                    {{#unless leaseDetails}}
+                                        <input type="text" class="form-control" placeholder="Φίλτρο..." x-model="searchQuery" style="max-width: 18ch;">
+                                    {{/unless}}
+                                </div>
                                 <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία του ακινήτου{{else}}Επιλέξτε το ακίνητο που αφορά αυτή τη μίσθωση{{/if}}</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="partySelect" class="form-label fw-bold">Συμβαλλόμενος *</label>
-                                <select class="form-select" id="partySelect" name="party_id" required {{#if leaseDetails}}disabled{{/if}}>
-                                    <option value="">Επιλέξτε συμβαλλόμενο</option>
-                                    {{#each parties}}
-                                    <option value="{{this.id}}" 
-                                            {{#if ../leaseDetails}}
-                                                {{#if (eq this.id ../leaseDetails.party_id)}}selected{{/if}}
-                                            {{/if}}>
-                                        {{this.name}}{{#if this.afm}} [{{this.afm}}]{{/if}}
-                                    </option>
-                                    {{/each}}
-                                </select>
+                                <div class="input-group" x-data="{ searchQuery: '', partyId: '{{leaseDetails.party_id}}' }">
+                                    <select class="form-select" x-model="partyId" id="partySelect" name="party_id" required {{#if leaseDetails}}disabled{{/if}}>
+                                        <option value="" x-show="!searchQuery">- - - Συμβαλλόμενος - - -</option>
+                                        {{#each parties}}
+                                        <option value="{{this.id}}" 
+                                                x-show="$el.textContent.toLowerCase().includes(searchQuery.toLowerCase())">
+                                            {{this.name}}{{#if this.afm}} [{{this.afm}}]{{/if}}
+                                        </option>
+                                        {{/each}}
+                                    </select>
+                                    {{#unless leaseDetails}}
+                                        <input type="text" class="form-control" placeholder="Φίλτρο..." x-model="searchQuery" style="max-width: 18ch;">
+                                    {{/unless}}
+                                </div>
                                 <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία του συμβαλλομένου{{else}}Επιλέξτε τον συμβαλλόμενο (μισθωτή/εκμισθωτή){{/if}}</div>
                             </div>
 
@@ -76,8 +82,8 @@
                             <div class="col-md-12 mb-3">
                                 <label for="leaseDirection" class="form-label fw-bold">Κατεύθυνση Μίσθωσης *</label>
                                 <select class="form-select" id="leaseDirection" name="lease_direction" required {{#if leaseDetails}}disabled{{/if}}>
-                                    <option value="incoming" {{#if (eq leaseDetails.lease_direction 'incoming')}}selected{{/if}}>{{leaseDirectionText 'incoming'}}</option>
                                     <option value="outgoing" {{#if (eq leaseDetails.lease_direction 'outgoing')}}selected{{/if}}>{{leaseDirectionText 'outgoing'}}</option>
+                                    <option value="incoming" {{#if (eq leaseDetails.lease_direction 'incoming')}}selected{{/if}}>{{leaseDirectionText 'incoming'}}</option>
                                     <option value="grant" {{#if (eq leaseDetails.lease_direction 'grant')}}selected{{/if}}>{{leaseDirectionText 'grant'}}</option>
                                 </select>
                                 <div class="form-text text-muted">{{#if leaseDetails}}Δεν επιτρέπεται επεξεργασία της κατεύθυνσης {{else}}Επιλέξτε τον τύπο της σύμβασης από την πλευρά του Δήμου.{{/if}}</div>
@@ -179,7 +185,7 @@
             </div>
         </div>
         
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">
@@ -192,8 +198,8 @@
                         {{#if leaseDetails}}
 
                         <button id="exportExcelBtn" class="btn btn-excel btn-icon">
-                            <i class="excel-icon"></i>
-                            <span>Εξαγωγή καρτέλας μίσθωσης σε Excel</span>
+                            <i class="excel-icon m-3"></i>
+                            <span>Εξαγωγή καρτέλας μίσθωσης <br> σε Excel</span>
                         </button>
 
                         <button type="button" class="btn btn-danger delete-lease-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
