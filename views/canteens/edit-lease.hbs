@@ -161,6 +161,12 @@
                 <div class="card-body">
                     <div class="d-grid gap-5">
                         {{#if leaseDetails}}
+
+                        <button id="exportExcelBtn" class="btn btn-excel btn-icon">
+                            <i class="excel-icon"></i>
+                            <span>Εξαγωγή καρτέλας μίσθωσης σε Excel</span>
+                        </button>
+
                         <button type="button" class="btn btn-danger delete-lease-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
                                 data-lease-id="{{leaseDetails.id}}" 
                                 data-lease-name="Μίσθωση Κυλικείου #{{leaseDetails.id}}">
@@ -240,6 +246,65 @@
         </div>
     </div>
 </div>
+
+
+{{#if leaseDetails}}
+<!-- Κρυφός πίνακας για εξαγωγή σε Excel -->
+<table id="leaseExportTable" class="d-none">
+    <thead>
+        <tr>
+            <th>Πεδίο</th>
+            <th>Τιμή</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>ID Μίσθωσης</td>
+            <td>{{leaseDetails.id}}</td>
+        </tr>
+        <tr>
+            <td>Κυλικείο</td>
+            <td>{{#if leaseDetails.canteen}}{{leaseDetails.canteen.name}}{{/if}}</td>
+        </tr>
+        <tr>
+            <td>Συμβαλλόμενος</td>
+            <td>{{#if leaseDetails.party}}{{leaseDetails.party.name}}{{#if leaseDetails.party.afm}} [{{leaseDetails.party.afm}}]{{/if}}{{/if}}</td>
+        </tr>
+        <tr>
+            <td>Έναρξη Μίσθωσης</td>
+            <td>{{leaseDetails.lease_start}}</td>
+        </tr>
+        <tr>
+            <td>Λήξη Μίσθωσης</td>
+            <td>{{or leaseDetails.lease_end '-'}}</td>
+        </tr>
+        <tr>
+            <td>Οικονομική προσφορά μισθωτή (€)</td>
+            <td>{{or leaseDetails.rent '-'}}</td>
+        </tr>
+        <tr>
+            <td>Αριθμός γνωστοποίησης</td>
+            <td>{{or leaseDetails.revision_number '-'}}</td>
+        </tr>
+        <tr>
+            <td>Εγγυητική Επιστολή</td>
+            <td>{{or leaseDetails.guarantee_letter '-'}}</td>
+        </tr>
+        <tr>
+            <td>Σημειώσεις</td>
+            <td>{{or leaseDetails.notes '-'}}</td>
+        </tr>
+        <tr>
+            <td>Ενημέρωση μίσθωσης στην Εφαρμογή</td>
+            <td>{{dateInput leaseDetails.updatedAt}}</td>
+        </tr>
+        <tr>
+            <td>Κατάσταση Μίσθωσης</td>
+            <td>{{check leaseDetails.active 'Ενεργή' 'Ανενεργή'}}</td>
+        </tr>
+    </tbody>
+</table>
+{{/if}}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -336,5 +401,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Button για εξαγωγή καρτέλας μίσθωσης σε Excel
+    Q('#exportExcelBtn') && Q('#exportExcelBtn').on('click', function() {
+            const canteenName = '{{#if leaseDetails.canteen}}{{leaseDetails.canteen.name}}{{/if}}';
+            const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            const filename = `Καρτέλα Μίσθωσης Κυλικείου - ${canteenName} - ${today}.xlsx`.replace(/[/\\?%*:|"<>]/g, '_');
+            
+            downloadTableAsExcel('leaseExportTable', filename, canteenName);
+        });
 });
 </script>
