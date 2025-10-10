@@ -27,7 +27,7 @@
  *    Αν υπάρχει αυτό το attribute, υπερισχύει του κειμένου του κελιού.
  *    Παράδειγμα: <td data-sort-value="0012">#12</td>
  *
- * 5) Καθολικές ρυθμίσεις για όλο το site μπορούν να οριστούν ΠΡΙΝ φορτώσει το αρχείο:
+ * 5) Καθολικές ρυθμίσεις για όλο το site ή τη σελίδα μπορούν να οριστούν ΠΡΙΝ φορτώσει το αρχείο dimtables.js:
  *    <script>
  *      window.dimtablesOptions = {
  *        rowsPerPage: 100,
@@ -38,6 +38,8 @@
  *      };
  *    </script>
  *    <script src="/path/to/dimtables.js"></script>
+ *    Για παράδειγμα, για απόκρυψη της αναζήτησης, ορίστε: 
+ *    searchInputClass: "d-none"
  */
 
 // Global namespace
@@ -60,21 +62,21 @@ window.dimtables.defaultOptions = {
     sortIcon: '<svg viewBox="0 0 16 16" width="1.2em" height="1.2em" class="ms-1 dimtables-sort-icon"><path d="M8 2 L4 6 H12 L8 2 Z" fill="currentColor"></path><path d="M8 14 L4 10 H12 L8 14 Z" fill="currentColor"></path></svg>'
 };
 
-// Αφαίρεση ελληνικών τόνων για αναζήτηση/φιλτράρισμα χωρίς ανάγκη για σωστούς τόνους
-function removeGreekAccents(str) {
-  if (!str) return '';
-  return str
-    .replace(/[άα]/gi, 'α')
-    .replace(/[έε]/gi, 'ε')
-    .replace(/[ήη]/gi, 'η')
-    .replace(/[ίϊΐι]/gi, 'ι')
-    .replace(/[όο]/gi, 'ο')
-    .replace(/[ύϋΰυ]/gi, 'υ')
-    .replace(/[ώω]/gi, 'ω');
-}
-
 (function () {
   const state = new WeakMap(); // κατάσταση ανά πίνακα
+
+  // Αφαίρεση ελληνικών τόνων για αναζήτηση/φιλτράρισμα χωρίς ανάγκη για σωστούς τόνους
+  function removeGreekAccents(str) {
+    if (!str) return '';
+    return str
+      .replace(/[άα]/gi, 'α')
+      .replace(/[έε]/gi, 'ε')
+      .replace(/[ήη]/gi, 'η')
+      .replace(/[ίϊΐι]/gi, 'ι')
+      .replace(/[όο]/gi, 'ο')
+      .replace(/[ύϋΰυ]/gi, 'υ')
+      .replace(/[ώω]/gi, 'ω');
+  }
 
   function mergeOptions() {
     return Object.assign(

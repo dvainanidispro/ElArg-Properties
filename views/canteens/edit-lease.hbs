@@ -49,7 +49,7 @@
                                             {{#if ../leaseDetails}}
                                                 {{#if (eq this.id ../leaseDetails.property_id)}}selected{{/if}}
                                             {{/if}}>
-                                        {{this.id}} - {{this.name}}{{#if this.principal}} - {{this.principal.name}}{{/if}}
+                                        {{this.name}}{{#if this.principal}} [{{this.principal.name}}]{{/if}}
                                     </option>
                                     {{/each}}
                                 </select>
@@ -65,7 +65,7 @@
                                             {{#if ../leaseDetails}}
                                                 {{#if (eq this.id ../leaseDetails.party_id)}}selected{{/if}}
                                             {{/if}}>
-                                        {{this.id}} - {{this.name}}{{#if this.afm}} [{{this.afm}}]{{/if}}
+                                        {{this.name}}{{#if this.afm}} [{{this.afm}}]{{/if}}
                                     </option>
                                     {{/each}}
                                 </select>

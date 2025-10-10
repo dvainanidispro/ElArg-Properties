@@ -5,7 +5,7 @@
                 <div class="card-header">
                     <h1 class="card-title h3">
                         <i class="ti-receipt me-2"></i>
-                        Αποστολές υπενθυμίσεων σε Διευθυντές Σχολείων - {{period.code}}
+                        Αποστολές υπενθυμίσεων σε Διευθυντές σχολείων - {{period.code}}
                     </h1>
                     <div class="mt-2">
                         <a href="/canteens/periods" class="btn btn-secondary btn-sm">
@@ -27,7 +27,7 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>Ημερομηνία Αποστολής</th>
-                                    <th>Ενεργά Κυλικεία</th>
+                                    <th>Κυλικεία <br>χωρίς υποβολή στοιχείων</th>
                                     <th>Αποστολές</th>
                                     <th>Αποτυχίες</th>
                                     <th>Παραλείψεις</th>
@@ -131,3 +131,10 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    window.dimtablesOptions = {
+        searchInputClass: "d-none",
+    };
+</script>
