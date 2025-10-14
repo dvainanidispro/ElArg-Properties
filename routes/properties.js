@@ -191,7 +191,7 @@ properties.put('/parties/:id', can('edit:content'), async (req, res) => {
         
         await party.update(updateData);
         
-        log.info(`Ο Party ${party.name} ενημερώθηκε (ID: ${party.id})`);
+        log.info(`Ο Συμβαλλόμενος ${party.name} ενημερώθηκε (ID: ${party.id})`);
         
         res.json({ 
             success: true, 

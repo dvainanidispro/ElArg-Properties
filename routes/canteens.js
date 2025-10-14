@@ -185,7 +185,7 @@ canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
         
         await principal.update(updateData);
         
-        log.info(`Ο Principal ${principal.email} ενημερώθηκε (ID: ${principal.id})`);
+        log.info(`Ο Διευθυντής ${principal.name} ενημερώθηκε (ID: ${principal.id})`);
         
         res.json({ 
             success: true, 
