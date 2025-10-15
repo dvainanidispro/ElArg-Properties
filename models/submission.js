@@ -34,6 +34,11 @@ const Submission = db.define('submission',
             type: DataTypes.DECIMAL(10, 2),
             comment: 'Κόστος ρεύματος για την περίοδο'
         },
+        data: {
+            type: DataTypes.JSONB,
+            comment: 'Array από subperiods/sub-submissions με πεδία: start_date, end_date, students, working_days, electricity_cost',
+            allowNull: true
+        },
         submittedBy: {
             type: DataTypes.INTEGER,
             allowNull: true,
