@@ -86,7 +86,7 @@
                             <div class="card-header">
                                 <h6 class="mb-0">
                                     <i class="ti-calendar me-2"></i>
-                                    Υποπερίοδος: {{date this.start_date}} - {{date this.end_date}}
+                                    <span class="larger">{{check (eq ../subperiods.length 1) 'Περίοδος' 'Υποπερίοδος'}}: {{date this.start_date}} - {{date this.end_date}}</span>
                                 </h6>
                             </div>
                             <div class="card-body">

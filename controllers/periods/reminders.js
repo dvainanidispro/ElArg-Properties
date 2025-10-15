@@ -103,6 +103,7 @@ async function sendRemindersForPendingSubmissions () {
         let logEntryBefore = await Models.Log.create({
             type: "reminder",
             severity: "info",
+            source: "system",
             body: {
                 period: {
                     id: period.id,
@@ -148,6 +149,7 @@ async function sendRemindersForPendingSubmissions () {
         let logEntryAfter = await Models.Log.create({
             type: "reminder",
             severity: "info",
+            source: "system",
             body: {
                 period: {
                     id: period.id,

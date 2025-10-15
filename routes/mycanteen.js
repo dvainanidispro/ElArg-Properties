@@ -471,6 +471,7 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
         await Models.Log.create({
             type: 'submission',
             severity: 'info',
+            source: req.user.email,
             body: {
                 action: 'create',
                 submissionId: newSubmission.id,
@@ -630,6 +631,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         await Models.Log.create({
             type: 'submission',
             severity: 'info',
+            source: req.user.email,
             body: {
                 action: 'update',
                 submissionId: submission.id,

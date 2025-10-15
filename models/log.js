@@ -11,6 +11,7 @@ const Log = db.define('log',
         },
         type: DataTypes.STRING, // e.g., "email", "login", "error", "submission"
         severity: DataTypes.STRING, // e.g., "info", "warning", "error"
+        source: DataTypes.STRING, // e.g., "system", "user@company.com"
         body: DataTypes.JSONB,
     },
     {

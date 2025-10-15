@@ -68,7 +68,7 @@
 
                     {{!-- Κατάσταση υποβολής --}}
                     {{#if submission}}
-                        <div class="alert alert-info" role="alert">
+                        <div class="alert alert-info my-5" role="alert">
                             <i class="ti-check me-2"></i>
                             <strong>Έχετε υποβάλει στοιχεία για αυτή την περίοδο.</strong>
                             {{#if (eq period.status 'open')}}
@@ -84,7 +84,7 @@
                             <div class="card-header">
                                 <h6 class="mb-0">
                                     <i class="ti-calendar me-2"></i>
-                                    Υποπερίοδος: {{date this.start_date}} - {{date this.end_date}}
+                                    <span class="larger">Περίοδος: {{date this.start_date}} - {{date this.end_date}}</span>
                                 </h6>
                             </div>
                             <div class="card-body">
@@ -156,12 +156,12 @@
                             <div class="col-12">
                                 {{#unless (eq period.status 'open')}}
                                     {{#if submission}}
-                                    <div class="alert alert-warning mb-3">
+                                    <div class="alert alert-warning my-4">
                                         <i class="ti-alert-triangle me-2"></i>
                                         <strong>Προσοχή:</strong> Η προθεσμία υποβολών έχει παρέλθει. Συνεπώς δεν μπορείτε να τροποποιήσετε τα παραπάνω.
                                     </div>
                                     {{else}}
-                                    <div class="alert alert-warning mb-3">
+                                    <div class="alert alert-warning my-4">
                                         <i class="ti-alert-triangle me-2"></i>
                                         <strong>Προσοχή:</strong> Η προθεσμία υποβολών έχει παρέλθει, αλλά μπορείτε ακόμα να υποβάλετε τα στοιχεία.
                                     </div>
