@@ -240,7 +240,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
                 {
                     model: Models.Submission,
                     as: 'submissions',
-                    attributes: ['id', 'period_id', 'property_id', 'property_type', 'updatedAt', 'rent', 'electricity_cost'],
+                    attributes: ['id', 'period_id', 'property_id', 'property_type', 'updatedAt', 'rent', 'data', 'electricity_cost'],
                     where: {
                         period_id: periodId,
                         property_type: 'canteen'
@@ -262,6 +262,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             hasSubmission: canteen.submissions && canteen.submissions.length > 0,
             submission: canteen.submissions?.[0] || null
         }));
+        // log.dev(canteensWithSubmissions);
 
         //# 4 Ταξινόμηση με βάση τις υποβολές
         // Καντίνες χωρίς υποβολή πρώτες. Μετά, ταξινόμιση κατά submission.updatedAt (χρονική σειρά).

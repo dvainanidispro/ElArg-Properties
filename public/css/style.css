@@ -315,3 +315,10 @@ table i{
 .unseparated {
     white-space: nowrap !important;
 }
+
+.larger{
+    font-size: larger;
+}
+.normal{
+    font-size: medium;
+}
