@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
+import { subperiodsFor } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 import { Op } from 'sequelize';
@@ -17,26 +18,23 @@ myCanteen.use(can('edit:ownschool'));
 
 
 /**
- * Helper function για υπολογισμό των πεδίων rent_offer, rent και tax_stamp
- * @param {Object} canteen - Το canteen object με τα leases
- * @param {number} students - Αριθμός μαθητών
- * @param {number} workingDays - Ημέρες λειτουργίας
+ * Helper function για υπολογισμό των πεδίων rent και tax_stamp από subperiods
+ * @param {Array} subperiodsData - Array με τα δεδομένα των υποπεριόδων
  * @returns {Object} Αντικείμενο με τα υπολογιζόμενα πεδία
  */
-function calculateRentFields(canteen, students, workingDays) {
-    // Πάρε το rent από το πιο πρόσφατο lease
-    const latestLease = canteen.leases?.[0];
-    const rentOffer = latestLease?.rent || 0;
-    
-    // Υπολογισμός rent: (1/189) * rent_offer * students * working_days
-    const rent = (1/189) * rentOffer * students * workingDays;
+function calculateRentFields(subperiodsData) {
+    // Υπολογισμός rent: άθροισμα του (1/189) * rent * students * working_days για κάθε υποπερίοδο
+    let rent = 0;
+    subperiodsData.forEach(subperiod => {
+        const subperiodRent = (1/189) * subperiod.rent * subperiod.students * subperiod.working_days;
+        rent += subperiodRent;
+    });
     //NOTE: Σε περίπτωση αλλαγής, θα πρέπει να γίνει αλλαγή και στο edit-submission.hbs (προβολή submission από user)
     
     // Υπολογισμός tax_stamp: rent * 0.036
     const taxStamp = rent * 0.036;
     
     return {
-        rent_offer: rentOffer,
         rent: parseFloat(rent.toFixed(2)),
         tax_stamp: parseFloat(taxStamp.toFixed(2))
     };
@@ -331,15 +329,23 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
             }]
         });
 
-        // Πάρε το rent από το πιο πρόσφατο lease
+        // Πάρε το πιο πρόσφατο lease και δημιούργησε subperiods
         const latestLease = canteen.leases?.[0];
         const rentOffer = latestLease?.rent || 0;
+        
+        // Δημιουργία subperiods με βάση το lease και την περίοδο
+        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{
+            start_date: period.start_date,
+            end_date: period.end_date,
+            rent: 0
+        }];
 
         res.render('principals/submission', {
             canteen,
             period,
             submission: existingSubmission,
             rentOffer,
+            subperiods,
             principal,
             user: req.user,
             title: `Υποβολή στοιχείων - ${canteen.name} - ${period.name}`
@@ -352,6 +358,10 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
     }
 });
 
+
+
+
+
 /**
  * POST /:canteenId/periods/:periodId/submission - Δημιουργία νέου submission
  */
@@ -359,7 +369,7 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
     try {
         const canteenId = parseInt(req.params.canteenId);
         const periodId = parseInt(req.params.periodId);
-        const { students, working_days, electricity_cost } = req.body;
+        const { data: subperiodsData } = req.body;
         const principalId = req.user.sub;
 
         // Βρες το κυλικείο και έλεγξε ότι ανήκει στον principal
@@ -433,15 +443,36 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
         }
 
         // Βασικός έλεγχος δεδομένων
-        if (!students || !working_days || electricity_cost === undefined) {
+        if (!subperiodsData || !Array.isArray(subperiodsData) || subperiodsData.length === 0) {
             return res.status(400).json({
                 success: false,
                 message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία'
             });
         }
 
-        // Υπολογισμός των πεδίων rent_offer, rent και tax_stamp
-        const calculatedFields = calculateRentFields(canteen, parseInt(students), parseInt(working_days));
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        for (const subperiod of subperiodsData) {
+            if (!subperiod.students || !subperiod.working_days || subperiod.electricity_cost === undefined) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία για όλες τις περιόδους'
+                });
+            }
+        }
+
+        // Πάρε τα subperiods με τα rent values και συγχώνευσε με τα δεδομένα από το frontend
+        const latestLease = canteen.leases?.[0];
+        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{ start_date: period.start_date, end_date: period.end_date, rent: 0 }];
+        
+        // Συγχώνευση subperiods με subperiodsData
+        // Το πεδίο rent του front-end, αν σταλεί κακόβουλα, αντικαθίσταται με το σωστό από το lease
+        const completeSubperiodsData = subperiodsData.map((data, index) => ({
+            ...data,        // Δεδομένα από το frontend
+            rent: subperiods[index]?.rent || 0     
+        }));
+        
+        // Υπολογισμός των πεδίων rent και tax_stamp
+        const calculatedFields = calculateRentFields(completeSubperiodsData);
 
         // Δημιουργία νέου submission
         const newSubmission = await Models.Submission.create({
@@ -450,17 +481,14 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
             property_type: 'canteen',
             principal_id: principalId,
             submittedBy: principalId,
-            students: parseInt(students),
-            working_days: parseInt(working_days),
-            electricity_cost: parseFloat(electricity_cost),
-            rent_offer: calculatedFields.rent_offer,
+            data: subperiodsData,
             rent: calculatedFields.rent,
             tax_stamp: calculatedFields.tax_stamp
         });
 
         log.info(`Νέο submission δημιουργήθηκε: Period ${periodId}, Canteen ${canteenId}, Principal ${principalId} (ID: ${newSubmission.id})`);
 
-        // Δημιουργία Log εγγραφής για την υποβολή
+        // Δημιουργία Log εγγραφής για τη δημιουργία υποβολής
         await Models.Log.create({
             type: 'submission',
             severity: 'info',
@@ -473,10 +501,8 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
                 principalId: principalId,
                 principalEmail: req.user.email,
                 data: {
-                    students: parseInt(students),
-                    working_days: parseInt(working_days),
-                    electricity_cost: parseFloat(electricity_cost),
-                }
+                    subperiods: subperiodsData
+                },
             }
         });
 
@@ -494,6 +520,10 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
     }
 });
 
+
+
+
+
 /**
  * PUT /:canteenId/periods/:periodId/submission - Ενημέρωση υπάρχοντος submission (μόνο αν period.status = 'open')
  */
@@ -501,7 +531,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
     try {
         const canteenId = parseInt(req.params.canteenId);
         const periodId = parseInt(req.params.periodId);
-        const { students, working_days, electricity_cost } = req.body;
+        const { data: subperiodsData } = req.body;
         const principalId = req.user.sub;
 
         // Βρες το κυλικείο και έλεγξε ότι ανήκει στον principal
@@ -575,22 +605,39 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         }
 
         // Βασικός έλεγχος δεδομένων
-        if (!students || !working_days || electricity_cost === undefined) {
+        if (!subperiodsData || !Array.isArray(subperiodsData) || subperiodsData.length === 0) {
             return res.status(400).json({
                 success: false,
                 message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία'
             });
         }
 
-        // Υπολογισμός των πεδίων rent_offer, rent και tax_stamp
-        const calculatedFields = calculateRentFields(canteen, parseInt(students), parseInt(working_days));
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        for (const subperiod of subperiodsData) {
+            if (!subperiod.students || !subperiod.working_days || subperiod.electricity_cost === undefined) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία για όλες τις περιόδους'
+                });
+            }
+        }
+
+        // Πάρε τα subperiods με τα rent values και συγχώνευσε με τα δεδομένα από το frontend
+        const latestLease = canteen.leases?.[0];
+        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{ start_date: period.start_date, end_date: period.end_date, rent: 0 }];
+        
+        // Συγχώνευση subperiods με subperiodsData
+        const completeSubperiodsData = subperiodsData.map((data, index) => ({
+            ...data,
+            rent: subperiods[index]?.rent || 0
+        }));
+        
+        // Υπολογισμός των πεδίων rent και tax_stamp
+        const calculatedFields = calculateRentFields(completeSubperiodsData);
 
         // Ενημέρωση του submission
         const updateData = {
-            students: parseInt(students),
-            working_days: parseInt(working_days),
-            electricity_cost: parseFloat(electricity_cost),
-            rent_offer: calculatedFields.rent_offer,
+            data: subperiodsData,
             rent: calculatedFields.rent,
             tax_stamp: calculatedFields.tax_stamp,
             submittedBy: principalId
@@ -613,9 +660,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
                 principalId: principalId,
                 principalEmail: req.user.email,
                 data: {
-                    students: parseInt(students),
-                    working_days: parseInt(working_days),
-                    electricity_cost: parseFloat(electricity_cost),
+                    subperiods: subperiodsData
                 },
             }
         });

@@ -22,8 +22,12 @@ const handlebarsConfig = {
         check: (condition, valueIfTrue, valueIfFalse) => condition ? valueIfTrue : valueIfFalse,
         /* example: {{or a b c}}, it needs c (Handlebars doesn't pass undefined). Use '' as third argument. */
         or: (a, b, c) => a ?? b ?? c, 
-        /** example: {{deepLookup obj 'key1' 'key2'}}. Το handlebars έχει ήδη την {{lookup object 'key'}} */
-        deepLookup: (obj, key1, key2) => obj?.[key1]?.[key2],
+        /** example: {{deepLookup obj 'key1' 'key2' 'key3'}} or {{deepLookup submission.data @index 'students'}}. Το handlebars έχει ήδη την {{lookup object 'key'}} */
+        deepLookup: (obj, ...keys) => {
+            // Remove the Handlebars context object (last argument)
+            const actualKeys = keys.slice(0, -1);
+            return actualKeys.reduce((current, key) => current?.[key], obj) || '';
+        },
         /* example: <script> let obj = {{{objectify obj}}}; </script> */      
         objectify: (object) => JSON.stringify(object),  
         inflect: (number, singular, plural) => number + ' ' + (number==1 ? singular : plural),

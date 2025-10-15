@@ -35,7 +35,7 @@
                                 <div class="card-body">
                                     <h6 class="card-title">
                                         <i class="ti-info-alt me-2"></i>
-                                        Στοιχεία Κυλικείου
+                                        Πληροφορίες Κυλικείου
                                     </h6>
                                     <strong>Όνομα:</strong> {{canteen.name}}<br>
                                     <strong>Διευθυντής Σχολείου:</strong> {{principal.name}}<br>
@@ -79,70 +79,77 @@
 
                     {{!-- Φόρμα υποβολής στοιχείων --}}
                     <form id="submissionForm" >
-                        <div class="row">
-                            {{!-- Rent Offer (disabled) --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="rentOffer" class="form-label fw-bold">
-                                    Οικονομική Προσφορά Μισθωτή (€)
-                                </label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       id="rentOffer" 
-                                       name="rent_offer" 
-                                       value="{{rentOffer}}" 
-                                       step="0.01" 
-                                       disabled>
-                                <div class="form-text text-muted">Αυτό το ποσό προέρχεται από την τρέχουσα μίσθωση</div>
+                        {{#each subperiods}}
+                        <div class="card mb-4 subperiod-card" data-index="{{@index}}">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="ti-calendar me-2"></i>
+                                    Υποπερίοδος: {{date this.start_date}} - {{date this.end_date}}
+                                </h6>
                             </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    {{!-- Rent για αυτή την υπο-περίοδο (disabled) --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Οικονομική Προσφορά Μισθωτή (€)
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               value="{{this.rent}}" 
+                                               step="0.01" 
+                                               disabled>
+                                        <div class="form-text text-muted">Μίσθωμα για αυτή την υπο-περίοδο</div>
+                                    </div>
 
-                            {{!-- Students --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="students" class="form-label fw-bold">
-                                    Αριθμός Μαθητών *
-                                </label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       id="students" 
-                                       name="students" 
-                                       value="{{submission.students}}" 
-                                       min="0" 
-                                       step="1" 
-                                       required>
-                                <div class="form-text text-muted">Ο συνολικός αριθμός μαθητών του σχολείου για την περίοδο</div>
-                            </div>
+                                    {{!-- Students --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Αριθμός Μαθητών *
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               name="subperiods[{{@index}}][students]" 
+                                               value="{{deepLookup ../submission.data @index 'students'}}" 
+                                               min="0" 
+                                               step="1" 
+                                               required>
+                                        <div class="form-text text-muted">Αριθμός μαθητών για αυτή την περίοδο</div>
+                                    </div>
 
-                            {{!-- Working Days --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="workingDays" class="form-label fw-bold">
-                                    Εργάσιμες Ημέρες *
-                                </label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       id="workingDays" 
-                                       name="working_days" 
-                                       value="{{submission.working_days}}" 
-                                       min="0" 
-                                       step="1" 
-                                       required>
-                                <div class="form-text text-muted">Ο αριθμός εργάσιμων ημερών που λειτούργησε το σχολείο</div>
-                            </div>
+                                    {{!-- Working Days --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Εργάσιμες Ημέρες *
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               name="subperiods[{{@index}}][working_days]" 
+                                               value="{{deepLookup ../submission.data @index 'working_days'}}" 
+                                               min="0" 
+                                               step="1" 
+                                               required>
+                                        <div class="form-text text-muted">Εργάσιμες ημέρες για αυτή την περίοδο</div>
+                                    </div>
 
-                            {{!-- Electricity Cost --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="electricityCost" class="form-label fw-bold">
-                                    Κόστος Ρεύματος (€) *
-                                </label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       id="electricityCost" 
-                                       name="electricity_cost" 
-                                       value="{{submission.electricity_cost}}" 
-                                       min="0" 
-                                       step="0.01" 
-                                       required>
-                                <div class="form-text text-muted">Το κόστος ρεύματος που αναλογεί στο κυλικείο για την περίοδο</div>
+                                    {{!-- Electricity Cost --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Κόστος Ρεύματος (€) *
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               name="subperiods[{{@index}}][electricity_cost]" 
+                                               value="{{deepLookup ../submission.data @index 'electricity_cost'}}" 
+                                               min="0" 
+                                               step="0.01" 
+                                               required>
+                                        <div class="form-text text-muted">Κόστος ρεύματος για αυτή την περίοδο</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        {{/each}}
                         
                         {{!-- Κουμπιά ενεργειών --}}
                         <div class="row mt-4">
@@ -239,15 +246,41 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Δεν ελέγχουμε εδώ αν η περίοδος είναι ανοιχτή (γίνεται server-side έλεγχος)
         
-        // Αφαίρεσε το rent_offer γιατί είναι disabled
-        delete data.rent_offer;
+        // Συλλογή δεδομένων από subperiods
+        const subperiodsData = [];
+        document.querySelectorAll('.subperiod-card').forEach((card, index) => {
+            const students = card.querySelector(`input[name="subperiods[${index}][students]"]`).value;
+            const workingDays = card.querySelector(`input[name="subperiods[${index}][working_days]"]`).value;
+            const electricityCost = card.querySelector(`input[name="subperiods[${index}][electricity_cost]"]`).value;
+            
+            if (!students || !workingDays || !electricityCost) {
+                Q('bootstrap-spinner').show(false);
+                showErrorModal(`Παρακαλώ συμπληρώστε όλα τα πεδία για την περίοδο ${index + 1}.`);
+                return false;
+            }
+            
+            subperiodsData.push({
+                start_date: {{{objectify subperiods}}}.map(s => s.start_date)[index],
+                end_date: {{{objectify subperiods}}}.map(s => s.end_date)[index],
+                students: parseInt(students),
+                working_days: parseInt(workingDays),
+                electricity_cost: parseFloat(electricityCost)
+            });
+        });
         
-        // Έλεγχος αν υπάρχουν τα απαιτούμενα πεδία
-        if (!data.students || !data.working_days || !data.electricity_cost) {
-            Q('bootstrap-spinner').show(false);
-            showErrorModal('Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία.');
-            return;
+        if (subperiodsData.length === 0) {
+            return; // Σφάλμα validation ήδη εμφανίστηκε
         }
+        
+        // Αντικατάσταση των παλαιών πεδίων με το data array
+        data.data = subperiodsData;
+        
+        // Καθαρισμός παλαιών πεδίων
+        Object.keys(data).forEach(key => {
+            if (key.startsWith('subperiods[')) {
+                delete data[key];
+            }
+        });
         
         const hasSubmission = {{#if submission}}true{{else}}false{{/if}};
         const isEdit = hasSubmission; // true αν υπάρχει submission (επεξεργασία)

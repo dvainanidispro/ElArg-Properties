@@ -22,18 +22,18 @@ const Submission = db.define('submission',
         },
         principal_id: DataTypes.INTEGER,
         rent_offer: DataTypes.DECIMAL(10, 2),
-        students: {
-            type: DataTypes.INTEGER,
-            comment: 'Αριθμός μαθητών σχολείου για την περίοδο'
-        },
-        working_days: {
-            type: DataTypes.INTEGER,
-            comment: 'Αριθμός εργάσιμων ημερών για την περίοδο'
-        },
-        electricity_cost: {
-            type: DataTypes.DECIMAL(10, 2),
-            comment: 'Κόστος ρεύματος για την περίοδο'
-        },
+        // students: {
+        //     type: DataTypes.INTEGER,
+        //     comment: 'Αριθμός μαθητών σχολείου για την περίοδο'
+        // },
+        // working_days: {
+        //     type: DataTypes.INTEGER,
+        //     comment: 'Αριθμός εργάσιμων ημερών για την περίοδο'
+        // },
+        // electricity_cost: {
+        //     type: DataTypes.DECIMAL(10, 2),
+        //     comment: 'Κόστος ρεύματος για την περίοδο'
+        // },
         data: {
             type: DataTypes.JSONB,
             comment: 'Array από subperiods/sub-submissions με πεδία: start_date, end_date, students, working_days, electricity_cost',
@@ -52,7 +52,17 @@ const Submission = db.define('submission',
                 const rent = this.getDataValue('rent') || 0;
                 const taxStamp = this.getDataValue('tax_stamp') || 0;
                 const total = parseFloat(rent) + parseFloat(taxStamp);
-                return total.toFixed(2);
+                return parseFloat(total.toFixed(2));
+            }
+        },
+        electricity_cost: {
+            type: DataTypes.VIRTUAL,
+            get() {
+                const data = this.getDataValue('data') || [];
+                const total = data.reduce((sum, subperiod) => {
+                    return sum + (parseFloat(subperiod?.electricity_cost) || 0);
+                }, 0);
+                return parseFloat(total.toFixed(2));
             }
         },
     },
