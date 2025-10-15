@@ -703,8 +703,15 @@ canteens.get('/leases/:id', can('view:content'), async (req, res) => {
             })
         ]);
         
+        // Επεξεργασία των rent_adjustments για το view
+        const leaseData = lease.toJSON();
+        if (leaseData.rent_adjustments) {
+            // Ταξινόμηση των adjustments κατά start_date
+            leaseData.rent_adjustments.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+        }
+        
         res.render('canteens/edit-lease', { 
-            leaseDetails: lease,
+            leaseDetails: leaseData,
             canteens: canteensList,
             parties,
             user: req.user,
@@ -723,7 +730,7 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
     try {
         const { 
             canteen_id, party_id, lease_start, lease_end, rent, 
-            rent_adjustment_info, guarantee_letter, revision_number, notes, active 
+            rent_adjustment_info, guarantee_letter, revision_number, notes, active, rent_adjustments 
         } = req.body;
         
         // Βασικός έλεγχος δεδομένων
@@ -754,6 +761,18 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
             });
         }
         
+        // Validation για rent adjustments αν υπάρχουν
+        if (rent_adjustments && Array.isArray(rent_adjustments)) {
+            for (const adjustment of rent_adjustments) {
+                if (!adjustment.start_date || !adjustment.end_date || !adjustment.rent) {
+                    return res.status(400).json({ 
+                        success: false, 
+                        message: 'Κάθε τροποποίηση μισθώματος πρέπει να έχει ημερομηνία έναρξης, λήξης και ποσό μισθώματος' 
+                    });
+                }
+            }
+        }
+        
         const newLease = await Models.Lease.create({
             property_id: parseInt(canteen_id),
             party_id: parseInt(party_id),
@@ -767,7 +786,8 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
             guarantee_letter,
             revision_number,
             notes,
-            active: (active!==undefined) ? active : true
+            active: (active!==undefined) ? active : true,
+            rent_adjustments: rent_adjustments || null
         });
         
         log.info(`Νέο lease κυλικείου δημιουργήθηκε: Canteen ${canteen_id} - Party ${party_id} (ID: ${newLease.id})`);
@@ -794,7 +814,7 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
         const leaseId = parseInt(req.params.id);
         const { 
             lease_start, lease_end, rent, 
-            rent_adjustment_info, guarantee_letter, revision_number, notes, active 
+            rent_adjustment_info, guarantee_letter, revision_number, notes, active, rent_adjustments 
         } = req.body;
         
         const lease = await Models.Lease.findByPk(leaseId);
@@ -803,6 +823,18 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
                 success: false, 
                 message: 'Η Μίσθωση Κυλικείου δεν βρέθηκε' 
             });
+        }
+        
+        // Validation για rent adjustments αν υπάρχουν
+        if (rent_adjustments && Array.isArray(rent_adjustments)) {
+            for (const adjustment of rent_adjustments) {
+                if (!adjustment.start_date || !adjustment.end_date || !adjustment.rent) {
+                    return res.status(400).json({ 
+                        success: false, 
+                        message: 'Κάθε τροποποίηση μισθώματος πρέπει να έχει ημερομηνία έναρξης, λήξης και ποσό μισθώματος' 
+                    });
+                }
+            }
         }
         
         // Δημιουργία αντικειμένου ενημέρωσης (χωρίς canteen_id, party_id, lease_direction)
@@ -815,7 +847,8 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
             guarantee_letter,
             revision_number,
             notes,
-            active: active
+            active: active,
+            rent_adjustments: rent_adjustments || null
         };
         
         await lease.update(updateData);

@@ -65,6 +65,11 @@ const Lease = db.define('lease', {
         type: DataTypes.SMALLINT,
         comment: 'Μήνας αναπροσαρμογής μισθώματος (1-12)'
     },
+	rent_adjustments: {
+		type: DataTypes.JSONB,
+		comment: 'Τροποποιήσεις μισθώματος - array από objects με πεδία: start_date, end_date, rent',
+		allowNull: true
+	},
 	guarantee_letter: {
 		type: DataTypes.STRING,
 		comment: 'Εγγυητική Επιστολή (για μισθωμένα από δήμο)'

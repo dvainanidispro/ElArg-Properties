@@ -93,19 +93,71 @@
                             <div class="col-md-6 mb-3">
                                 <label for="monthlyRent" class="form-label fw-bold">Οικονομική προσφορά μισθωτή (€)</label>
                                 <input type="number" step="0.01" class="form-control" id="monthlyRent" name="rent" value="{{check leaseDetails.rent leaseDetails.rent ''}}">
-                                {{!-- <div class="form-text text-muted">Ποσό μισθώματος σε ευρώ</div> --}}
+                                <div class="form-text text-muted">Σε περίπτωση πολλών τροποποιήσεων μισθωμάτων, αναγράψτε το τελευταίο χρονικά</div>
                             </div>
                             
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Τροποποιήσεις Μισθώματος</label>
+                                <div>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#rentAdjustmentsCollapse" aria-expanded="false">
+                                        <i class="ti-angle-down me-1"></i>
+                                        Διαχείριση Τροποποιήσεων
+                                    </button>
+                                </div>
+                                <div class="form-text text-muted">Προσθήκη τροποποιήσεων μισθώματος με ημερομηνίες εφαρμογής</div>
+                            </div>
+                            
+                            <!-- Collapse για Rent Adjustments -->
+                            <div class="col-12 mb-3">
+                                <div class="collapse" id="rentAdjustmentsCollapse">
+                                    <div class="card m-5">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="ti-calendar me-2"></i>
+                                                Τροποποιήσεις Μισθώματος
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="rentAdjustmentsList">
+                                                {{#if leaseDetails.rent_adjustments}}
+                                                    {{#each leaseDetails.rent_adjustments}}
+                                                    <div class="rent-adjustment-item border rounded p-3 mb-3" data-index="{{@index}}">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Από Ημερομηνία *</label>
+                                                                <input type="date" class="form-control" name="adjustment_start_date" value="{{this.start_date}}" required>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label class="form-label">Έως Ημερομηνία *</label>
+                                                                <input type="date" class="form-control" name="adjustment_end_date" value="{{this.end_date}}" required>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <label class="form-label">Νέο Μίσθωμα (€) *</label>
+                                                                <input type="number" step="0.01" class="form-control" name="adjustment_rent" value="{{this.rent}}" required>
+                                                            </div>
+                                                            <div class="col-md-1 d-flex align-items-end">
+                                                                <button type="button" class="btn btn-danger btn-sm remove-adjustment">
+                                                                    <i class="ti-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {{/each}}
+                                                {{/if}}
+                                            </div>
+                                            
+                                            <div class="d-grid gap-2 d-md-flex">
+                                                <button type="button" class="btn btn-success btn-sm" id="addRentAdjustment">
+                                                    <i class="ti-plus me-1"></i>
+                                                    Προσθήκη Τροποποίησης
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                             
-                            {{!-- <div class="col-md-12 mb-3">
-                                <label for="rentAdjustmentInfo" class="form-label fw-bold">Πληροφορίες Αναπροσαρμογής Μισθώματος</label>
-                                <textarea class="form-control" id="rentAdjustmentInfo" name="rent_adjustment_info" rows="3">{{check leaseDetails.rent_adjustment_info leaseDetails.rent_adjustment_info ''}}</textarea>
-                                <div class="form-text text-muted">Πληροφορίες για αναπροσαρμογές, δείκτες, ποσοστά αύξησης κλπ.</div>
-                            </div> --}}
-
-                             <div class="col-md-6 mb-3"></div>
-
                             <div class="col-md-6 mb-3">
                                 <label for="revisionNumber" class="form-label fw-bold">Αριθμός γνωστοποίησης</label>
                                 <input type="text" class="form-control" id="revisionNumber" name="revision_number" value="{{check leaseDetails.revision_number leaseDetails.revision_number ''}}">
@@ -170,7 +222,7 @@
 
                         <button id="exportExcelBtn" class="btn btn-excel btn-icon">
                             <i class="excel-icon m-3"></i>
-                            <span>Εξαγωγή καρτέλας μίσθωσης <br> σε Excel</span>
+                            <span>Εξαγωγή καρτέλας μίσθωσης</span>
                         </button>
 
                         <button type="button" class="btn btn-danger delete-lease-btn {{#unless (can 'edit:content')}}d-none{{/unless}}"
@@ -340,6 +392,25 @@ document.addEventListener('DOMContentLoaded', function() {
         // Μετατροπή string boolean σε boolean
         data.active = data.active === 'true';
         
+        // Συλλογή rent adjustments
+        const rentAdjustments = [];
+        document.querySelectorAll('.rent-adjustment-item').forEach(item => {
+            const startDate = item.querySelector('input[name="adjustment_start_date"]').value;
+            const endDate = item.querySelector('input[name="adjustment_end_date"]').value;
+            const rent = item.querySelector('input[name="adjustment_rent"]').value;
+            
+            if (startDate && endDate && rent) {
+                rentAdjustments.push({
+                    start_date: startDate,
+                    end_date: endDate,
+                    rent: parseFloat(rent)
+                });
+            }
+        });
+        
+        // Προσθήκη rent adjustments στα data (null αν άδειο array)
+        data.rent_adjustments = rentAdjustments.length > 0 ? rentAdjustments : null;
+        
         try {
             const url = isEdit ? `/canteens/leases/${leaseId}` : '/canteens/leases';
             const method = isEdit ? 'PUT' : 'POST';
@@ -416,5 +487,62 @@ document.addEventListener('DOMContentLoaded', function() {
             
             downloadTableAsExcel('leaseExportTable', filename, canteenName);
         });
+
+    // Rent Adjustments Management
+    let adjustmentIndex = document.querySelectorAll('.rent-adjustment-item').length;
+
+    // Προσθήκη νέας τροποποίησης
+    document.getElementById('addRentAdjustment').addEventListener('click', function() {
+        const adjustmentsList = document.getElementById('rentAdjustmentsList');
+        const newAdjustment = createRentAdjustmentItem(adjustmentIndex);
+        adjustmentsList.insertAdjacentHTML('beforeend', newAdjustment);
+        adjustmentIndex++;
+        attachRemoveEventListeners();
+    });
+
+    // Αφαίρεση τροποποίησης
+    function attachRemoveEventListeners() {
+        document.querySelectorAll('.remove-adjustment').forEach(button => {
+            button.replaceWith(button.cloneNode(true)); // Remove existing listeners
+        });
+        
+        document.querySelectorAll('.remove-adjustment').forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την τροποποίηση;')) {
+                    this.closest('.rent-adjustment-item').remove();
+                }
+            });
+        });
+    }
+
+    // Δημιουργία HTML για νέα τροποποίηση
+    function createRentAdjustmentItem(index) {
+        return /*HTML*/`
+            <div class="rent-adjustment-item border rounded p-3 mb-3" data-index="${index}">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Από Ημερομηνία *</label>
+                        <input type="date" class="form-control" name="adjustment_start_date" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Έως Ημερομηνία *</label>
+                        <input type="date" class="form-control" name="adjustment_end_date" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Μίσθωμα (€) *</label>
+                        <input type="number" step="0.01" class="form-control" name="adjustment_rent" required>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-adjustment">
+                            <i class="ti-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Αρχική εκκίνηση event listeners
+    attachRemoveEventListeners();
 });
 </script>

@@ -173,6 +173,10 @@ input::placeholder{
 a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     color: #04c !important;
     border-color: #04c !important;
+    &:focus{
+        background-color: var(--bs-btn-active-bg) !important;
+        border-color: var(--bs-btn-active-border-color) !important;
+    }
 }
 
 .btn-warning{
