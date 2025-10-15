@@ -146,7 +146,7 @@
                                         {{/if}}
                                     </td>
                                     <td class="d-none d-xxl-table-cell" data-sort-value="{{this.submission.electricity_cost}}" >
-                                        {{this.submission.electricity_cost}}
+                                        {{check this.submission.electricity_cost (euro this.submission.electricity_cost) '-'}}
                                     </td>
                                     <td class="" data-sort-value="{{this.submission.rent}}">
                                         {{check this.submission.rent (euro this.submission.rent) '-'}}

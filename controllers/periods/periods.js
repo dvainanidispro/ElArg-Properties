@@ -121,4 +121,26 @@ function subperiodsFor(period, lease) {
     return subperiods;
 }
 
-export { getActiveCanteenPeriod, subperiodsFor };
+/**
+ * Helper function για υπολογισμό των πεδίων rent και tax_stamp από subperiods
+ * @param {Array} subperiodsData - Array με τα δεδομένα των υποπεριόδων
+ * @returns {Object} Αντικείμενο με τα υπολογιζόμενα πεδία
+ */
+function calculateRentFields(subperiodsData) {
+    // Υπολογισμός rent: άθροισμα του (1/189) * rent * students * working_days για κάθε υποπερίοδο
+    let rent = 0;
+    subperiodsData.forEach(subperiod => {
+        const subperiodRent = (1/189) * subperiod.rent * subperiod.students * subperiod.working_days;
+        rent += subperiodRent;
+    });
+    
+    // Υπολογισμός tax_stamp: rent * 0.036
+    const taxStamp = rent * 0.036;
+    
+    return {
+        rent: parseFloat(rent.toFixed(2)),
+        tax_stamp: parseFloat(taxStamp.toFixed(2))
+    };
+}
+
+export { getActiveCanteenPeriod, subperiodsFor, calculateRentFields };

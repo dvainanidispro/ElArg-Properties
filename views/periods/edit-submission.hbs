@@ -35,7 +35,7 @@
                                 <div class="card-body">
                                     <h6 class="card-title">
                                         <i class="ti-info-alt me-2"></i>
-                                        Στοιχεία Κυλικείου
+                                        Πληροφορίες Κυλικείου
                                     </h6>
                                     <strong>Όνομα:</strong> {{canteen.name}}<br>
                                     {{#if canteen.principal}}
@@ -78,116 +78,82 @@
 
                     {{!-- Φόρμα υποβολής στοιχείων --}}
                     <form id="submissionForm">
-                        <div class="row">
-                            {{!-- Principal ID (Hidden) --}}
-                            <input type="hidden" name="principal_id" value="{{canteen.principal.id}}">
+                        {{!-- Principal ID (Hidden) --}}
+                        <input type="hidden" name="principal_id" value="{{canteen.principal.id}}">
 
-                            <hr>
-                            {{!-- Rent Offer --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="rentOffer" class="form-label fw-bold">
-                                    Οικονομική Προσφορά Μισθωτή (€) *
-                                </label>
-                    <input type="number" 
-                        class="form-control" 
-                        id="rentOffer" 
-                        name="rent_offer" 
-                        value="{{submission.rent_offer}}" 
-                        step="0.01" 
-                        min="0" 
-                        required>
-                                <div class="form-text text-muted">Η οικονομική προσφορά του μισθωτή για την περίοδο</div>
+                        {{#each subperiods}}
+                        <div class="card mb-4 subperiod-card" data-index="{{@index}}">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="ti-calendar me-2"></i>
+                                    Υποπερίοδος: {{date this.start_date}} - {{date this.end_date}}
+                                </h6>
                             </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    {{!-- Rent για αυτή την υπο-περίοδο --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Οικονομική Προσφορά Μισθωτή (€) *
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               name="subperiods[{{@index}}][rent]"
+                                               value="{{#if ../submission.data}}{{deepLookup ../submission.data @index 'rent'}}{{else}}{{this.rent}}{{/if}}" 
+                                               step="0.01" 
+                                               min="0"
+                                               required>
+                                        <div class="form-text text-muted">Μίσθωμα για αυτή την υπο-περίοδο</div>
+                                    </div>
 
-                            {{!-- Students --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="students" class="form-label fw-bold">
-                                    Αριθμός Μαθητών *
-                                </label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       id="students" 
-                                       name="students" 
-                                       value="{{submission.students}}" 
-                                       min="0" 
-                                       step="1" 
-                                       required>
-                                <div class="form-text text-muted">Ο συνολικός αριθμός μαθητών του σχολείου για την περίοδο</div>
-                            </div>
+                                    {{!-- Students --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Αριθμός Μαθητών *
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               name="subperiods[{{@index}}][students]" 
+                                               value="{{deepLookup ../submission.data @index 'students'}}" 
+                                               min="0" 
+                                               step="1" 
+                                               required>
+                                        <div class="form-text text-muted">Αριθμός μαθητών για αυτή την περίοδο</div>
+                                    </div>
 
-                            {{!-- Working Days --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="workingDays" class="form-label fw-bold">
-                                    Εργάσιμες Ημέρες *
-                                </label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       id="workingDays" 
-                                       name="working_days" 
-                                       value="{{submission.working_days}}" 
-                                       min="0" 
-                                       step="1" 
-                                       required>
-                                <div class="form-text text-muted">Ο αριθμός εργάσιμων ημερών που λειτούργησε το σχολείο</div>
-                            </div>
+                                    {{!-- Working Days --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Εργάσιμες Ημέρες *
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               name="subperiods[{{@index}}][working_days]" 
+                                               value="{{deepLookup ../submission.data @index 'working_days'}}" 
+                                               min="0" 
+                                               step="1" 
+                                               required>
+                                        <div class="form-text text-muted">Εργάσιμες ημέρες για αυτή την περίοδο</div>
+                                    </div>
 
-                            {{!-- Electricity Cost --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="electricityCost" class="form-label fw-bold">
-                                    Κόστος Ρεύματος (€) *
-                                </label>
-                                <input type="number" 
-                                       class="form-control" 
-                                       id="electricityCost" 
-                                       name="electricity_cost" 
-                                       value="{{submission.electricity_cost}}" 
-                                       min="0" 
-                                       step="0.01" 
-                                       required>
-                                <div class="form-text text-muted">Το κόστος ρεύματος που αναλογεί στο κυλικείο για την περίοδο</div>
-                            </div>
-
-                            <hr>
-
-                            {{!-- Rent --}}
-
-                            <div class="col-md-6 mb-3">
-                                <label for="rent" class="form-label fw-bold">
-                                    Μίσθωμα (€) *
-                                </label>
-                                <div class="input-group">
-                                    <input type="number" 
-                                        class="form-control" 
-                                        id="rent" 
-                                        name="rent" 
-                                        value="{{submission.rent}}" 
-                                        min="0" 
-                                        step="0.01" 
-                                        required>
-                                    <button type="button" class="btn btn-secondary" id="autoCalcRent">Υπολογισμός</button>
+                                    {{!-- Electricity Cost --}}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-bold">
+                                            Κόστος Ρεύματος (€) *
+                                        </label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               name="subperiods[{{@index}}][electricity_cost]" 
+                                               value="{{deepLookup ../submission.data @index 'electricity_cost'}}" 
+                                               min="0" 
+                                               step="0.01" 
+                                               required>
+                                        <div class="form-text text-muted">Κόστος ρεύματος για αυτή την περίοδο</div>
+                                    </div>
                                 </div>
-                                <div class="form-text text-muted">Το μίσθωμα προς καταβολή για την περίοδο</div>
-                            </div>
-
-                            {{!-- Tax Stamp --}}
-                            <div class="col-md-6 mb-3">
-                                <label for="taxStamp" class="form-label fw-bold">
-                                    Χαρτόσημο (€) *
-                                </label>
-                                <div class="input-group">
-                                    <input type="number" 
-                                        class="form-control" 
-                                        id="taxStamp" 
-                                        name="tax_stamp" 
-                                        value="{{submission.tax_stamp}}" 
-                                        min="0" 
-                                        step="0.01" 
-                                        required>
-                                    <button type="button" class="btn btn-secondary" id="autoCalcTaxStamp">Υπολογισμός</button>
-                                </div>
-                                <div class="form-text text-muted">Το ποσό του χαρτοσήμου</div>
                             </div>
                         </div>
+                        {{/each}}
                         
                         {{!-- Υπολογισμός συνόλου --}}
                         {{#if submission}}
@@ -199,6 +165,8 @@
                                             <i class="ti-control-forward me-2"></i>
                                             Υπολογισμοί
                                         </h6>
+                                        <strong>Συνολικό Μίσθωμα:</strong> {{submission.rent}} €<br>
+                                        <strong>Χαρτόσημο:</strong> {{submission.tax_stamp}} €<br>
                                         <strong>Συνολικό Ποσό Είσπραξης:</strong> 
                                         <span id="totalAmount">{{submission.total}}</span> €
                                         <div class="form-text text-muted">Μίσθωμα + Χαρτόσημο</div>
@@ -265,15 +233,19 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <h6><i class="ti-money me-1"></i> Οικονομικά Στοιχεία</h6>
-                        <p class="small text-muted">Συμπληρώστε την οικονομική προσφορά, το καταβληθέν μίσθωμα και το χαρτόσημο.</p>
+                        <p class="small text-muted">Συμπληρώστε την οικονομική προσφορά για κάθε υποπερίοδο.</p>
                     </div>
                     <div class="mb-3">
                         <h6><i class="ti-user me-1"></i> Στοιχεία Λειτουργίας</h6>
-                        <p class="small text-muted">Αριθμός μαθητών και εργάσιμες ημέρες για τον υπολογισμό αναλογιών.</p>
+                        <p class="small text-muted">Αριθμός μαθητών και εργάσιμες ημέρες για κάθε υποπερίοδο.</p>
                     </div>
                     <div class="mb-3">
                         <h6><i class="ti-bolt me-1"></i> Κόστος Ρεύματος</h6>
-                        <p class="small text-muted">Το κόστος ηλεκτρικού ρεύματος που αναλογεί στη χρήση του κυλικείου.</p>
+                        <p class="small text-muted">Το κόστος ρεύματος για κάθε υποπερίοδο.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6><i class="ti-info me-1"></i> Υποπερίοδοι</h6>
+                        <p class="small text-muted">Κάθε περίοδος μπορεί να χωρίζεται σε υποπεριόδους με διαφορετικά μισθώματα.</p>
                     </div>
                 </div>
             </div>
@@ -283,24 +255,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Υπολογισμός Μισθώματος
-    document.getElementById('autoCalcRent').addEventListener('click', function() {
-        const rentOffer = parseFloat(document.getElementById('rentOffer').value) || 0;
-        const students = parseFloat(document.getElementById('students').value) || 0;
-        const workingDays = parseFloat(document.getElementById('workingDays').value) || 0;
-        const rent = (1/189) * rentOffer * students * workingDays;
-        document.getElementById('rent').value = rent.toFixed(2);
-        calculateTotal();
-    });
-
-    // Υπολογισμός Χαρτοσήμου
-    document.getElementById('autoCalcTaxStamp').addEventListener('click', function() {
-        const rent = parseFloat(document.getElementById('rent').value) || 0;
-        const taxStamp = rent * 0.036;
-        document.getElementById('taxStamp').value = taxStamp.toFixed(2);
-        calculateTotal();
-    });
-
     // Form για υποβολή/επεξεργασία submission
     document.getElementById('submissionForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -309,17 +263,41 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this);
         const data = Object.fromEntries(formData);
         
-        // Έλεγχος απαιτούμενων πεδίων
-        if (!data.students || !data.working_days || !data.electricity_cost) {
-            Q('bootstrap-spinner').show(false);
-            showErrorModal('Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία (*).');
-            return;
+        // Συλλογή δεδομένων από subperiods
+        const subperiodsData = [];
+        document.querySelectorAll('.subperiod-card').forEach((card, index) => {
+            const rent = card.querySelector(`input[name="subperiods[${index}][rent]"]`).value;
+            const students = card.querySelector(`input[name="subperiods[${index}][students]"]`).value;
+            const workingDays = card.querySelector(`input[name="subperiods[${index}][working_days]"]`).value;
+            const electricityCost = card.querySelector(`input[name="subperiods[${index}][electricity_cost]"]`).value;
+            
+            if (!rent || !students || !workingDays || !electricityCost) {
+                Q('bootstrap-spinner').show(false);
+                showErrorModal(`Παρακαλώ συμπληρώστε όλα τα πεδία για την υποπερίοδο ${index + 1}.`);
+                return false;
+            }
+            
+            subperiodsData.push({
+                start_date: {{{objectify subperiods}}}.map(s => s.start_date)[index],
+                end_date: {{{objectify subperiods}}}.map(s => s.end_date)[index],
+                rent: parseFloat(rent),
+                students: parseInt(students),
+                working_days: parseInt(workingDays),
+                electricity_cost: parseFloat(electricityCost)
+            });
+        });
+        
+        if (subperiodsData.length === 0) {
+            return; // Σφάλμα validation ήδη εμφανίστηκε
         }
         
-        // Μετατροπή numeric fields
-        ['rent_offer', 'students', 'working_days', 'electricity_cost', 'rent', 'tax_stamp', 'principal_id'].forEach(field => {
-            if (data[field]) {
-                data[field] = parseFloat(data[field]) || parseInt(data[field]);
+        // Προσθήκη δεδομένων subperiods
+        data.data = subperiodsData;
+        
+        // Καθαρισμός παλαιών πεδίων
+        Object.keys(data).forEach(key => {
+            if (key.startsWith('subperiods[')) {
+                delete data[key];
             }
         });
         
@@ -370,21 +348,5 @@ document.addEventListener('DOMContentLoaded', function() {
             showErrorModal('Σφάλμα δικτύου: ' + error.message);
         }
     });
-
-    // Auto-calculate total amount
-    function calculateTotal() {
-        const rent = parseFloat(document.getElementById('rent').value) || 0;
-        const taxStamp = parseFloat(document.getElementById('taxStamp').value) || 0;
-        const total = rent + taxStamp;
-        
-        const totalElement = document.getElementById('totalAmount');
-        if (totalElement) {
-            totalElement.textContent = total.toFixed(2);
-        }
-    }
-
-    // Add event listeners for auto-calculation
-    document.getElementById('rent').addEventListener('input', calculateTotal);
-    document.getElementById('taxStamp').addEventListener('input', calculateTotal);
 });
 </script>

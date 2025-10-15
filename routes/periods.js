@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { Op } from 'sequelize';
 import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
+import { subperiodsFor, calculateRentFields } from '../controllers/periods/periods.js';
 import log from '../controllers/logger.js';
 
 /**
@@ -10,7 +10,6 @@ import log from '../controllers/logger.js';
  */
 
 const periods = Router();
-
 
 
 
@@ -84,10 +83,19 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
             return res.status(404).render('errors/404', { message: 'Η υποβολή δεν βρέθηκε' });
         }
         
+        // Πάρε το πιο πρόσφατο lease και δημιούργησε subperiods
+        const latestLease = submission.canteen.leases?.[0];
+        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{
+            start_date: period.start_date,
+            end_date: period.end_date,
+            rent: 0
+        }];
+        
         res.render('periods/edit-submission', {
             period,
             submission,
             canteen: submission.canteen,
+            subperiods,
             user: req.user,
             title: `Υποβολή Στοιχείων - ${submission.canteen.name}`
         });
@@ -130,11 +138,35 @@ periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (
             });
         }
         
-        // Ενημέρωση των στοιχείων υποβολής (το submittedBy δεν αλλάζει)
-        const updateData = { ...req.body };
-        delete updateData.id; // Αφαιρούμε το id από τα δεδομένα ενημέρωσης
+        const { data: subperiodsData } = req.body;
         
-        await submission.update(updateData);
+        // Βασικός έλεγχος δεδομένων subperiods
+        if (!subperiodsData || !Array.isArray(subperiodsData) || subperiodsData.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Απαιτούνται έγκυρα δεδομένα υποπεριόδων'
+            });
+        }
+        
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        for (const subperiod of subperiodsData) {
+            if (!subperiod.rent || !subperiod.students || !subperiod.working_days || !subperiod.electricity_cost) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Όλα τα πεδία των υποπεριόδων είναι υποχρεωτικά'
+                });
+            }
+        }
+        
+        // Υπολογισμός των πεδίων rent και tax_stamp
+        const calculatedFields = calculateRentFields(subperiodsData);
+        
+        // Ενημέρωση του submission
+        await submission.update({
+            data: subperiodsData,
+            rent: calculatedFields.rent,
+            tax_stamp: calculatedFields.tax_stamp
+        });
         
         log.info(`Η Υποβολή ${submission.id} ενημερώθηκε για την περίοδο ${period.code}`);
         
@@ -488,20 +520,22 @@ periods.get('/submissions/new', can('edit:content'), async (req, res) => {
         });
 
         if (existingSubmission) {
-            return res.redirect(`/periods/${periodId}/submissions/${existingSubmission.id}`);
+            return res.redirect(`/canteens/periods/${periodId}/submissions/${existingSubmission.id}`);
         }
 
-        // Προσυμπλήρωση rent_offer από το lease.rent αν υπάρχει lease
-        let prefillSubmission = null;
-        const lease = canteen.leases && canteen.leases.length > 0 ? canteen.leases[0] : null;
-        if (lease && lease.rent) {
-            prefillSubmission = { rent_offer: lease.rent };
-        }
+        // Πάρε το πιο πρόσφατο lease και δημιούργησε subperiods
+        const latestLease = canteen.leases?.[0];
+        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{
+            start_date: period.start_date,
+            end_date: period.end_date,
+            rent: 0
+        }];
 
         res.render('periods/edit-submission', {
             period,
             canteen,
-            submission: prefillSubmission,
+            submission: null,
+            subperiods,
             newSubmission: true,
             user: req.user,
             title: `Νέα Υποβολή - ${canteen.name}`
@@ -517,7 +551,7 @@ periods.get('/submissions/new', can('edit:content'), async (req, res) => {
  */
 periods.post('/submissions', can('edit:content'), async (req, res) => {
     try {
-        const { period_id, canteen_id, ...submissionData } = req.body;
+        const { period_id, canteen_id, data: subperiodsData, principal_id } = req.body;
         
         if (!period_id || !canteen_id) {
             return res.status(400).json({ 
@@ -560,12 +594,36 @@ periods.post('/submissions', can('edit:content'), async (req, res) => {
             });
         }
         
+        // Βασικός έλεγχος δεδομένων subperiods
+        if (!subperiodsData || !Array.isArray(subperiodsData) || subperiodsData.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Απαιτούνται έγκυρα δεδομένα υποπεριόδων'
+            });
+        }
+        
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        for (const subperiod of subperiodsData) {
+            if (!subperiod.rent || !subperiod.students || !subperiod.working_days || !subperiod.electricity_cost) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Όλα τα πεδία των υποπεριόδων είναι υποχρεωτικά'
+                });
+            }
+        }
+        
+        // Υπολογισμός των πεδίων rent και tax_stamp
+        const calculatedFields = calculateRentFields(subperiodsData);
+        
         // Δημιουργία νέας υποβολής
         const newSubmission = await Models.Submission.create({
             period_id: period_id,
             property_id: canteen_id,
             property_type: 'canteen',
-            ...submissionData
+            principal_id: principal_id || null,
+            data: subperiodsData,
+            rent: calculatedFields.rent,
+            tax_stamp: calculatedFields.tax_stamp
         });
         
         log.info(`Νέα Υποβολή δημιουργήθηκε (ID: ${newSubmission.id}) για κυλικείο ${canteen.name} και περίοδο ${period.code}`);

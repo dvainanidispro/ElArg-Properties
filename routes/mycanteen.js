@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
-import { subperiodsFor } from '../controllers/periods/periods.js';
+import { subperiodsFor, calculateRentFields } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 import { Op } from 'sequelize';
@@ -17,28 +17,7 @@ myCanteen.use(can('edit:ownschool'));
 
 
 
-/**
- * Helper function για υπολογισμό των πεδίων rent και tax_stamp από subperiods
- * @param {Array} subperiodsData - Array με τα δεδομένα των υποπεριόδων
- * @returns {Object} Αντικείμενο με τα υπολογιζόμενα πεδία
- */
-function calculateRentFields(subperiodsData) {
-    // Υπολογισμός rent: άθροισμα του (1/189) * rent * students * working_days για κάθε υποπερίοδο
-    let rent = 0;
-    subperiodsData.forEach(subperiod => {
-        const subperiodRent = (1/189) * subperiod.rent * subperiod.students * subperiod.working_days;
-        rent += subperiodRent;
-    });
-    //NOTE: Σε περίπτωση αλλαγής, θα πρέπει να γίνει αλλαγή και στο edit-submission.hbs (προβολή submission από user)
-    
-    // Υπολογισμός tax_stamp: rent * 0.036
-    const taxStamp = rent * 0.036;
-    
-    return {
-        rent: parseFloat(rent.toFixed(2)),
-        tax_stamp: parseFloat(taxStamp.toFixed(2))
-    };
-}
+
 
 
 
@@ -481,7 +460,7 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
             property_type: 'canteen',
             principal_id: principalId,
             submittedBy: principalId,
-            data: subperiodsData,
+            data: completeSubperiodsData,
             rent: calculatedFields.rent,
             tax_stamp: calculatedFields.tax_stamp
         });
@@ -501,7 +480,7 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
                 principalId: principalId,
                 principalEmail: req.user.email,
                 data: {
-                    subperiods: subperiodsData
+                    subperiods: completeSubperiodsData
                 },
             }
         });
@@ -637,7 +616,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
 
         // Ενημέρωση του submission
         const updateData = {
-            data: subperiodsData,
+            data: completeSubperiodsData,
             rent: calculatedFields.rent,
             tax_stamp: calculatedFields.tax_stamp,
             submittedBy: principalId
@@ -660,7 +639,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
                 principalId: principalId,
                 principalEmail: req.user.email,
                 data: {
-                    subperiods: subperiodsData
+                    subperiods: completeSubperiodsData
                 },
             }
         });
