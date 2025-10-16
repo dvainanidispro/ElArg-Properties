@@ -95,20 +95,16 @@ properties.post('/parties', can('edit:content'), async (req, res) => {
             });
         }
         
-        // Έλεγχος αν υπάρχει ήδη party με το ίδιο AFM ή email
-        const whereConditions = [];
-        if (afm) whereConditions.push({ afm });
-        if (email) whereConditions.push({ email });
-        
-        if (whereConditions.length > 0) {
+        // Έλεγχος αν υπάρχει ήδη party με το ίδιο AFM
+        if (afm) {
             const existingParty = await Models.Party.findOne({
-                where: { [Op.or]: whereConditions }
+                where: { afm }
             });
             
             if (existingParty) {
                 return res.status(400).json({ 
                     success: false, 
-                    message: 'Υπάρχει ήδη Συμβαλλόμενος με αυτό το ΑΦΜ ή email' 
+                    message: 'Υπάρχει ήδη Συμβαλλόμενος με αυτό το ΑΦΜ' 
                 });
             }
         }
@@ -160,23 +156,19 @@ properties.put('/parties/:id', can('edit:content'), async (req, res) => {
             });
         }
         
-        // Έλεγχος αν το νέο AFM ή email υπάρχει ήδη σε άλλον party
-        const whereConditions = [];
-        if (afm && afm !== party.afm) whereConditions.push({ afm });
-        if (email && email !== party.email) whereConditions.push({ email });
-        
-        if (whereConditions.length > 0) {
+        // Έλεγχος αν το νέο AFM υπάρχει ήδη σε άλλον party
+        if (afm && afm !== party.afm) {
             const existingParty = await Models.Party.findOne({
                 where: {
                     id: { [Op.ne]: partyId },
-                    [Op.or]: whereConditions
+                    afm: afm
                 }
             });
             
             if (existingParty) {
                 return res.status(400).json({ 
                     success: false, 
-                    message: 'Υπάρχει ήδη άλλος Συμβαλλόμενος με αυτό το ΑΦΜ ή email' 
+                    message: 'Υπάρχει ήδη άλλος Συμβαλλόμενος με αυτό το ΑΦΜ' 
                 });
             }
         }

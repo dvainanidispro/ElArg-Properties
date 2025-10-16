@@ -161,15 +161,18 @@
                             <div class="col-md-6">
                                 <div class="card bg-light">
                                     <div class="card-body">
-                                        <h6 class="card-title">
-                                            <i class="ti-control-forward me-2"></i>
-                                            Υπολογισμοί
-                                        </h6>
-                                        <strong>Συνολικό Μίσθωμα:</strong> {{submission.rent}} €<br>
-                                        <strong>Χαρτόσημο:</strong> {{submission.tax_stamp}} €<br>
-                                        <strong>Συνολικό Ποσό Είσπραξης:</strong> 
-                                        <span id="totalAmount">{{submission.total}}</span> €
-                                        <div class="form-text text-muted">Μίσθωμα + Χαρτόσημο</div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="card-title">
+                                                    <i class="ti-control-forward me-2"></i>
+                                                    Καθαρό Μίσθωμα:
+                                                </h6>
+                                                <div id="calculatedRent" class="fs-5 fw-bold">{{euro submission.rent}}</div>
+                                            </div>
+                                            <div class="">
+                                                <button type="button" id="caclulateRent" class="btn btn-outline-primary">Υπολογισμός</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -255,6 +258,63 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Υπολογισμός καθαρού μισθώματος
+    document.getElementById('caclulateRent')?.addEventListener('click', function(e) {
+        e.preventDefault(); // Αποτροπή submit της φόρμας
+        
+        let totalRent = 0;
+        let hasErrors = false;
+        
+        // Συλλογή δεδομένων από όλες τις υποπεριόδους
+        document.querySelectorAll('.subperiod-card').forEach((card, index) => {
+            const rentInput = card.querySelector(`input[name="subperiods[${index}][rent]"]`);
+            const studentsInput = card.querySelector(`input[name="subperiods[${index}][students]"]`);
+            const workingDaysInput = card.querySelector(`input[name="subperiods[${index}][working_days]"]`);
+            
+            const rent = parseFloat(rentInput.value) || 0;
+            const students = parseInt(studentsInput.value) || 0;
+            const workingDays = parseInt(workingDaysInput.value) || 0;
+            
+            // Έλεγχος αν όλα τα πεδία είναι συμπληρωμένα
+            if (!rent || !students || !workingDays) {
+                hasErrors = true;
+                // Προσθήκη red border στα κενά πεδία
+                [rentInput, studentsInput, workingDaysInput].forEach(input => {
+                    if (!input.value) {
+                        input.classList.add('is-invalid');
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+            } else {
+                // Αφαίρεση red borders αν τα πεδία είναι συμπληρωμένα
+                [rentInput, studentsInput, workingDaysInput].forEach(input => {
+                    input.classList.remove('is-invalid');
+                });
+                
+                // Υπολογισμός για αυτή την υποπερίοδο: (1/189) * rent * students * working_days
+                const subperiodRent = (1/189) * rent * students * workingDays;
+                totalRent += subperiodRent;
+            }
+        });
+        
+        if (hasErrors) {
+            showErrorModal('Παρακαλώ συμπληρώστε όλα τα πεδία (Οικονομική Προσφορά, Αριθμός Μαθητών, Εργάσιμες Ημέρες) για όλες τις υποπεριόδους.');
+            return;
+        }
+        
+        // Ενημέρωση του display με το υπολογιζόμενο ποσό
+        const calculatedRentElement = document.getElementById('calculatedRent');
+        if (calculatedRentElement) {
+            calculatedRentElement.textContent = totalRent.toLocaleString('el-GR', {
+                style: 'currency',
+                currency: 'EUR',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    });
+
     // Form για υποβολή/επεξεργασία submission
     document.getElementById('submissionForm').addEventListener('submit', async function(e) {
         e.preventDefault();

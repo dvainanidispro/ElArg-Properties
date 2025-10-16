@@ -86,7 +86,9 @@ canteens.get('/principals/:id', can('view:content'), async (req, res) => {
  */
 canteens.post('/principals', can('edit:content'), async (req, res) => {
     try {
-        const { email, name, contact, notes, active } = req.body;
+        let { email, name, contact, notes, active } = req.body;
+        active = (active === 'true') || (active === true); // Convert string 'true'/'false' to boolean
+        console.log({active});
         
         // Βασικός έλεγχος δεδομένων
         if (!email) {
@@ -96,16 +98,22 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
             });
         }
         
-        // Έλεγχος αν υπάρχει ήδη principal με το ίδιο email
-        const existingPrincipal = await Models.Principal.findOne({
-            where: { email }
-        });
-        
-        if (existingPrincipal) {
-            return res.status(400).json({ 
-                success: false, 
-                message: 'Υπάρχει ήδη Διευθυντής με αυτό το email' 
+        // Έλεγχος αν υπάρχει ήδη ενεργός principal με το ίδιο email (μόνο αν ο νέος principal είναι ενεργός)
+        if (active) {
+            log.dev();
+            const existingPrincipal = await Models.Principal.findOne({
+                where: { 
+                    email,
+                    active: true
+                }
             });
+            
+            if (existingPrincipal) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: `Υπάρχει ο Διευθυντής "${existingPrincipal.name || existingPrincipal.email}" ο οποίος είναι ενεργός με το ίδιο email. Παρακαλώ απενεργοποιήστε εκείνον πριν αποθηκεύσετε αυτόν τον Διευθυντή.` 
+                });
+            }
         }
         
         const newPrincipal = await Models.Principal.create({
@@ -114,7 +122,7 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
             contact: contact || '',
             notes: notes || '',
             role: 'principal',
-            active: (active!==undefined) ? active : true // Default true για νέους principals
+            active,
         });
         
         log.info(`Νέος principal δημιουργήθηκε: ${newPrincipal.email} (ID: ${newPrincipal.id})`);
@@ -147,7 +155,8 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
 canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
     try {
         const principalId = parseInt(req.params.id);
-        const { email, name, contact, notes, active } = req.body;
+        let { email, name, contact, notes, active } = req.body;
+        active = (active === 'true') || (active === true); // Convert string 'true'/'false' to boolean
         
         const principal = await Models.Principal.findByPk(principalId);
         if (!principal) {
@@ -157,19 +166,20 @@ canteens.put('/principals/:id', can('edit:content'), async (req, res) => {
             });
         }
         
-        // Έλεγχος αν το νέο email υπάρχει ήδη σε άλλον principal
-        if (email !== principal.email) {
-            const existingPrincipal = await Models.Principal.findOne({
+        // Έλεγχος αν το νέο email υπάρχει ήδη σε άλλον ενεργό principal
+        if (active) {
+            const otherPrincipal = await Models.Principal.findOne({
                 where: {
                     id: { [Op.ne]: principalId },
-                    email
+                    email,
+                    active: true
                 }
             });
             
-            if (existingPrincipal) {
+            if (otherPrincipal) {
                 return res.status(400).json({ 
                     success: false, 
-                    message: 'Υπάρχει ήδη άλλος Διευθυντής με αυτό το email' 
+                    message: `Υπάρχει ο Διευθυντής "${otherPrincipal.name || otherPrincipal.email}" ο οποίος είναι ενεργός με το ίδιο email. Παρακαλώ απενεργοποιήστε εκείνον πριν αποθηκεύσετε αυτόν τον Διευθυντή.` 
                 });
             }
         }

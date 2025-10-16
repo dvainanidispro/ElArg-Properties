@@ -29,8 +29,10 @@ const Principal = db.define('principal',
             { 
                 fields: ['email'],
                 unique: true,
-                name: 'principals_email',
+                name: 'principals_email_active_unique',
+                comment: 'Επιτρέπει διπλότυπα emails αρκεί μόνο ένας principal ανά email να είναι ενεργός',
                 where: {
+                    active: true,
                     email: { [db.Sequelize.Op.ne]: null }
                 }
             }
