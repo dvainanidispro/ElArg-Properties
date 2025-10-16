@@ -777,7 +777,7 @@ canteens.post('/leases', can('edit:content'), async (req, res) => {
                 if (!adjustment.start_date || !adjustment.end_date || !adjustment.rent) {
                     return res.status(400).json({ 
                         success: false, 
-                        message: 'Κάθε τροποποίηση μισθώματος πρέπει να έχει ημερομηνία έναρξης, λήξης και ποσό μισθώματος' 
+                        message: 'Κάθε αναπροσαρμογή μισθώματος πρέπει να έχει ημερομηνία έναρξης, λήξης και ποσό μισθώματος' 
                     });
                 }
             }
@@ -841,7 +841,7 @@ canteens.put('/leases/:id', can('edit:content'), async (req, res) => {
                 if (!adjustment.start_date || !adjustment.end_date || !adjustment.rent) {
                     return res.status(400).json({ 
                         success: false, 
-                        message: 'Κάθε τροποποίηση μισθώματος πρέπει να έχει ημερομηνία έναρξης, λήξης και ποσό μισθώματος' 
+                        message: 'Κάθε αναπροσαρμογή μισθώματος πρέπει να έχει ημερομηνία έναρξης, λήξης και ποσό μισθώματος' 
                     });
                 }
             }
