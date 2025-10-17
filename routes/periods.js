@@ -83,13 +83,8 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
             return res.status(404).render('errors/404', { message: 'Η υποβολή δεν βρέθηκε' });
         }
         
-        // Πάρε το πιο πρόσφατο lease και δημιούργησε subperiods
-        const latestLease = submission.canteen.leases?.[0];
-        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{
-            start_date: period.start_date,
-            end_date: period.end_date,
-            rent: 0
-        }];
+        // Πάρε τα αποθηκευμένα δεδομένα από την υποβολή
+        const subperiods = submission.data || [];
         
         res.render('periods/edit-submission', {
             period,

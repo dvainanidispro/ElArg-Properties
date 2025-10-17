@@ -123,11 +123,13 @@ function subperiodsFor(period, lease) {
 
 /**
  * Helper function για υπολογισμό των πεδίων rent και tax_stamp από subperiods
+ * Υπολογισμός rent: άθροισμα του (1/189) * rent * students * working_days για κάθε υποπερίοδο
  * @param {Array} subperiodsData - Array με τα δεδομένα των υποπεριόδων
- * @returns {Object} Αντικείμενο με τα υπολογιζόμενα πεδία
- */
+ * @returns {Object} Αντικείμενο με τα υπολογιζόμενα πεδία, rent και tax_stamp
+*/
 function calculateRentFields(subperiodsData) {
-    // Υπολογισμός rent: άθροισμα του (1/189) * rent * students * working_days για κάθε υποπερίοδο
+    //NOTE: Προσοχή. Αν αλλάξει αυτό, να αλλάξει και στο edit-submission.hbs (επεξεργασία υποβολής από χρήστη)
+   
     let rent = 0;
     subperiodsData.forEach(subperiod => {
         const subperiodRent = (1/189) * subperiod.rent * subperiod.students * subperiod.working_days;
