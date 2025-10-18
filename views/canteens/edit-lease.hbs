@@ -101,7 +101,7 @@
                                 <div>
                                     <button type="button" class="btn btn-outline-primary btn-sm btn-badge" data-bs-toggle="collapse" data-bs-target="#rentAdjustmentsCollapse" aria-expanded="false" id="rentAdjustmentsToggle">
                                         <i class="ti-angle-down me-1"></i>
-                                        <span>Διαχείριση Αναπροσαρμογών</span>
+                                        <span>{{check (can 'edit:content') 'Διαχείριση' 'Προβολή'}} Αναπροσαρμογών</span>
                                         <span class="badge bg-info ms-2 px-2 py-1 d-none" id="rentAdjustmentsBadge">0</span>
                                     </button>
                                 </div>
@@ -123,7 +123,7 @@
                                                 <span>
                                                     Σημείωση: Αν το Μίσθωμα (€) της αναπροσαρμογής συμπίπτει με την Οικονομική Προσφορά Μισθωτή (παραπάνω), 
                                                     δεν χρειάζεται να προστεθεί ως αναπροσαρμογή. 
-                                                    Προσθέτε μόνο τις αναπροσαρμογές με διαφορετικό Μίσθωμα.
+                                                    {{#if (can 'edit:content')}}Προσθέτε μόνο τις αναπροσαρμογές με διαφορετικό Μίσθωμα.{{/if}}
                                                 </span>
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                             </div>
@@ -155,9 +155,8 @@
                                                     {{/each}}
                                                 {{/if}}
                                             </div>
-                                            
                                             <div class="d-grid gap-2 d-md-flex">
-                                                <button type="button" class="btn btn-success btn-sm" id="addRentAdjustment">
+                                                <button type="button" class="btn btn-success btn-sm {{#unless (can 'edit:content')}}d-none{{/unless}}" id="addRentAdjustment">
                                                     <i class="ti-plus me-1"></i>
                                                     Προσθήκη Αναπροσαρμογής
                                                 </button>
