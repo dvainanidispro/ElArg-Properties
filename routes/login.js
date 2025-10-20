@@ -6,11 +6,15 @@ import { validateCredentials } from '../controllers/auth.js';
 import { createAndSendMagicLink } from '../controllers/email.js';
 // import log from '../controllers/logger.js';
 
-
+const tokenCookieName = process.env.TOKENCOOKIENAME;
 
 
 router.get('/login', (req, res) => {
-    res.render('login/login', { layout: 'basic', tokenCookieName: process.env.TOKENCOOKIENAME});
+    // Αν υπάρχει token στο URL (magic link), διαγράφουμε το παλιό cookie
+    if (req.query[tokenCookieName]) {
+        res.clearCookie(tokenCookieName);
+    }
+    res.render('login/login', { layout: 'basic', tokenCookieName });
 });
 
 router.get('/userlogin', (req, res) => {
@@ -70,7 +74,7 @@ router.get('/autologin',
 
 router.get('/logout', (req, res) => {
     // delete cookie
-    res.clearCookie(process.env.TOKENCOOKIENAME);
+    res.clearCookie(tokenCookieName);
     res.redirect('/login');
 });
 
