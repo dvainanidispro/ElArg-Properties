@@ -344,7 +344,7 @@ periods.get('/', can('view:content'), async (req, res) => {
     try {
         const periods = await Models.Period.findAll({
             where: { property_type: 'canteen' },
-            attributes: ['id', 'code', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'status', 'createdAt'],
+            attributes: ['id', 'code', 'name', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'status', 'createdAt'],
             order: [['end_date', 'DESC']]
         });
         
@@ -367,7 +367,7 @@ periods.get('/:id', can('view:content'), async (req, res) => {
     try {
         const periodId = parseInt(req.params.id);
         const period = await Models.Period.findByPk(periodId, {
-            attributes: ['id', 'code', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'createdAt', 'updatedAt'],
+            attributes: ['id', 'code', 'name', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'createdAt', 'updatedAt'],
             raw: true
         });
         

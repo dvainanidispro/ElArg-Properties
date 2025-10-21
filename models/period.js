@@ -12,6 +12,7 @@ const Period = db.define('period',
             type: DataTypes.STRING,
             allowNull: false
         },
+        name: DataTypes.STRING,
         property_type: DataTypes.STRING, // 'property' ή 'canteen'
         start_date: DataTypes.DATEONLY,
         end_date: DataTypes.DATEONLY,

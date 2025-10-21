@@ -18,7 +18,7 @@
                 <div class="card-header">
                     <h4 class="card-title">
                         <i class="ti-clipboard me-2"></i>
-                        Υποβολή Στοιχείων Κυλικείου - {{canteen.name}} [{{period.code}}]
+                        Υποβολή Στοιχείων Κυλικείου - {{canteen.name}} [{{period.name}}]
                     </h4>
                     <div class="card-actions">
                         <a href="/canteens/periods/{{period.id}}/submissions" class="btn btn-secondary btn-icon">
@@ -60,7 +60,7 @@
                                         <i class="ti-calendar me-2"></i>
                                         Πληροφορίες Περιόδου
                                     </h6>
-                                    <strong>Περίοδος:</strong> {{period.code}}<br>
+                                    <strong>Περίοδος:</strong> {{period.name}}<br>
                                     <strong>Από:</strong> {{date period.start_date}}<br>
                                     <strong>Έως:</strong> {{date period.end_date}}<br>
                                     <strong>Προθεσμία:</strong> {{date period.submission_deadline}}<br>

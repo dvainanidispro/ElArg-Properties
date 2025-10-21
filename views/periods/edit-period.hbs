@@ -17,14 +17,14 @@
                 <div class="card-header">
                     <h4 class="card-title">
                         <i class="ti-pencil me-2"></i>
-                        <span>Περίοδος: {{periodDetails.code}}</span> 
+                        <span>Περίοδος: {{periodDetails.name}}</span> 
                         <span data-variable="period-description"></span>
                     </h4>
                 </div>
                 <div class="card-body">
                     <form id="periodForm">
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-6 mb-3 d-none">
                                 <label for="periodId" class="form-label fw-bold">ID Περιόδου</label>
                                 <input type="text" class="form-control" id="periodId" name="id" value="{{periodDetails.id}}" readonly>
                                 <div class="form-text text-muted">Δεν επιτρέπεται επεξεργασία του ID</div>
@@ -36,6 +36,14 @@
                                        value="{{periodDetails.code}}" 
                                        readonly>
                                 <div class="form-text text-muted">Ο κωδικός περιόδου δεν επιτρέπεται να τροποποιηθεί</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="periodName" class="form-label fw-bold">Όνομα Περιόδου</label>
+                                <input type="text" class="form-control" id="periodName" name="name" 
+                                       value="{{periodDetails.name}}" 
+                                       readonly>
+                                <div class="form-text text-muted">Το όνομα της περιόδου δεν επιτρέπεται να τροποποιηθεί</div>
                             </div>
                             
                             

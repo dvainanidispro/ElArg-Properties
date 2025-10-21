@@ -15,27 +15,33 @@
                                 <tr>
                                     {{!-- <th>ID</th> --}}
                                     <th>Κωδικός</th>
-                                    <th>Έναρξη περιόδου</th>
-                                    <th>Λήξη περιόδου</th>
-                                    <th>Προθεσμία υποβολών</th>
-                                    <th>Κατάσταση υποβολών</th>
+                                    <th class="wide-cell-m">Όνομα περιόδου</th>
+                                    <th class="wide-cell-m">Διάστημα</th>
+                                    <th>Προθεσμία <br>υποβολών</th>
+                                    <th class="wide-cell-m">Κατάσταση <br>υποβολών</th>
                                     <th>Ενεργή</th>
                                     <th>Λεπτομέρειες</th>
                                     <th>Υπενθυμίσεις</th>
-                                    <th>Υποβολές στοιχείων</th>
+                                    <th>Υποβολές <br>στοιχείων</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each periods}}
                                 <tr>
                                     {{!-- <td>{{this.id}}</td> --}}
-                                    <td class="fw-semibold">
+                                    <td >
                                         <a href="/canteens/periods/{{this.id}}" class="text-primary text-decoration-none">
                                             {{this.code}}
                                         </a>
                                     </td>
-                                    <td>{{date this.start_date}}</td>
-                                    <td>{{date this.end_date}}</td>
+                                    <td class="fw-semibold">
+                                        <a href="/canteens/periods/{{this.id}}" class="text-primary text-decoration-none">
+                                            {{this.name}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{date this.start_date}} - {{date this.end_date}}
+                                    </td>
                                     <td>{{date this.submission_deadline}}</td>
                                     <td>
                                         {{#if (eq this.status 'planned')}}

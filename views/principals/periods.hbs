@@ -49,7 +49,7 @@
                             <table class="dim-table table table-striped table-hover align-middle">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th class="sortable">Κωδικός Περιόδου</th>
+                                        <th class="sortable">Περίοδος</th>
                                         <th class="sortable" data-sort-type="date-gr">Χρονικό διάστημα</th>
                                         <th class="sortable" data-sort-type="date-gr">Προθεσμία υποβολής</th>
                                         <th>Κατάσταση Περιόδου</th>
@@ -61,7 +61,7 @@
                                     {{#each periods}}
                                     <tr>
                                         <td>
-                                            <strong>{{this.code}}</strong>
+                                            <strong>{{this.name}}</strong>
                                         </td>
                                         <td>
                                             {{date this.start_date}} - {{date this.end_date}}

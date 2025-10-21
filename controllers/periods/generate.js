@@ -7,7 +7,7 @@
 import Models from '../../models/models.js';
 const { Period } = Models;
 import log from '../logger.js';
-import { createPeriodByQuarter, createPeriodEndingInMonthOf } from './functions.js';
+import { createPeriodEndingInMonthOf } from './functions.js';
 
 
 log.system("Ξεκινά η διαδικασία δημιουργίας περιόδου...");
@@ -59,47 +59,6 @@ async function generatePeriod(date = dateForPeriodGeneration) {
         log.system("Ολοκληρώθηκε η διαδικασία δημιουργίας περιόδου.");
     }
 }
-
-/**
- * Δημιουργεί περιόδους για όλα τα τρίμηνα ενός έτους. Δεν χρησημοποιείται προς το παρόν. 
- * @param {number} year - Το έτος για το οποίο θα δημιουργηθούν οι περίοδοι
- * @returns {Promise<Array>} Οι νέες περίοδοι που δημιουργήθηκαν
- */
-async function generatePeriodsForYear(year) {
-    const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
-    const createdPeriods = [];
-
-    try {
-        for (const quarter of quarters) {
-            const periodData = createPeriodByQuarter(year, quarter);
-            
-            // Ελέγχουμε αν η περίοδος υπάρχει ήδη
-            const existingPeriod = await Period.findOne({
-                where: {
-                    code: periodData.code
-                }
-            });
-
-            if (!existingPeriod) {
-                const newPeriod = await Period.create(periodData);
-                createdPeriods.push(newPeriod);
-                log.info(`Δημιουργήθηκε περίοδος: ${newPeriod.code}`);
-            } else {
-                log.info(`Η περίοδος ${periodData.code} υπάρχει ήδη`);
-            }
-        }
-
-        log.info(`Δημιουργήθηκαν ${createdPeriods.length} νέες περίοδοι για το έτος ${year}`);
-        return createdPeriods;
-
-    } catch (error) {
-        log.error(`Σφάλμα κατά τη δημιουργία περιόδων για το έτος ${year}: ${error.message}`);
-    } finally {
-        log.system("Ολοκληρώθηκε η διαδικασία δημιουργίας περιόδων.");
-    }
-}
-
-
 
 
 
