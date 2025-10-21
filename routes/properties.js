@@ -389,8 +389,8 @@ properties.get('/properties/:id', can('view:content'), async (req, res) => {
 properties.post('/properties', can('edit:content'), async (req, res) => {
     try {
         const { 
-            kaek, address, department, appartment_number, is_part_of_other, usage, description, 
-            area, construction_year, file_server_link, ownership_status, ownership_details,
+            kaek, atak, address, department, appartment_number, is_part_of_other, usage, description, 
+            area, area_land, area_building, construction_year, permit, file_server_link, ownership_status, ownership_details,
             asset_type, active 
         } = req.body;
         
@@ -418,6 +418,7 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
         
         const newProperty = await Models.Property.create({
             kaek: kaek.trim() || '',
+            atak: atak ? atak.trim() : '',
             address: address.trim() || '',
             department: department.trim() || '',
             appartment_number: appartment_number.trim() || '',
@@ -425,7 +426,10 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
             usage: usage || '',
             description: description || '',
             area: area ? parseInt(area) : null,
+            area_land: area_land ? parseInt(area_land) : null,
+            area_building: area_building ? parseInt(area_building) : null,
             construction_year: construction_year ? parseInt(construction_year) : null,
+            permit: permit ? permit.trim() : '',
             file_server_link: file_server_link || '',
             ownership_status: ownership_status || '',
             ownership_details: ownership_details || '',
@@ -456,8 +460,8 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
     try {
         const propertyId = parseInt(req.params.id);
         const { 
-            kaek, address, department, appartment_number, is_part_of_other, usage, description, 
-            area, construction_year, file_server_link, ownership_status, ownership_details,
+            kaek, atak, address, department, appartment_number, is_part_of_other, usage, description, 
+            area, area_land, area_building, construction_year, permit, file_server_link, ownership_status, ownership_details,
             asset_type, active 
         } = req.body;
         
@@ -489,6 +493,7 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
         // Δημιουργία αντικειμένου ενημέρωσης
         const updateData = {
             kaek: kaek.trim(),
+            atak: atak.trim(),
             address: address.trim(),
             department: department.trim(),
             appartment_number: appartment_number.trim(),
@@ -496,7 +501,10 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
             usage,
             description,
             area: area ? parseInt(area) : null,
+            area_land: area_land ? parseInt(area_land) : null,
+            area_building: area_building ? parseInt(area_building) : null,
             construction_year: construction_year ? parseInt(construction_year) : null,
+            permit,
             file_server_link,
             ownership_status,
             ownership_details,

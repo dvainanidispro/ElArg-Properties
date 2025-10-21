@@ -102,15 +102,32 @@
                                 <input type="number" class="form-control" id="constructionYear" name="construction_year" value="{{or propertyDetails.construction_year '' ''}}">
                             </div>
                             <div class="col-md-6 mb-3">
+                                <label for="propertyPermit" class="form-label fw-bold">Αριθμός Οικοδομικής Άδειας</label>
+                                <input type="text" class="form-control" id="propertyPermit" name="permit" value="{{or propertyDetails.permit '' ''}}">
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <label for="propertyKaek" class="form-label fw-bold">ΚΑΕΚ</label>
                                 <input type="text" class="form-control" id="propertyKaek" name="kaek" value="{{or propertyDetails.kaek '' ''}}">
                                 <div class="form-text text-muted">Κωδικός Αναγνώρισης Ειδικής Κατασκευής</div>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="propertyArea" class="form-label fw-bold">Επιφάνεια (τ.μ.)</label>
+                                <label for="propertyAtak" class="form-label fw-bold">ΑΤΑΚ</label>
+                                <input type="text" class="form-control" id="propertyAtak" name="atak" value="{{or propertyDetails.atak '' ''}}">
+                                <div class="form-text text-muted">Αριθμός Ταυτότητας Ακινήτου Κτηματολογίου</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="propertyAreaLand" class="form-label fw-bold">Επιφάνεια Οικοπέδου (τ.μ.)</label>
+                                <input type="number" class="form-control" id="propertyAreaLand" name="area_land" value="{{or propertyDetails.area_land '' ''}}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="propertyAreaBuilding" class="form-label fw-bold">Επιφάνεια Κτίσματος (τ.μ.)</label>
+                                <input type="number" class="form-control" id="propertyAreaBuilding" name="area_building" value="{{or propertyDetails.area_building '' ''}}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="propertyArea" class="form-label fw-bold">Επιφάνεια Ακινήτου (τ.μ.)</label>
                                 <input type="number" class="form-control" id="propertyArea" name="area" value="{{or propertyDetails.area '' ''}}">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label for="propertyUsage" class="form-label fw-bold">Χρήση Ακινήτου</label>
                                 <input type="text" class="form-control" id="propertyUsage" name="usage" value="{{or propertyDetails.usage '' ''}}">
                             </div>
@@ -127,9 +144,10 @@
                                 <label for="ownershipStatus" class="form-label fw-bold">Ιδιοκτησιακό Καθεστώς</label>
                                 <select class="form-select" id="ownershipStatus" name="ownership_status">
                                     <option value="">Επιλέξτε...</option>
-                                    <option value="not_owned" {{#if (eq propertyDetails.ownership_status 'not_owned')}}selected{{/if}}>{{ownershipStatusText 'not_owned'}}</option>
                                     <option value="sole_ownership" {{#if (eq propertyDetails.ownership_status 'sole_ownership')}}selected{{/if}}>{{ownershipStatusText 'sole_ownership'}}</option>
                                     <option value="shared_ownership" {{#if (eq propertyDetails.ownership_status 'shared_ownership')}}selected{{/if}}>{{ownershipStatusText 'shared_ownership'}}</option>
+                                    <option value="individual" {{#if (eq propertyDetails.ownership_status 'individual')}}selected{{/if}}>{{ownershipStatusText 'individual'}}</option>
+                                    <option value="unknown" {{#if (eq propertyDetails.ownership_status 'unknown')}}selected{{/if}}>{{ownershipStatusText 'unknown'}}</option>
                                 </select>
                             </div>
                             
@@ -255,6 +273,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Μετατροπή κενών strings σε null για numbers και dates
         if (data.area === '') data.area = null;
+        if (data.area_land === '') data.area_land = null;
+        if (data.area_building === '') data.area_building = null;
         if (data.construction_year === '') data.construction_year = null;
         
         // Μετατροπή string boolean σε boolean

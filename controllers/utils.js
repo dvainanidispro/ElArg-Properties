@@ -14,9 +14,11 @@ let greekdate = (inputDate) => {
 let descriptions = {
     ownershipStatus: (status) => {
         const statuses = {
-            not_owned: 'Δεν ανήκει στο Δήμο',
+            // not_owned: 'Δεν ανήκει στο Δήμο',
             sole_ownership: 'Ιδιόκτητο',
-            shared_ownership: 'Συνιδιόκτητο',
+            shared_ownership: 'Συνιδιοκτησία',
+            individual: 'Ιδιώτης',
+            unknown: 'Άγνωστου',
         };
         return statuses[status] || status;
     },

@@ -13,6 +13,10 @@ const Property = db.define('property',
             type: DataTypes.STRING,
             comment: 'ΚΑΕΚ - Κωδικός Αναγνώρισης Ειδικής Κατασκευής'
         },
+        atak: {
+            type: DataTypes.STRING,
+            comment: 'ΑΤΑΚ - Αριθμός Ταυτότητας Ακινήτου Κτηματολογίου'
+        },
         address: {
             type: DataTypes.STRING,
             comment: 'Διεύθυνση ακινήτου'
@@ -42,9 +46,21 @@ const Property = db.define('property',
             type: DataTypes.SMALLINT,
             comment: 'Επιφάνεια ακινήτου (τ.μ.)'
         },
+        area_land: {
+            type: DataTypes.SMALLINT,
+            comment: 'Επιφάνεια οικοπέδου (τ.μ.)'
+        },
+        area_building: {
+            type: DataTypes.SMALLINT,
+            comment: 'Επιφάνεια κτίσματος (τ.μ.)'
+        },
         construction_year: {
             type: DataTypes.SMALLINT,
             comment: 'Έτος κατασκευής'
+        },
+        permit: {
+            type: DataTypes.STRING,
+            comment: 'Αριθμός οικοδομικής άδειας'
         },
         file_server_link: {
             type: DataTypes.TEXT,
@@ -54,7 +70,7 @@ const Property = db.define('property',
         // Ιδιοκτησιακό καθεστώς
         ownership_status: {
             type: DataTypes.STRING,
-            comment: 'Ιδιοκτησιακό καθεστώς - not_owned (δεν ανήκει στο Δήμο), sole_ownership (ιδιόκτητο), shared_ownership (συνιδιόκτητο)'
+            comment: 'Ιδιοκτησιακό καθεστώς - sole_ownership (ιδιόκτητο), shared_ownership (συνιδιοκτησία), individual (Ιδιώτης), unknown (Άγνωστο)'
         },
         ownership_details: {
             type: DataTypes.TEXT,
