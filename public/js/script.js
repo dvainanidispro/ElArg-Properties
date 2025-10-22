@@ -19,7 +19,7 @@ window.addEventListener('pageshow', function (event) {
         if (!href || href.length < 3) {
             return true; // συνεχίζουμε το every
         }
-        if ((nav && href === nav) || (!nav && href === path)) {
+        if ((nav && href === nav) || (!nav && path.startsWith(href))) {
             link.classList.add("active");
             return false; // σταματάμε το every
         } 

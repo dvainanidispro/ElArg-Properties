@@ -257,17 +257,11 @@ properties.delete('/parties/:id', can('edit:content'), async (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////        ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PROPERTIES       ///////////////////////////
 
-/**
- * GET /properties - Εμφάνιση λίστας όλων των properties (redirect)
- */
-properties.get('/', can('view:content'), async (req, res) => {
-    res.redirect('/properties/properties');
-});
 
 /**
- * GET /properties/properties - Εμφάνιση λίστας όλων των properties
+ * GET /properties/properties ή /properties/estate - Εμφάνιση λίστας όλων των properties
  */
-properties.get('/properties', can('view:content'), async (req, res) => {
+properties.get(['/','/properties','/estate'], can('view:content'), async (req, res) => {
     try {
         const filter = {};
         if (req.query.asset_type) {
@@ -307,12 +301,21 @@ properties.get('/properties', can('view:content'), async (req, res) => {
                 party: latestLease?.party || null,
             };
         });
-        
-        res.render('properties/properties', { 
-            properties: processedProperties,
-            user: req.user,
-            title: 'Ακίνητα'
-        });
+
+        // Έλεγχος του path για να αποφασίσουμε ποιο template να χρησιμοποιήσουμε
+        if (req.path.endsWith('/estate')) {             // Αν path = /properties/estate
+            res.render('properties/estate', { 
+                properties: processedProperties,
+                user: req.user,
+                title: 'Περιουσία'
+            });
+        } else {
+            res.render('properties/properties', { 
+                properties: processedProperties,
+                user: req.user,
+                title: 'Ακίνητα'
+            });
+        }
     } catch (error) {
         log.error(`Σφάλμα κατά την ανάκτηση ακινήτων: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση ακινήτων' });

@@ -163,6 +163,14 @@ input::placeholder{
     background-color: var(--bs-pink) !important;
     color: var(--bs-light) !important;
 }
+.bg-pink-light{
+    background-color: hsl(330, 87%, 73%) !important;
+    color: var(--bs-light) !important;
+}
+.bg-gray{
+    background-color: hsl(0, 0%, 60%) !important;
+    color: var(--bs-light) !important;
+}
 .bg-indigo{
     background-color: var(--bs-indigo) !important;
     color: var(--bs-light) !important;
@@ -287,14 +295,16 @@ table i{
     font-size: 1.2rem;
 }
 
-.wide-cell-m{
-    width: 25ch;
-}
-.wide-cell, .wide-cell-l{
-    width: 40ch;
-}
-.wide-cell-xl{
-    width: 50ch;
+@media (min-width: 1200px) {
+    .wide-cell-m{
+        width: 25ch;
+    }
+    .wide-cell, .wide-cell-l{
+        width: 40ch;
+    }
+    .wide-cell-xl{
+        width: 50ch;
+    }
 }
 
 /* Excel Icon - SVG ως CSS icon */

@@ -1,0 +1,120 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title h3">
+                        <i class="ti-home me-2"></i>
+                        Περιουσία
+                    </h1>
+                    <div class="card-actions my-3">
+                        <div class="d-flex gap-2">
+                            <a href="/properties/estate" class="btn btn-success ">
+                                {{!-- <i class="ti-plus me-1"></i> --}}
+                                <span>Όλα</span>
+                            </a>
+                            <a href="/properties/estate?is_part_of_other=false" class="btn btn-secondary">
+                                {{!-- <i class="ti-plus me-1"></i> --}}
+                                <span>Όχι τμήματα άλλων ακινήτων</span>
+                            </a>
+                            <button id="exportExcelBtn" class="btn btn-excel btn-icon">
+                                <i class="excel-icon"></i>
+                                <span>Εξαγωγή σε Excel</span>
+                            </button>
+                        </div>
+                        {{#if (can 'edit:content')}}
+                        <div class="d-flex my-3">
+                            <a href="/properties/properties/new" class="btn btn-primary fw-semibold">
+                                <i class="ti-plus me-1"></i>
+                                Νέο Ακίνητο
+                            </a>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="properties" class="dim-table table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="sortable d-none" data-sort-type="number">ID</th>
+                                    <th class="wide-cell-l">Διεύθυνση</th>
+                                    <th class="wide-cell-m">Δημοτικό Διαμέρισμα</th>
+                                    <th>ΚΑΕΚ</th>
+                                    <th>Ιδιοκτησιακό <br>Καθεστώς</th>
+                                    <th class="wide-cell-m">Χρήση ακινήτου</th>
+                                    <th class="d-none">Μέρος άλλου</th>
+                                    <th class="sortable d-none">Κατάσταση</th>
+                                    <th>Λεπτομέρειες</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each properties}}
+                                <tr>
+                                    <td class="d-none">{{this.id}}</td>
+                                    <td class="fw-semibold">
+                                        <a href="/properties/properties/{{this.id}}" class="text-primary text-decoration-none">
+                                            {{join this.address this.appartment_number}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{this.department}}
+                                    </td>
+                                    <td>
+                                        {{this.kaek}}
+                                    </td>
+                                    <td>
+                                        {{#if (eq this.ownership_status 'sole_ownership')}}
+                                            <span class="badge bg-indigo fs-6">Ιδιόκτητο</span>
+                                        {{else if (eq this.ownership_status 'shared_ownership')}}
+                                            <span class="badge bg-info fs-6">Συνιδιοκτησία</span>
+                                        {{else if (eq this.ownership_status 'individual')}}
+                                            <span class="badge bg-pink-light fs-6">Ιδιώτης</span>
+                                        {{else if (eq this.ownership_status 'unknown')}}
+                                            <span class="badge bg-gray fs-6">Άγνωστου</span>
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.usage}}
+                                            {{this.usage}}
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{check this.is_part_of_other 'Ναι' 'Όχι'}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{#if this.active}}
+                                            <span class="badge bg-success fs-6 status-badge" data-lease-end="{{this.lease.lease_end}}">Ενεργό</span>
+                                        {{else}}
+                                            <span class="badge bg-secondary fs-6">Ανενεργό</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <a href="/properties/properties/{{this.id}}" class="btn btn-outline-primary" title="Προβολή/Επεξεργασία">
+                                            <i class="ti-eye text-primary" ></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="module">
+    // Έλεγχος λήξης μισθώσεων ακινήτων
+    checkLeaseExpiry();
+
+    Q('#exportExcelBtn') && Q('#exportExcelBtn').on('click', function() {
+        downloadTableAsExcel('properties', 'Ακίνητα.xlsx', 'Ακίνητα');
+    });
+</script>
