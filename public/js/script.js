@@ -1,4 +1,3 @@
-
 /** Reload the page if it was restored from the back/forward cache */
 window.addEventListener('pageshow', function (event) {
     if (event.persisted) {
@@ -16,10 +15,12 @@ window.addEventListener('pageshow', function (event) {
     const path = Q.url.path;
     Q(".sidebar .sidebar-link").every(link => {
         const href = link.getAttribute("href");
+        const baseHref = href.split('?')[0];    // χωρίς get parameters
         if (!href || href.length < 3) {
             return true; // συνεχίζουμε το every
         }
-        if ((nav && href === nav) || (!nav && path.startsWith(href))) {
+        
+        if ((nav && baseHref === nav) || (!nav && path.startsWith(baseHref))) {
             link.classList.add("active");
             return false; // σταματάμε το every
         } 
