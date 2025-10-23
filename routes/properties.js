@@ -678,7 +678,7 @@ properties.get('/leases/:id', can('view:content'), async (req, res) => {
                 {
                     model: Models.Property,
                     as: 'property',
-                    attributes: ['id', 'appartment_number', 'address', 'asset_type']
+                    attributes: ['id', 'appartment_number', 'address', 'asset_type', 'file_server_link']
                 },
                 {
                     model: Models.Party,

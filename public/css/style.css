@@ -67,8 +67,9 @@ table.dim-table {
 table.dim-table tr{ 
     height: 3.5rem; 
 }
-
-
+table.dim-table i{
+    font-size: 1.2rem;
+}
 
 
 /*********     THEME CORRECTIONS     *********/
@@ -202,6 +203,26 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
 }
 
 
+/* Excel Icon - SVG ως CSS icon */
+.btn-excel{
+    background-color: #177b45; 
+    color: var(--bs-light);
+    &:hover{
+        background-color: #146c3f;
+    }
+}
+.excel-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg height='24px' width='24px' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 26 26' xml:space='preserve'%3E%3Cg%3E%3Cpath style='fill:white;' d='M25.162,3H16v2.984h3.031v2.031H16V10h3v2h-3v2h3v2h-3v2h3v2h-3v3h9.162C25.623,23,26,22.609,26,22.13V3.87C26,3.391,25.623,3,25.162,3z M24,20h-4v-2h4V20z M24,16h-4v-2h4V16z M24,12h-4v-2h4V12z M24,8h-4V6h4V8z'/%3E%3Cpath style='fill:white;' d='M0,2.889v20.223L15,26V0L0,2.889z M9.488,18.08l-1.745-3.299c-0.066-0.123-0.134-0.349-0.205-0.678H7.511C7.478,14.258,7.4,14.494,7.277,14.81l-1.751,3.27H2.807l3.228-5.064L3.082,7.951h2.776l1.448,3.037c0.113,0.24,0.214,0.525,0.304,0.854h0.028c0.057-0.198,0.163-0.492,0.318-0.883l1.61-3.009h2.542l-3.037,5.022l3.122,5.107L9.488,18.08L9.488,18.08z'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    vertical-align: middle;
+}
+
+
 /*********    LAYOUT    **********/ 
 
 .sidebar{
@@ -291,8 +312,34 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     }
 }
 
-table i{
-    font-size: 1.2rem;
+.rent-adjustment-item{
+    padding: 0.6rem 1.2rem !important;
+    background-color: hsl(240, 67%, 94%);
+}
+
+
+
+
+
+
+
+/*********    UTILITY CLASSES    *********/
+
+.center-contents, .center-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.unseparated {
+    white-space: nowrap !important;
+}
+
+.larger{
+    font-size: larger;
+}
+.normal{
+    font-size: medium;
 }
 
 @media (min-width: 1200px) {
@@ -307,37 +354,3 @@ table i{
     }
 }
 
-/* Excel Icon - SVG ως CSS icon */
-.btn-excel{
-    background-color: #177b45; 
-    color: var(--bs-light);
-    &:hover{
-        background-color: #146c3f;
-    }
-}
-.excel-icon {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    background-image: url("data:image/svg+xml,%3Csvg height='24px' width='24px' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 26 26' xml:space='preserve'%3E%3Cg%3E%3Cpath style='fill:white;' d='M25.162,3H16v2.984h3.031v2.031H16V10h3v2h-3v2h3v2h-3v2h3v2h-3v3h9.162C25.623,23,26,22.609,26,22.13V3.87C26,3.391,25.623,3,25.162,3z M24,20h-4v-2h4V20z M24,16h-4v-2h4V16z M24,12h-4v-2h4V12z M24,8h-4V6h4V8z'/%3E%3Cpath style='fill:white;' d='M0,2.889v20.223L15,26V0L0,2.889z M9.488,18.08l-1.745-3.299c-0.066-0.123-0.134-0.349-0.205-0.678H7.511C7.478,14.258,7.4,14.494,7.277,14.81l-1.751,3.27H2.807l3.228-5.064L3.082,7.951h2.776l1.448,3.037c0.113,0.24,0.214,0.525,0.304,0.854h0.028c0.057-0.198,0.163-0.492,0.318-0.883l1.61-3.009h2.542l-3.037,5.022l3.122,5.107L9.488,18.08L9.488,18.08z'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    vertical-align: middle;
-}
-
-.rent-adjustment-item{
-    padding: 0.6rem 1.2rem !important;
-    background-color: hsl(240, 67%, 94%);
-}
-
-.unseparated {
-    white-space: nowrap !important;
-}
-
-.larger{
-    font-size: larger;
-}
-.normal{
-    font-size: medium;
-}
