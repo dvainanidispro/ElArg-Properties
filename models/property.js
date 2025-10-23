@@ -43,15 +43,15 @@ const Property = db.define('property',
             comment: 'Περιγραφή ακινήτου'
         },
         area: {
-            type: DataTypes.SMALLINT,
-            comment: 'Επιφάνεια ακινήτου (τ.μ.)'
+            type: DataTypes.DECIMAL(8, 2),
+            comment: 'Επιφάνεια διαμερίσματος (τ.μ.)'
         },
         area_land: {
-            type: DataTypes.SMALLINT,
+            type: DataTypes.DECIMAL(8, 2),
             comment: 'Επιφάνεια οικοπέδου (τ.μ.)'
         },
         area_building: {
-            type: DataTypes.SMALLINT,
+            type: DataTypes.DECIMAL(8, 2),
             comment: 'Επιφάνεια κτίσματος (τ.μ.)'
         },
         construction_year: {

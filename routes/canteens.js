@@ -1018,11 +1018,11 @@ canteens.get('/canteens/:id/leases/history', can('view:content'), async (req, re
 });
 
 
-canteens.get('/pending', can('view:content'), async (req, res) => {
+canteens.get(['/submissions', '/pending'], can('view:content'), async (req, res) => {
     try {
         const period = await getActiveCanteenPeriod();
         if (period) {
-            return res.redirect(`/canteens/periods/${period.id}/submissions?nav=/canteens/pending`);
+            return res.redirect(`/canteens/periods/${period.id}/submissions?nav=/canteens/submissions`);
         } else {
             return res.render('periods/submissions', {
                 submissions: [],
@@ -1032,7 +1032,7 @@ canteens.get('/pending', can('view:content'), async (req, res) => {
             });
         }
     } catch (error) {
-        log.error(`Σφάλμα στο /canteens/pending: ${error}`);
+        log.error(`Σφάλμα στο /canteens/submissions: ${error}`);
         res.status(500).render('errors/500', { message: 'Σφάλμα κατά την ανάκτηση περιόδου' });
     }
 });

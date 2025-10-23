@@ -117,15 +117,15 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="propertyAreaLand" class="form-label fw-bold">Επιφάνεια Οικοπέδου (τ.μ.)</label>
-                                <input type="number" class="form-control" id="propertyAreaLand" name="area_land" value="{{or propertyDetails.area_land '' ''}}">
+                                <input type="number" step="0.01" class="form-control" id="propertyAreaLand" name="area_land" value="{{or propertyDetails.area_land '' ''}}">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="propertyAreaBuilding" class="form-label fw-bold">Επιφάνεια Κτίσματος (τ.μ.)</label>
-                                <input type="number" class="form-control" id="propertyAreaBuilding" name="area_building" value="{{or propertyDetails.area_building '' ''}}">
+                                <input type="number" step="0.01" class="form-control" id="propertyAreaBuilding" name="area_building" value="{{or propertyDetails.area_building '' ''}}">
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="propertyArea" class="form-label fw-bold">Επιφάνεια Ακινήτου (τ.μ.)</label>
-                                <input type="number" class="form-control" id="propertyArea" name="area" value="{{or propertyDetails.area '' ''}}">
+                                <label for="propertyArea" class="form-label fw-bold">Επιφάνεια Διαμερίσματος (τ.μ.)</label>
+                                <input type="number" step="0.01" class="form-control" id="propertyArea" name="area" value="{{or propertyDetails.area '' ''}}">
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="propertyUsage" class="form-label fw-bold">Χρήση Ακινήτου</label>
