@@ -86,6 +86,10 @@ const Lease = db.define('lease', {
 		type: DataTypes.TEXT,
 		comment: 'Σημειώσεις για τη μίσθωση'
 	},
+    file_server_link: {
+            type: DataTypes.TEXT,
+            comment: 'Link προς file server'
+        },
 	active: {
 		type: DataTypes.BOOLEAN,
 		defaultValue: true

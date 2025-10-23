@@ -727,7 +727,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
         const { 
             property_id, party_id, lease_direction, lease_start, lease_end, rent, 
             rent_frequency, number_of_payments, rent_adjustment_month, rent_adjustment_info, 
-            guarantee_letter, notes, active 
+            guarantee_letter, notes, file_server_link, active 
         } = req.body;
         // Βασικός έλεγχος δεδομένων
         if (!property_id || !party_id || !lease_direction || !lease_start) {
@@ -767,6 +767,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
             rent_adjustment_info: rent_adjustment_info || '',
             guarantee_letter: guarantee_letter || '',
             notes: notes || '',
+            file_server_link: file_server_link || '',
             active: (active!==undefined) ? active : true
         });
         log.info(`Νέο lease δημιουργήθηκε: Property ${property_id} - Party ${party_id} (ID: ${newLease.id})`);
@@ -793,7 +794,7 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
         const { 
             lease_start, lease_end, rent, 
             rent_frequency, number_of_payments, rent_adjustment_month, rent_adjustment_info, 
-            guarantee_letter, notes, active 
+            guarantee_letter, notes, file_server_link, active 
         } = req.body;
         
         const lease = await Models.Lease.findByPk(leaseId);
@@ -815,6 +816,7 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
             rent_adjustment_info,
             guarantee_letter,
             notes,
+            file_server_link,
             active,
         };
         
