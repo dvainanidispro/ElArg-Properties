@@ -32,6 +32,7 @@ import { validateUser } from './controllers/auth.js';
 
 import { db, databaseConnectionTest } from './config/database.js';
 import Models from './models/models.js';
+import { checkSmtpConnection } from './controllers/email.js';
 
 
 
@@ -39,17 +40,41 @@ import Models from './models/models.js';
 
 
 server.get(['/status', '/health'], async (req, res) => {
-    let infoText = `Web server: OK<br>`;
+    let statusData = {
+        webServer: 'OK',
+        database: 'FAILED',
+        smtp: 'NOT TESTED'
+    };
+    let overallStatus = 500;
+    
     try {  
-        await db.authenticate();    // ώστε να μην κάνει console log
-        infoText += `Database connection: OK`;
-        res.status(200).send(infoText);
+        // Έλεγχος σύνδεσης με τη βάση δεδομένων
+        await db.authenticate();
+        statusData.database = 'OK';
+        overallStatus = 200;
+        
+        // Έλεγχος SMTP σύνδεσης μόνο αν η βάση είναι επιτυχής
+        try {
+            await checkSmtpConnection();
+            statusData.smtp = 'OK';
+        } catch (smtpError) {
+            statusData.smtp = 'FAILED';
+            log.error(`SMTP connection test failed: ${smtpError}`);
+        }
     } catch (error) {
-        infoText += `Database connection: FAILED!`;
+        statusData.database = 'FAILED';
         log.error(`Database connection test failed: ${error}`);
-        res.status(500).send(infoText);
     }
-     //TODO: implement SMTP connection test
+    
+    const htmlTable = `
+    <table style="border-collapse: collapse;">
+        <style>td { border: 1px solid black; padding: 5px; }</style>
+        <tr><td>Web Server</td><td>${statusData.webServer}</td></tr>
+        <tr><td>Database Connection</td><td>${statusData.database}</td></tr>
+        <tr><td>SMTP Connection</td><td>${statusData.smtp}</td></tr>
+    </table>`;
+    
+    res.status(overallStatus).send(htmlTable);
 });
 
 
@@ -101,7 +126,7 @@ async function startServer(){
     let port = process.env.PORT??80;
     let listeningURL = process.env.LISTENINGURL??'http://localhost';
     server.listen(port, () => {
-        log.system(`Express server is listening at ${listeningURL}. Started at ${presentTime()}.`);
+        log.system(`Express server started at ${presentTime()} | Listening at ${listeningURL}.`);
     });
 }
 startServer();

@@ -31,9 +31,35 @@ transporter.verify((error, success) => {
     if (error) {
         log.error(`SMTP transporter verification failed: ${error}`);
     } else {
-        log.system('SMTP transporter verified and ready to send emails');
+        log.system(`SMTP connection to ${emailConfig.host} has been established successfully | Ready to send emails.`);
     }
 });
+
+/**
+ * Ελέγχει τη σύνδεση με τον SMTP server με timeout 3 δευτερολέπτων
+ * @returns {Promise<boolean>} true αν η σύνδεση είναι επιτυχής, false αλλιώς
+ */
+const checkSmtpConnection = async () => {
+    try {
+        await Promise.race([
+            new Promise((resolve, reject) => {
+                transporter.verify((error, success) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(success);
+                    }
+                });
+            }),
+            new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('SMTP connection timeout (3s)')), 3000);
+            })
+        ]);
+        return true;
+    } catch (error) {
+        throw error;
+    }
+};
 
 
 
@@ -133,4 +159,4 @@ const emailBodyTemplate = (purpose, user) => {
 
 
 
-export { createAndSendMagicLink, transporter, emailBodyTemplate };
+export { createAndSendMagicLink, transporter, emailBodyTemplate, checkSmtpConnection };

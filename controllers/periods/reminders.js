@@ -166,8 +166,8 @@ async function sendRemindersForPendingSubmissions () {
             },
         });
 
-        const sentCountSuccesfully = emailResults.filter(r => r.success && !r.skipped).length;
-        log.info(`Στάλθηκαν υπενθυμίσεις σε ${sentCountSuccesfully} διευθυντές.`);
+        const sentCountSuccessfully = emailResults.filter(r => r.success && !r.skipped).length;
+        log.success(`Στάλθηκαν υπενθυμίσεις σε ${sentCountSuccessfully} διευθυντές.`);
     } catch (error) {
         log.error(`Σφάλμα στη sendRemindersToPrincipal: ${error}`);
     }
