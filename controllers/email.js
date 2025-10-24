@@ -89,11 +89,8 @@ const createAndSendMagicLink = async (email) => {
     let token = createAccessToken(user, true);
     user.link = `${process.env.LISTENINGURL}/login?token=${token}`;
 
-    return emailBodyTemplate("magicLink", user);
-
-    if (process.env.NODE_ENV === 'development') {
-        log.dev(emailBodyTemplate("magicLink", user));
-        return true;
+    if (process.env.SENDACTUALEMAILS === 'false'){
+        return emailBodyTemplate("magicLink", user);
     }
 
     const mailOptions = {

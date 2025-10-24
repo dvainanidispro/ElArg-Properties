@@ -191,7 +191,7 @@ function sendEmailForPendingCanteen (canteen, period) {
         log.dev(mailOptions);
         try {
             if (process.env.SENDACTUALEMAILS == 'false') {      // Μόνο αν έχει τεθεί false
-                log.warn(`ΠΡΟΣΟΧΗ: Η αποστολή email είναι απενεργοποιημένη (SENDACTUALEMAILS=false).`);
+                log.warn(`ΠΡΟΣΟΧΗ: Η αποστολή email είναι απενεργοποιημένη (SENDACTUALEMAILS false).`);
                 // Προσομοίωση αποστολής email με καθυστέρηση
                 setTimeout(() => {
                     resolve(true);
