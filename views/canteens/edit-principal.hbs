@@ -33,21 +33,21 @@
                             {{/if}}
                             <div class="col-md-6 mb-3">
                                 <label for="principalName" class="form-label fw-bold">Όνομα</label>
-                                <input type="text" class="form-control" id="principalName" name="name" value="{{or principalDetails.name '' ''}}">
+                                <input type="text" class="form-control" id="principalName" name="name" value="{{principalDetails.name}}">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="principalEmail" class="form-label fw-bold">Email *</label>
-                                <input type="email" class="form-control" id="principalEmail" name="email" value="{{or principalDetails.email '' ''}}" required>
+                                <input type="email" class="form-control" id="principalEmail" name="email" value="{{principalDetails.email}}" required>
                                 <div class="form-text text-muted">To email πρέπει να είναι μοναδικό για τον Διευθυντή</div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="principalContact" class="form-label fw-bold">Επικοινωνία</label>
-                                <input type="text" class="form-control" id="principalContact" name="contact" value="{{or principalDetails.contact '' ''}}" placeholder="Τηλέφωνο ή άλλη επικοινωνία">
+                                <input type="text" class="form-control" id="principalContact" name="contact" value="{{principalDetails.contact}}" placeholder="Τηλέφωνο ή άλλη επικοινωνία">
                                 <div class="form-text text-muted">Τηλέφωνο, διεύθυνση ή άλλες πληροφορίες επικοινωνίας</div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="principalNotes" class="form-label fw-bold">Σημειώσεις</label>
-                                <textarea class="form-control" id="principalNotes" name="notes" rows="3" placeholder="Προαιρετικές σημειώσεις για τον διευθυντή">{{or principalDetails.notes '' ''}}</textarea>
+                                <textarea class="form-control" id="principalNotes" name="notes" rows="3" placeholder="Προαιρετικές σημειώσεις για τον διευθυντή">{{principalDetails.notes}}</textarea>
                                 <div class="form-text text-muted">Προαιρετικές σημειώσεις (πχ σημείωση για σχολείο στο οποίο ήταν παλιότερα Διευθυντής)</div>
                             </div>
                             <div class="col-md-12 mb-3">

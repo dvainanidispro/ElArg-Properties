@@ -32,22 +32,22 @@
                             {{/if}}
                             <div class="col-md-6 mb-3">
                                 <label for="partyName" class="form-label fw-bold">Ονοματεπώνυμο ή Επωνυμία *</label>
-                                <input type="text" class="form-control" id="partyName" name="name" value="{{or partyDetails.name '' ''}}" required>
+                                <input type="text" class="form-control" id="partyName" name="name" value="{{partyDetails.name}}" required>
                                 <div class="form-text text-muted">Πλήρες όνομα του συμβαλλομένου ή επωνυμία εταιρίας</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="partyAfm" class="form-label fw-bold">ΑΦΜ</label>
-                                <input type="text" class="form-control" id="partyAfm" name="afm" value="{{or partyDetails.afm '' ''}}" placeholder="123456789">
+                                <input type="text" class="form-control" id="partyAfm" name="afm" value="{{partyDetails.afm}}" placeholder="123456789">
                                 <div class="form-text text-muted">Αριθμός Φορολογικού Μητρώου</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="partyEmail" class="form-label fw-bold">Email</label>
-                                <input type="email" class="form-control" id="partyEmail" name="email" value="{{or partyDetails.email '' ''}}">
+                                <input type="email" class="form-control" id="partyEmail" name="email" value="{{partyDetails.email}}">
                                 <div class="form-text text-muted">Διεύθυνση ηλεκτρονικού ταχυδρομείου</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="partyContact" class="form-label fw-bold">Επικοινωνία</label>
-                                <input type="text" class="form-control" id="partyContact" name="contact" value="{{or partyDetails.contact '' ''}}" placeholder="Τηλέφωνο ή άλλη επικοινωνία">
+                                <input type="text" class="form-control" id="partyContact" name="contact" value="{{partyDetails.contact}}" placeholder="Τηλέφωνο ή άλλη επικοινωνία">
                                 <div class="form-text text-muted">Τηλέφωνο, διεύθυνση ή άλλες πληροφορίες επικοινωνίας</div>
                             </div>
                         </div>

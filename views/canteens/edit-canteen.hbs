@@ -33,11 +33,11 @@
                             {{/if}}
                             <div class="col-md-6 mb-3">
                                 <label for="canteenName" class="form-label fw-bold">Όνομα Σχολείου ή Κυλικείου *</label>
-                                <input type="text" class="form-control" id="canteenName" name="name" value="{{or canteenDetails.name '' ''}}" required>
+                                <input type="text" class="form-control" id="canteenName" name="name" value="{{canteenDetails.name}}" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canteenArea" class="form-label fw-bold">Επιφάνεια (τ.μ.)</label>
-                                <input type="number" class="form-control" id="canteenArea" name="area" value="{{or canteenDetails.area '' ''}}" min="0" step="0.01">
+                                <input type="number" class="form-control" id="canteenArea" name="area" value="{{canteenDetails.area}}" min="0" step="0.01">
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label fw-bold">Μίσθωση</label>
