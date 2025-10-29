@@ -151,7 +151,7 @@ let validateCredentials = async (req, res, next) => {
  * Αν δεν είναι έγκυρος, τον στέλνει στο loginpath. Εξαιρούνται free paths.
  */
 let validateUser = (req, res, next) => {
-    // log.dev(`Request: ${req.method} ${req.path} `);
+    log.info(`Request: ${req.method} ${req.path} `);
     // log.dev(req.cookies.token);
 
     /** Ελέγχει αν το path είναι ελεύθερο και αν ναι, αφήνει το χρήστη να συνεχίσει, αλλιώς τον οδηγεί στο loginpath */
@@ -174,7 +174,8 @@ let validateUser = (req, res, next) => {
             {audience: aud, issuer: iss}, 
             (failure, decodedToken) => {
                 if ( failure ) {    // Λάθος token ή ληγμένο token (ο χρήστης δεν είναι logged-in)
-                    // log.dev(`Invalid or expired token: ${token}`);
+                    log.info(`Invalid or expired token: ${token}`);
+                    log.info(failure);
                     res.locals.error = 'Η σύνδεσή σας έχει λήξει. Παρακαλώ συνδεθείτε ξανά.';
                     handleLoggedOffUser();
                 }

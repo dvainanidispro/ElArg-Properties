@@ -21,7 +21,7 @@ server.use(express.static('public'));
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
 server.use(cookieParser());
-server.use(Security);
+// server.use(Security);
 
 
 
@@ -127,6 +127,7 @@ async function startServer(){
     let listeningURL = process.env.LISTENINGURL??'http://localhost';
     server.listen(port, () => {
         log.system(`Express server started at ${presentTime()} | Listening at ${listeningURL}.`);
+        log.info('Node.js version: ' + process.version);
     });
 }
 startServer();
