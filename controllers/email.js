@@ -12,7 +12,11 @@ const emailConfig = {
     port: process.env.EMAILPORT,
     secureConnection: false, // true for 465, false for other ports
     tls: {
-        ciphers:'SSLv3'
+        minVersion: 'TLSv1',
+        ciphers: 'DEFAULT:@SECLEVEL=1',
+        // ciphers:'SSLv3',
+        // rejectUnauthorized: false,
+        // dhparam: null,
     },
     auth: {
         user: process.env.EMAILUSER,

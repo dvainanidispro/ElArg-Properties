@@ -162,12 +162,12 @@
                                         <i class="ti-clipboard me-1"></i>
                                         <span>Αντιγραφή</span>
                                     </button>
-                                    {{#unless leaseDetails.file_server_link}}
+                                    {{#if leaseDetails}}{{#unless leaseDetails.file_server_link}}
                                     <button class="btn btn-info btn-icon" type="button" id="copyLinkFromProperty" title="Αντιγραφή διαδρομής από το ακίνητο">
                                         <i class="ti-clipboard me-1"></i>
                                         <span>Αντιγραφή από Ακίνητο</span>
                                     </button>
-                                    {{/unless}}
+                                    {{/unless}}{{/if}}
                                 </div>
                                 <div class="form-text text-muted">Διαδρομή αρχείων στον file server. Κάντε επικόλληση στον Windows Explorer.</div>
                             </div>
