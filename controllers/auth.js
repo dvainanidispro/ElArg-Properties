@@ -151,7 +151,7 @@ let validateCredentials = async (req, res, next) => {
  * Αν δεν είναι έγκυρος, τον στέλνει στο loginpath. Εξαιρούνται free paths.
  */
 let validateUser = (req, res, next) => {
-    log.info(`Request: ${req.method} ${req.path} `);
+    // log.dev(`Request: ${req.method} ${req.path} `);
     // log.dev(req.cookies.token);
 
     /** Ελέγχει αν το path είναι ελεύθερο και αν ναι, αφήνει το χρήστη να συνεχίσει, αλλιώς τον οδηγεί στο loginpath */

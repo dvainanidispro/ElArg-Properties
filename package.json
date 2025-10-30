@@ -12,6 +12,7 @@
     "start:local": "node --env-file=.env server.js",
     "generate:period:local": "node --env-file=.env controllers/actions/generate-period.js",
     "remind:principals:local": "node --env-file=.env controllers/actions/remind-principals.js",
+    "backup:db": "node --env-file=.env controllers/actions/take-db-backup.js",
     "generate:period": "node controllers/actions/generate-period.js",
     "remind:principals": "node controllers/actions/remind-principals.js"
   },
