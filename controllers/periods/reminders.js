@@ -45,9 +45,9 @@ async function sendRemindersForPendingSubmissions () {
     try {
 
         //# 1 Βρίσκουμε την ενεργή περίοδο
-        const period = await getActiveCanteenPeriod();
+        const period = await getActiveCanteenPeriod(true);
         if (!period) {
-            log.info("Δεν βρέθηκε ενεργή περίοδος. Δεν στάλθηκαν υπενθυμίσεις.");
+            log.info("Δεν βρέθηκε ενεργή ανοιτκή περίοδος. Δεν στάλθηκαν υπενθυμίσεις.");
             return;
         }
         log.info(`Αποστολή υπενθυμίσεων για την ενεργή περίοδο: ${period.code}`);

@@ -1,15 +1,18 @@
 import Models from '../../models/models.js';
 
 /**
- * Finds the most recent period with status 'open' or 'closed'.
+ * Finds the most recent period with status 'open' or 'closed'. 
+ * If onlyOpen is true, only 'open' periods are considered.
+ * 
+ * @param {boolean} onlyOpen - If true, only 'open' periods are considered.
  * @returns {Promise<object|null>} The current period or null
  */
-async function getActiveCanteenPeriod() {
+async function getActiveCanteenPeriod(onlyOpen = false) {
     const recentPeriods = await Models.Period.findAll({
         order: [['end_date', 'DESC']],
         limit: 3,   // Απίθανο να χρειάζονται περισσότερες από 3
     });
-    return recentPeriods.find(p => ['open', 'closed'].includes(p.status)) || null;
+    return recentPeriods.find(p => onlyOpen ? p.status === 'open' : ['open', 'closed'].includes(p.status)) || null;
 }
 
 /**

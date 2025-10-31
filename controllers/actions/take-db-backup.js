@@ -27,7 +27,7 @@ async function takeDatabaseBackup() {
 
         // Check if backup folder exists
         if (!existsSync(backupDestination)) {
-            log.info('Backup folder does not exist, exiting...');
+            log.info('Backup folder does not exist, exiting...', false);
             process.exit(1);
         }
 
@@ -36,9 +36,9 @@ async function takeDatabaseBackup() {
         const filename = `${process.env.DATABASENAME}_backup_${timestamp}.sql`;
         const backupPath = join(backupDestination, filename);
 
-        log.info(`Starting database backup...`);
-        log.info(`Database: ${process.env.DATABASENAME}`);
-        log.info(`Backup location: ${backupDestination}`);
+        log.info(`Starting database backup...`, false);
+        log.info(`Database: ${process.env.DATABASENAME}`, false);
+        log.info(`Backup location: ${backupDestination}`, false);
 
         // Prepare pg_dump command
         // -F p: plain text format, -F c: custom format (compressed)
@@ -52,17 +52,17 @@ async function takeDatabaseBackup() {
         const { stdout, stderr } = await execAsync(pgDumpCommand, { env, maxBuffer: 1024 * 1024 * 10 });
 
         if (stderr && !stderr.includes('pg_dump:')) {
-            log.warn('Backup completed with warnings:');
+            log.warn('Backup completed with warnings:', false);
             log.warn(stderr, false);
         }
 
-        log.success(`Database backup completed successfully!`);
-        log.success(`Backup saved to: ${backupPath}`);
+        log.success(`Database backup completed successfully!`, false);
+        log.success(`Backup saved to: ${backupPath}`, false);
 
         return backupPath;
 
     } catch (error) {
-        log.error(`Database backup failed: ${error.message}`);
+        log.error(`Database backup failed: ${error.message}`, false);
         throw error;
     }
 }
@@ -70,10 +70,14 @@ async function takeDatabaseBackup() {
 // Execute backup when script is run directly
 takeDatabaseBackup()
     .then(() => {
-        process.exit(0);
+        setTimeout(() => {
+            process.exit(0);
+        }, 3000);
     })
     .catch((error) => {
-        console.error('Error taking database backup');
-        process.exit(1);
+        console.error('Error taking database backup:', error);
+        setTimeout(() => {
+            process.exit(1);
+        }, 3000);
     });
 
