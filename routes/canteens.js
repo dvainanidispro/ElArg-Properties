@@ -100,7 +100,6 @@ canteens.post('/principals', can('edit:content'), async (req, res) => {
         
         // Έλεγχος αν υπάρχει ήδη ενεργός principal με το ίδιο email (μόνο αν ο νέος principal είναι ενεργός)
         if (active) {
-            log.dev();
             const existingPrincipal = await Models.Principal.findOne({
                 where: { 
                     email,

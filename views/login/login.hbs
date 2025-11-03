@@ -6,7 +6,11 @@
         <div class="with-token alert alert-info d-none" id="verifying">
             Επαληθεύουμε το λογαριασμό σας...
         </div>
-
+        {{#if (eq environment 'staging')}}
+         <div class="alert alert-danger text-center my-4 fw-bold" role="alert" id="error">
+            ΠΡΟΣΟΧΗ: Το περιβάλλον δεν προορίζεται για παραγωγική χρήση!
+        </div>
+        {{/if}}
         <div class="container d-none" style="margin-top: 5rem;" id="login-modal">
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-4">

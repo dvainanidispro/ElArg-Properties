@@ -14,7 +14,11 @@ router.get('/login', (req, res) => {
     if (req.query[tokenCookieName]) {
         res.clearCookie(tokenCookieName);
     }
-    res.render('login/login', { layout: 'basic', tokenCookieName });
+    res.render('login/login', { 
+            layout: 'basic', 
+            tokenCookieName,
+            environment: process.env.NODE_ENV,
+        });
 });
 
 router.get('/userlogin', (req, res) => {

@@ -79,6 +79,7 @@ let descriptions = {
             10: 'Οκτώβριος',
             11: 'Νοέμβριος',
             12: 'Δεκέμβριος',
+            '-1': 'Ειδική περίπτωση',
         };
         return months[monthNumber] || monthNumber;
     },

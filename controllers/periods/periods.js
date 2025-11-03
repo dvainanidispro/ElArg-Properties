@@ -12,7 +12,8 @@ async function getActiveCanteenPeriod(onlyOpen = false) {
         order: [['end_date', 'DESC']],
         limit: 3,   // Απίθανο να χρειάζονται περισσότερες από 3
     });
-    return recentPeriods.find(p => onlyOpen ? p.status === 'open' : ['open', 'closed'].includes(p.status)) || null;
+    let acceptedStatuses = onlyOpen ? ['open'] : ['open', 'closed'];
+    return recentPeriods.find(p => acceptedStatuses.includes(p.status)) || null;
 }
 
 /**
