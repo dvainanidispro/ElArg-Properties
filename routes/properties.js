@@ -262,14 +262,24 @@ properties.delete('/parties/:id', can('edit:content'), async (req, res) => {
  * GET /properties/properties ή /properties/estate - Εμφάνιση λίστας όλων των properties
  */
 properties.get(['/','/properties','/estate'], can('view:content'), async (req, res) => {
+
+    // Έλεγχος του path (properties ή estate)
+    const isEstate = req.path.endsWith('/estate');
+
     try {
+
+        // Filters for the query
         const filter = {};
+        if (isEstate) {     // Στην οθόνη "Περιουσία" θέλουμε μόνο όσα ανήκουν στο Δήμο.
+            filter.ownership_status = { [Op.ne]: 'individual' };
+        }
         if (req.query.asset_type) {
             filter.asset_type = req.query.asset_type;
         } else if (req.query.is_part_of_other) {
             filter.is_part_of_other = req.query.is_part_of_other === 'true';    // Μετατροπή string σε boolean
         } 
 
+        // Ανάκτηση των properties με το πιο πρόσφατο lease και party
         const propertiesList = await Models.Property.findAll({
             where: filter,
             include: [{
@@ -303,7 +313,7 @@ properties.get(['/','/properties','/estate'], can('view:content'), async (req, r
         });
 
         // Έλεγχος του path για να αποφασίσουμε ποιο template να χρησιμοποιήσουμε
-        if (req.path.endsWith('/estate')) {             // Αν path = /properties/estate
+        if (isEstate) {             // Αν path = /properties/estate
             res.render('properties/estate', { 
                 properties: processedProperties,
                 user: req.user,
