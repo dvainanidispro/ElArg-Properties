@@ -312,6 +312,23 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     }
 }
 
+.shake-it{
+    animation: shake 3s ease-in-out;
+}
+@keyframes shake {
+    0%, 100% { transform: translateY(0); }
+    /* 10% { transform: translateY(-4px); } */
+    50% { transform: translateY(0); }
+    55% { transform: translateY(-4px); }
+    60% { transform: translateY(0); }
+    65% { transform: translateY(-4px); }
+    70% { transform: translateY(0); }
+    75% { transform: translateY(-4px); }
+    80% { transform: translateY(0); }
+    85% { transform: translateY(-4px); }
+    90% { transform: translateY(0); }
+}
+
 .rent-adjustment-item{
     padding: 0.6rem 1.2rem !important;
     background-color: hsl(240, 67%, 94%);

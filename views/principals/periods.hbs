@@ -118,17 +118,17 @@
                                                 {{/if}}
                                             {{else if (eq this.status 'open')}}
                                                 <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
-                                                   class="btn btn-primary btn-icon" 
+                                                   class="btn btn-primary btn-icon shake-it" 
                                                    title="Υποβολή στοιχείων">
                                                     <i class="ti-plus" ></i>
                                                     <span>Υποβολή στοιχείων</span>
                                                 </a>
                                             {{else if (eq this.status 'closed')}}
                                                 <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
-                                                   class="btn btn-primary btn-icon" 
+                                                   class="btn btn-primary btn-icon shake-it" 
                                                    title="Υποβολή στοιχείων (Εκπρόθεσμη)">
                                                     <i class="ti-plus" ></i>
-                                                    <span>Υποβολή στοιχείων</span>
+                                                    <span>Υποβολή στοιχείων<br> (Εκπρόθεσμη)</span>
                                                 </a>
                                             {{else if (eq this.status 'planned')}}
                                                 <span class="text-muted small badge-icon">

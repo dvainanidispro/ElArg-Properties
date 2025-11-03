@@ -3,7 +3,6 @@ import Models from '../models/models.js';
 import { subperiodsFor, calculateRentFields } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
-import { Op } from 'sequelize';
 
 /**
  * Routes for managing canteens of the logged-in principal.
@@ -33,6 +32,7 @@ myCanteen.use(can('edit:ownschool'));
 myCanteen.get('/', async (req, res) => {
     try {
 
+
         //# 1. Βρίσκουμε τα κυλικεία του Διευθυντή
 
         // Βρες τον principal με βάση το email του συνδεδεμένου χρήστη
@@ -42,7 +42,7 @@ myCanteen.get('/', async (req, res) => {
                 model: Models.Canteen,
                 as: 'canteens',
                 where: { active: true },
-                required: false // LEFT JOIN για να εμφανίζει το principal ακόμα και χωρίς κυλικεία
+                required: false // LEFT JOIN για να φέρνει τον principal ακόμα και χωρίς κυλικεία
             }],
             order: [[{ model: Models.Canteen, as: 'canteens' }, 'name', 'ASC']]
         });
@@ -53,8 +53,12 @@ myCanteen.get('/', async (req, res) => {
                 message: 'Δεν βρέθηκαν στοιχεία διευθυντή' 
             });
         }
+        
+        /** Τα κυλικεία που ανήκουν στον Διευθυντή */
+        const canteens = principal.canteens || [];
 
-        //# 2. Ελέγχουμε τις εκκρεμότητές του Διευθυντή (αν δεν έχει υποβάλει στοιχεία για ανοιχτές περιόδους)
+
+        //# 2. Ελέγχουμε τα κυλικεία του Διευθυντή (και τις υποβολές τους) για τα relevant periods
         
         // Φέρε τις 3 τελευταίες periods που είναι open ή closed (δεν γίνεται φίλτρο σε virtual field)
         const latestPeriods = await Models.Period.findAll({
@@ -62,12 +66,22 @@ myCanteen.get('/', async (req, res) => {
             limit: 3 // Φέρνουμε τα 3 πιο πρόσφατα (δεν μας νοιάζουν τα παλιότερα)
         });
         const periods = latestPeriods.filter(p => ['open', 'closed'].includes(p.status));
-
-        // Για κάθε κυλικείο, έλεγξε αν έχει υποβάλει στοιχεία για τις relevant periods
-        const canteens = principal.canteens || [];
         const periodIds = periods.map(p => p.id);
 
-        // Επιστρέφει για κάθε κυλικείο τις υποβολές που αφορούν τις recent periods
+        /**
+         * Το canteensWithStatus είναι το canteen array (παραπάνω) όπου το κάθε αντικείμενο του
+         * θα ενισχυθεί με επιπλέον πεδία. Κάθε αντικείμενο του (ενισχυμένο canteen) θα έχει τη μορφή:
+         * {
+         *   id: <canteen_id>,
+         *   name: <canteen_name>,
+         *   principal_id: <principal_id>,
+         *   active: <boolean>,
+         *   άλλαΠεδίαΚυλικείου: ['κλπ'],
+         *   submissions: [<submission_objects> με keys: id, period_id, property_id, property_type],
+         *   missingPeriods: [<missing_period_objects> με keys: id, code, status],
+         *   hasPending: <boolean>
+         * }
+         */
         let canteensWithStatus;
         if (periodIds.length === 0) {
             // Δεν υπάρχουν relevant periods — επιστρέφουμε τα κυλικεία χωρίς pending
@@ -82,7 +96,7 @@ myCanteen.get('/', async (req, res) => {
                 // Βρες submissions του συγκεκριμένου κυλικείου για τις relevant periods
                 const submissions = await Models.Submission.findAll({
                     where: {
-                        period_id: { [Op.in]: periodIds },
+                        period_id: periodIds, // Ισοδύναμο με { [Op.in]: periodIds }
                         property_id: canteen.id,
                         property_type: 'canteen',
                         // principal_id: principal.id           // Ας βλέπει και τις υποβολές άλλων principals
@@ -105,21 +119,15 @@ myCanteen.get('/', async (req, res) => {
         }
 
         //# 3. Συγκέντρωση στατιστικών εκκρεμοτήτων και render της σελίδας
-        const pendingCanteens = canteensWithStatus.filter(c => c.hasPending);
-        const pendingCount = pendingCanteens.length;
-        const pendingDetails = pendingCanteens.map(c => ({
-            id: c.id,
-            name: c.name,
-            missingCount: c.missingPeriods.length,
-            missingCodes: c.missingPeriods.map(p => p.code)
-        }));
+        const pendingCount = canteensWithStatus.reduce((count, canteen) => {
+            return count + canteen.missingPeriods.length;
+        }, 0);
 
         res.render('principals/mycanteen', { 
             canteens: canteensWithStatus,
             periods,
             principal,
             pendingCount,
-            pendingDetails,
             user: req.user,
             title: 'Το κυλικείο μου'
         });
@@ -191,7 +199,7 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
             order: [['start_date', 'DESC']]
         });
 
-        // Φιλτράρω τις περιόδους που δεν έχουν status 'inactive'
+        // Φιλτράρω τις περιόδους που δεν έχουν status 'inactive' (το virtual field δεν μπορεί να φιλτραριστεί με το query)
         const activePeriods = periods.filter(period => period.status !== 'inactive');
 
         // Προσθέτω πληροφορία για το αν έχει υποβληθεί submission
