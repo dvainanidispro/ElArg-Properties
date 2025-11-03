@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
-import { subperiodsFor, calculateRentFields } from '../controllers/periods/periods.js';
+import { subperiodsFor, calculateRentFields, getActiveCanteenPeriod } from '../controllers/periods/periods.js';
 import log from '../controllers/logger.js';
 
 /**
@@ -237,9 +237,16 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
         }
         
         //# 2 Βρίσκουμε όλα τα ενεργά canteens
+        // TODO: Για τις παλιότερες περιόδους, θα πρέπει να παίρνουμε τις καντίνες που ήταν ενεργές εκείνη την περίοδο.
+        // Τι γίνεται τώρα: Για την ενεργή περίοδο παίρνουμε μόνο τις ενεργές καντίνες (σωστό),
+        // ενώ για τις παλιότερες περιόδους, παίρνουμε όλες τις καντίνες (όχι πλήρως σωστό).
+        // Θα πρέπει να κρατήσουμε ένα ιστορικό των canteen ids που ήταν ενεργές σε κάθε περίοδο (σε πεδίο του πίνακα periods)
+        const activePeriod = await getActiveCanteenPeriod();
+        const thisIsTheActivePeriod = activePeriod && (activePeriod.id === period.id);
+
         const canteens = await Models.Canteen.findAll({
             where: {
-                active: true
+                active: thisIsTheActivePeriod ? true : [true, false, null]
             },
             include: [
                 {

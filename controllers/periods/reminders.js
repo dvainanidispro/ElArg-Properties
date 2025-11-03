@@ -45,7 +45,9 @@ async function sendRemindersForPendingSubmissions () {
     try {
 
         //# 1 Βρίσκουμε την ενεργή περίοδο
-        const period = await getActiveCanteenPeriod(true);
+        // Δεν βάζουμε onlyOpen=true στο getActiveCanteenPeriod, 
+        // γιατί μπορεί να θέλουμε να στείλουμε υπενθυμίσεις και μετά την προθεσμία υποβολής.
+        const period = await getActiveCanteenPeriod();
         if (!period) {
             log.info("Δεν βρέθηκε ενεργή ανοιτκή περίοδος. Δεν στάλθηκαν υπενθυμίσεις.");
             return;

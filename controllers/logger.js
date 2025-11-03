@@ -23,7 +23,7 @@ const log = (message) => {
   console.log(display(message));
 }
 log.dev = (message='- - - here - - -') => {
-    if (process.env.NODE_ENV == 'development') {
+    if (process.env.NODE_ENV.toLocaleLowerCase() == 'development') {
         console.debug(styleText(['bold', 'italic', 'blue'], `📘 ${display(message)}`));
     }
 }

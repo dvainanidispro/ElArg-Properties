@@ -13,7 +13,7 @@ import { createPeriodEndingInMonthOf } from './functions.js';
 log.system("Ξεκινά η διαδικασία δημιουργίας περιόδου...");
 
 const dateForPeriodGeneration = new Date(); // σημερινή ημερομηνία
-// const dateForPeriodGeneration = '2025-11-02'; // συγκεκριμένη ημερομηνία
+// const dateForPeriodGeneration = '2025-11-02'; // συγκεκριμένη ημερομηνία για δοκιμές
 
 
 

@@ -1,11 +1,12 @@
 import Models from '../../models/models.js';
 
 /**
- * Finds the most recent period with status 'open' or 'closed'. 
- * If onlyOpen is true, only 'open' periods are considered.
+ * Φέρνει την πιο πρόσφατη περίοδο με status 'open' ή 'closed'. 
+ * Σημείωση: Το status της περιόδου είναι ένα virtual πεδίο που υπολογίζεται από τις ημερομηνίες και το πεδίο active.
+ * Αν το onlyOpen είναι ρητά true, μόνο οι 'open' periods λαμβάνονται υπόψη.
  * 
- * @param {boolean} onlyOpen - If true, only 'open' periods are considered.
- * @returns {Promise<object|null>} The current period or null
+ * @param {boolean} onlyOpen - Αν είναι true, μόνο οι 'open' periods λαμβάνονται υπόψη.
+ * @returns {Promise<object|null>} Η τρέχουσα περίοδος ή null
  */
 async function getActiveCanteenPeriod(onlyOpen = false) {
     const recentPeriods = await Models.Period.findAll({
@@ -13,6 +14,7 @@ async function getActiveCanteenPeriod(onlyOpen = false) {
         limit: 3,   // Απίθανο να χρειάζονται περισσότερες από 3
     });
     let acceptedStatuses = onlyOpen ? ['open'] : ['open', 'closed'];
+    // Θυμίζω ότι το status είναι virtual πεδίο που υπολογίζεται από της ημερομηνίες και από το πεδίο active! 
     return recentPeriods.find(p => acceptedStatuses.includes(p.status)) || null;
 }
 
