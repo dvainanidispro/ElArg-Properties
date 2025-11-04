@@ -121,7 +121,7 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="propertyAreaBuilding" class="form-label fw-bold">Επιφάνεια Κτίσματος (τ.μ.)</label>
-                                <input type="number" step="0.01" class="form-control" id="propertyAreaBuilding" name="area_building" value="{{propertyDetails.area_building}}">
+                                <input type="text" class="form-control" id="propertyAreaBuilding" name="area_building" value="{{propertyDetails.area_building}}">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="propertyArea" class="form-label fw-bold">Επιφάνεια Διαμερίσματος (τ.μ.)</label>
@@ -274,7 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Μετατροπή κενών strings σε null για numbers και dates
         if (data.area === '') data.area = null;
         if (data.area_land === '') data.area_land = null;
-        if (data.area_building === '') data.area_building = null;
         if (data.construction_year === '') data.construction_year = null;
         
         // Μετατροπή string boolean σε boolean

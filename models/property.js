@@ -51,7 +51,7 @@ const Property = db.define('property',
             comment: 'Επιφάνεια οικοπέδου (τ.μ.)'
         },
         area_building: {
-            type: DataTypes.DECIMAL(8, 2),
+            type: DataTypes.STRING,
             comment: 'Επιφάνεια κτίσματος (τ.μ.)'
         },
         construction_year: {
