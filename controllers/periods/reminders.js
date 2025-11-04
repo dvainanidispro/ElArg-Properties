@@ -12,6 +12,7 @@ import { greekdate } from '../utils.js';
 const appName = process.env.APPNAME || "Εφαρμογή Ακινήτων Δήμου Ελληνικού - Αργυρούπολης";
 const appUrl = process.env.LISTENINGURL || "http://localhost";
 const emailUser = process.env.EMAILUSERNAME ?? process.env.EMAILUSER ?? "";
+const sendActualEmails = process.env.SENDACTUALEMAILS !== 'false'; // false, μόνο αν έχει τεθεί ρητά false. Default true.
 
 
 let reminderBodyTemplate = (canteen, period) => {
@@ -102,7 +103,7 @@ async function sendRemindersForPendingSubmissions () {
 
         //# 4 Αρχική καταγραφή στη Βάση Δεδομένων (log)
         // log.info(pendingCanteens);
-        let logEntryBefore = await Models.Log.create({
+        let logEntryBefore = sendActualEmails && await Models.Log.create({
             type: "reminder",
             severity: "info",
             source: "system",
@@ -148,7 +149,7 @@ async function sendRemindersForPendingSubmissions () {
             skipped: result.skipped
         }));
 
-        let logEntryAfter = await Models.Log.create({
+        let logEntryAfter = sendActualEmails && await Models.Log.create({
             type: "reminder",
             severity: "info",
             source: "system",
@@ -192,7 +193,7 @@ function sendEmailForPendingCanteen (canteen, period) {
         };
         log.dev(mailOptions);
         try {
-            if (process.env.SENDACTUALEMAILS == 'false') {      // Μόνο αν έχει τεθεί false
+            if (sendActualEmails==false) {
                 log.warn(`ΠΡΟΣΟΧΗ: Η αποστολή email είναι απενεργοποιημένη (SENDACTUALEMAILS false).`);
                 // Προσομοίωση αποστολής email με καθυστέρηση
                 setTimeout(() => {

@@ -668,6 +668,7 @@ properties.get('/leases/new', can('edit:content'), async (req, res) => {
             leaseDetails: null, // null για νέο lease
             properties: propertiesList,
             parties,
+            currentYear: new Date().getFullYear(),
             user: req.user,
             title: 'Νέα Μίσθωση'
         });
@@ -720,6 +721,7 @@ properties.get('/leases/:id', can('view:content'), async (req, res) => {
             leaseDetails: lease,
             properties: propertiesList,
             parties,
+            currentYear: new Date().getFullYear(),
             user: req.user,
             title: `Μίσθωση: ${lease.property?.kaek || lease.property?.address || lease.id}`
         });
@@ -737,7 +739,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
         const { 
             property_id, party_id, lease_direction, lease_start, lease_end, rent, 
             rent_frequency, number_of_payments, rent_adjustment_month, rent_adjustment_info, 
-            guarantee_letter, notes, file_server_link, active 
+            last_rent_adjustment_year, guarantee_letter, notes, file_server_link, active 
         } = req.body;
         // Βασικός έλεγχος δεδομένων
         if (!property_id || !party_id || !lease_direction || !lease_start) {
@@ -775,6 +777,7 @@ properties.post('/leases', can('edit:content'), async (req, res) => {
             number_of_payments: number_of_payments ? parseInt(number_of_payments) : null,
             rent_adjustment_month: rent_adjustment_month ? parseInt(rent_adjustment_month) : null,
             rent_adjustment_info: rent_adjustment_info || '',
+            last_rent_adjustment_year: last_rent_adjustment_year ? parseInt(last_rent_adjustment_year) : null,
             guarantee_letter: guarantee_letter || '',
             notes: notes || '',
             file_server_link: file_server_link || '',
@@ -804,7 +807,7 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
         const { 
             lease_start, lease_end, rent, 
             rent_frequency, number_of_payments, rent_adjustment_month, rent_adjustment_info, 
-            guarantee_letter, notes, file_server_link, active 
+            last_rent_adjustment_year, guarantee_letter, notes, file_server_link, active 
         } = req.body;
         
         const lease = await Models.Lease.findByPk(leaseId);
@@ -813,6 +816,15 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
                 success: false, 
                 message: 'Η Μίσθωση δεν βρέθηκε' 
             });
+        }
+
+        // Δημιουργία του πεδίου last_rent_adjustment_year για τη βάση
+        let adjusted_last_rent_adjustment_year = last_rent_adjustment_year; // αρχικά το default, ό,τι ήρθε από τη φόρμα (έτος ή null)
+        const currentYear = new Date().getFullYear();
+        // Στην περίπτωση που στη βάση είχε παλιότερο έτος και ο χρήστης αφήσει κενό το πεδίο, 
+        // να μην ενημερωθεί το πεδίο της βάσης (δηλαδή να μην σβηστεί το παλιότερο έτος στη βάση).
+        if (lease.last_rent_adjustment_year < currentYear && !last_rent_adjustment_year) {
+            adjusted_last_rent_adjustment_year = undefined;
         }
         
         // Δημιουργία αντικειμένου ενημέρωσης (χωρίς property_id, party_id, lease_direction)
@@ -824,6 +836,7 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
             number_of_payments: number_of_payments ? parseInt(number_of_payments) : null,
             rent_adjustment_month: rent_adjustment_month ? parseInt(rent_adjustment_month) : null,
             rent_adjustment_info,
+            last_rent_adjustment_year: adjusted_last_rent_adjustment_year,
             guarantee_letter,
             notes,
             file_server_link,
@@ -832,7 +845,7 @@ properties.put('/leases/:id', can('edit:content'), async (req, res) => {
         
         await lease.update(updateData);
         
-        log.info(`Το Lease ενημερώθηκε: Property ${lease.property_id} - Party ${lease.party_id} (ID: ${lease.id})`);
+        log.info(`Το Lease με ID ${lease.id} ενημερώθηκε: Property ${lease.property_id} - Party ${lease.party_id}`);
         
         res.json({ 
             success: true, 

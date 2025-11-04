@@ -92,16 +92,16 @@
                             <div class="col-md-4 mb-3">
                                 <label for="leaseStart" class="form-label fw-bold">Έναρξη Μίσθωσης *</label>
                                 <input type="date" class="form-control" id="leaseStart" name="lease_start" value="{{#if leaseDetails}}{{dateInput leaseDetails.lease_start}}{{/if}}" required>
-                                <div class="form-text text-muted">Ημερομηνία έναρξης της μίσθωσης</div>
+                                {{!-- <div class="form-text text-muted">Ημερομηνία έναρξης της μίσθωσης</div> --}}
                             </div>
                             
                             <div class="col-md-4 mb-3">
                                 <label for="leaseEnd" class="form-label fw-bold">Λήξη Μίσθωσης</label>
                                 <input type="date" class="form-control" id="leaseEnd" name="lease_end" value="{{#if leaseDetails.lease_end}}{{dateInput leaseDetails.lease_end}}{{/if}}">
-                                <div class="form-text text-muted">Ημερομηνία λήξης της μίσθωσης (προαιρετικό)</div>
+                                <div class="form-text text-muted">(προαιρετικό)</div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="rentAdjustmentMonth" class="form-label fw-bold">Μήνας Αναπροσαρμογής</label>
+                                <label for="rentAdjustmentMonth" class="form-label fw-bold">Μήνας Αναπροσαρμογής Μισθώματος</label>
                                 <select class="form-select" id="rentAdjustmentMonth" name="rent_adjustment_month">
                                     <option value="">Δεν έχει οριστεί</option>
                                     {{#each (array 1 2 3 4 5 6 7 8 9 10 11 12 -1)}}
@@ -109,7 +109,12 @@
                                     {{/each}}
                                     {{!-- <option value="-1" {{#if (eq leaseDetails.rent_adjustment_month '-1')}}selected{{/if}}>Ειδική περίπτωση</option> --}}
                                 </select>
-                                <div class="form-text text-muted">Μήνας κατά τον οποίο γίνεται η αναπροσαρμογή του μισθώματος</div>
+                                <div class="form-check my-2">
+                                    <input class="form-check-input" type="checkbox" id="adjustmentDone" name="adjustmentDone" {{#if (eq leaseDetails.last_rent_adjustment_year currentYear)}}checked{{/if}}>
+                                    <label class="form-check-label" for="adjustmentDone">
+                                        Ολοκληρώθηκε για το {{currentYear}}
+                                    </label>
+                                </div>
                             </div>
                             
                             <div class="col-md-4 mb-3">
@@ -132,7 +137,7 @@
                             <div class="col-md-4 mb-3">
                                 <label for="numberOfPayments" class="form-label fw-bold">Αριθμός Ετήσιων Δόσεων</label>
                                 <input type="number" min="1" max="12" class="form-control" id="numberOfPayments" name="number_of_payments" value="{{check leaseDetails.number_of_payments leaseDetails.number_of_payments ''}}">
-                                <div class="form-text text-muted">Αριθμός δόσεων ανά έτος (π.χ. 12 για μηνιαία, 4 για τριμηνιαία)</div>
+                                <div class="form-text text-muted">Αριθμός δόσεων ανά έτος <br>(π.χ. 12 για μηνιαία, 4 για τριμηνιαία)</div>
                             </div>
                             
                             
@@ -393,6 +398,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isEdit) {
             delete data.id; // Αφαιρούμε το ID από τα data για PUT request
         }
+        
+        // Μετατροπή checkbox αναπροσαρμογής σε έτος
+        if (data.adjustmentDone == 'on') {      // default τιμή για checked checkbox
+            data.last_rent_adjustment_year = {{currentYear}};
+        } else {
+            data.last_rent_adjustment_year = null;
+        }
+        delete data.adjustmentDone; // Αφαιρούμε το checkbox field
         
         // Μετατροπή κενών strings σε null για numbers και dates
         if (data.rent === '') data.rent = null;

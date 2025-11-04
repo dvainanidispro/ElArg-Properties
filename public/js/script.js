@@ -175,15 +175,21 @@ function checkLeaseExpiry(expiredText = 'Έχει λήξει', expiringSoonText 
  */
 function checkRentAdjustmentMonth() {
     const currentMonth = new Date().getMonth() + 1; // getMonth() επιστρέφει 0-11
+    const currentYear = new Date().getFullYear();
     const rentAdjustmentCells = document.querySelectorAll('.adjustment-month');
     
     rentAdjustmentCells.forEach(cell => {
         const cellMonth = parseInt(cell.getAttribute('data-sort-value'), 10);
-        if (cellMonth === currentMonth) {
-            const span = cell.querySelector('span');
+        let cellYear = parseInt(cell.getAttribute('data-last-adjustment-year'), 10);
+        if (isNaN(cellYear)) {cellYear=0}
+        const span = cell.querySelector('span');
+        if (cellMonth == currentMonth && cellYear < currentYear) {
             if (span) {
                 span.classList.add('badge', 'fs-6', 'bg-warning2', 'fw-bold');
             }
+        } else if (cellYear == currentYear) {
+            // insert ✔️
+            span.insertAdjacentHTML('beforeend', ' ✔️');
         }
     });
 }

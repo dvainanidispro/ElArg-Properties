@@ -28,6 +28,7 @@ dashboard.get(['/', '/dashboard'],
         const activeProperties = { sum: 0, rented: 0, leasedOut: 0 };
         const leasesExpiringSoon = { sum: 0, canteens: 0, properties: 0 };
         let leaseAdjustments = 0;
+        const currentYear = new Date().getFullYear();
         const activeCanteenPeriod = { code: null, start: null, end: null, completed: 0, pending: 0 };
         
         //# 1 Πόσους μήνες θεωρούμε "σύντομα" για λήξη μίσθωσης
@@ -53,7 +54,7 @@ dashboard.get(['/', '/dashboard'],
             }),
             Models.Lease.findAll({
                 where: { active: true },
-                attributes: ['property_type', 'rent_adjustment_month', 'lease_end'],
+                attributes: ['property_type', 'rent_adjustment_month', 'last_rent_adjustment_year', 'lease_end'],
                 raw: true
             }),
         ]);
@@ -73,7 +74,8 @@ dashboard.get(['/', '/dashboard'],
         
         // Filter leases with rent adjustments this month
         leaseAdjustments = activeLeases.filter(l => 
-            l.property_type === 'property' && l.rent_adjustment_month === currentMonth
+            (l.property_type === 'property') && (l.rent_adjustment_month === currentMonth)
+            && (isNaN(l.last_rent_adjustment_year) || l.last_rent_adjustment_year < currentYear)
         ).length;
 
 

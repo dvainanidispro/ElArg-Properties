@@ -1,4 +1,3 @@
-
 :root{
     --bs-body-bg: hsl(240, 67%, 97%);
     --bs-heading-color: hsl(277, 100%, 15%);
@@ -274,7 +273,7 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
 
 .card{
     background-color: hsl(240, 67%, 96%);
-    & input, input:focus{
+    & input:not([type="checkbox"]), input:not([type="checkbox"]):focus{
         background-color: var(--input-bg-color);
     }
 }
