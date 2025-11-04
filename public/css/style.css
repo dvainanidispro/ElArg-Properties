@@ -358,15 +358,28 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     font-size: medium;
 }
 
+
 @media (min-width: 1200px) {
+    .narrow-cell-sm{
+        width: 15ch;
+    }
+    .narrow-cell-m, .narrow-cell{
+        width: 18ch;
+    }
+    .narrow-cell-l {
+        width: 20ch;
+    }
+    .wide-cell-sm{
+        width: 12vw;
+    }
     .wide-cell-m{
-        width: 25ch;
+        width: 15vw;
     }
     .wide-cell, .wide-cell-l{
-        width: 40ch;
+        width: 20vw;
     }
     .wide-cell-xl{
-        width: 50ch;
+        width: 30vw;
     }
 }
 
