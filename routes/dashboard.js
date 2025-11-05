@@ -30,6 +30,7 @@ dashboard.get(['/', '/dashboard'],
         let leaseAdjustments = 0;
         const currentYear = new Date().getFullYear();
         const activeCanteenPeriod = { code: null, start: null, end: null, completed: 0, pending: 0 };
+        let periodCanteens = 0;
         
         //# 1 Πόσους μήνες θεωρούμε "σύντομα" για λήξη μίσθωσης
         const expiringSoonMonths = 6;
@@ -86,19 +87,20 @@ dashboard.get(['/', '/dashboard'],
             activeCanteenPeriod.code = currentPeriod.code;
             activeCanteenPeriod.start = currentPeriod.start_date;
             activeCanteenPeriod.end = currentPeriod.end_date;
+            periodCanteens = currentPeriod.canteens.length || activeCanteens;
 
             // Υποβολές για αυτή την περίοδο
             activeCanteenPeriod.completed = await Models.Submission.count({
                 where: { period_id: currentPeriod.id, property_type: 'canteen' }
             });
-            activeCanteenPeriod.pending = activeCanteens - activeCanteenPeriod.completed;
-            activeCanteenPeriod.submittedPercent = activeCanteens > 0 ? Math.round((activeCanteenPeriod.completed / activeCanteens) * 100) : 0;
+            activeCanteenPeriod.pending = periodCanteens - activeCanteenPeriod.completed;
+            activeCanteenPeriod.submittedPercent = (periodCanteens > 0) ? Math.round((activeCanteenPeriod.completed / periodCanteens) * 100) : 0;
         }
 
 
         //# 4 Render σελίδας
         res.render('dashboard', {
-            activeCanteens,
+            activeCanteens,     // δεν χρειάζεται το periodCanteens
             activeProperties,
             leasesExpiringSoon,
             leaseAdjustments,

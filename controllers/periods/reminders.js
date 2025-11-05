@@ -101,9 +101,9 @@ async function sendRemindersForPendingSubmissions () {
             }
         }));
 
-        //# 4 Αρχική καταγραφή στη Βάση Δεδομένων (log)
+        //# 4 Αρχική καταγραφή στη Βάση Δεδομένων (log) και ενημέρωση canteens περιόδου
         // log.info(pendingCanteens);
-        let logEntryBefore = sendActualEmails && await Models.Log.create({
+        let logEntryBefore = sendActualEmails && Models.Log.create({        // χωρίς await
             type: "reminder",
             severity: "info",
             source: "system",
@@ -116,6 +116,9 @@ async function sendRemindersForPendingSubmissions () {
                 canteens: pendingCanteens
             },
         });
+
+        // Ενημέρωση canteens περιόδου
+        updatePeriodCanteens(period, pendingCanteens);      // χωρίς await
 
         //# 5 Αποστολή email στους Διευθυντές των σχολείων που δεν έχουν υποβάλει στοιχεία
         // Παράλληλη αποστολή όλων των emails
@@ -149,7 +152,7 @@ async function sendRemindersForPendingSubmissions () {
             skipped: result.skipped
         }));
 
-        let logEntryAfter = sendActualEmails && await Models.Log.create({
+        let logEntryAfter = sendActualEmails && Models.Log.create({     // χωρίς await
             type: "reminder",
             severity: "info",
             source: "system",
@@ -215,6 +218,38 @@ function sendEmailForPendingCanteen (canteen, period) {
             resolve(false);
         }
     });
+}
+
+/**
+ * Ενημερώνει το πεδίο canteens της περιόδου στη Βάση Δεδομένων με ένωση των νέων ids και των υπαρχόντων.
+ * @param {Object} period - Sequelize Period instance ή plain object με id/canteens
+ * @param {Array} canteens - Array από αντικείμενα ή ids (χρησιμοποιούμε μόνο τα ids)
+ * @returns {Promise<void>}
+ */
+async function updatePeriodCanteens(period, canteens) {
+    // Εξαγωγή ids αν δοθεί array από αντικείμενα
+    const newIds = canteens.map(c => typeof c === 'object' ? c.id : c);
+    // Ένωση με υπάρχοντα ids (μοναδικά)
+    const existingIds = Array.isArray(period.canteens) ? period.canteens : [];
+    const unionIds = Array.from(new Set([...existingIds, ...newIds]));
+
+    // Ενημέρωση του πεδίου canteens στη βάση - αν χρειάζεται
+    if (JSON.stringify(unionIds) === JSON.stringify(existingIds)) {
+        return;
+    }
+    try {
+        const [affectedRows] = await Models.Period.update(
+            { canteens: unionIds },
+            { where: { id: period.id } }
+        );
+        if (affectedRows > 0) {
+            log.success(`Ενημερώθηκαν οι Canteens της περιόδου ${period.name} στη Βάση Δεδομένων.`);
+        } else {
+            log.warn(`Period ${period.id} update: no rows affected (maybe not found).`);
+        }
+    } catch (err) {
+        log.error(`Failed to update canteens for period ${period.id}: ${err.message}`);
+    }
 }
 
 

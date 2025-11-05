@@ -18,8 +18,15 @@ const Period = db.define('period',
         end_date: DataTypes.DATEONLY,
         submission_deadline: DataTypes.DATEONLY,
         active: DataTypes.BOOLEAN,
+        canteens: {
+            type: DataTypes.ARRAY(DataTypes.INTEGER),
+            allowNull: true,
+            defaultValue: [],
+            comment: 'Array από canteen ids για την περίοδο'
+        },
         status: {
             type: DataTypes.VIRTUAL,
+            // Δυνατές τιμές για status: 'planned', 'open', 'closed' 'inactive'
             get() {
                 const today = new Date();
                 const endDate = new Date(this.end_date);

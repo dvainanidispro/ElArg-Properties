@@ -351,7 +351,7 @@ properties.get('/properties/new', can('edit:content'), async (req, res) => {
 /**
  * GET /properties/properties/:id - Εμφάνιση στοιχείων συγκεκριμένου property
  */
-properties.get('/properties/:id', can('view:content'), async (req, res) => {
+properties.get(['/properties/:id', '/estate/:id'], can('view:content'), async (req, res) => {
     try {
         const propertyId = parseInt(req.params.id);
         const property = await Models.Property.findByPk(propertyId, {
