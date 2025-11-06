@@ -87,7 +87,8 @@ dashboard.get(['/', '/dashboard'],
             activeCanteenPeriod.code = currentPeriod.code;
             activeCanteenPeriod.start = currentPeriod.start_date;
             activeCanteenPeriod.end = currentPeriod.end_date;
-            periodCanteens = (currentPeriod.status=='open') ? currentPeriod.canteens.length : activeCanteens;
+            // Οι σωστές canteens για την περίοδο. activeCanteenPeriod = open ή closed (όχι planned ή inactive)
+            periodCanteens = (currentPeriod.status=='open') ? activeCanteens : currentPeriod.canteens?.length??0;
 
             // Υποβολές για αυτή την περίοδο
             activeCanteenPeriod.completed = await Models.Submission.count({
