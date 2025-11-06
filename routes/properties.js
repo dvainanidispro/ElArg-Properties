@@ -270,7 +270,7 @@ properties.get(['/','/properties','/estate'], can('view:content'), async (req, r
 
         // Filters for the query
         const filter = {};
-        if (isEstate) {     // Στην οθόνη "Περιουσία" θέλουμε μόνο όσα ανήκουν στο Δήμο.
+        if (isEstate) {     // Στην οθόνη "Περιουσία" θέλουμε μόνο όσα ανήκουν στο Δήμο. (Εναλλακτικά if req.query.owned)
             filter.ownership_status = { [Op.ne]: 'individual' };
         }
         if (req.query.asset_type) {

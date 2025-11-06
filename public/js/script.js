@@ -187,8 +187,7 @@ function checkRentAdjustmentMonth() {
             if (span) {
                 span.classList.add('badge', 'fs-6', 'bg-warning2', 'fw-bold');
             }
-        } else if (cellYear == currentYear) {
-            // insert ✔️
+        } else if (cellMonth == currentMonth && cellYear == currentYear) {
             span.insertAdjacentHTML('beforeend', ' ✔️');
         }
     });
@@ -206,11 +205,15 @@ function checkRentAdjustmentMonth() {
 function downloadTableAsExcel(tableID, filename = 'table.xlsx', sheetname = 'Sheet1') {
     const table = document.getElementById(tableID);
     if (!table) { console.error('Table not found:', tableID); return; }
+    
+    // Αφαίρεση μη έγκυρων χαρακτήρων και περιορισμός μήκους
+    sheetname = sheetname.substring(0,31).replace(/[/\\?%*:|"<>]/g, '_');
+    filename = filename.replace(/[/\\?%*:|"<>]/g, '_'); 
 
     // Clone για να μην πειραχτεί το DOM
     const clone = table.cloneNode(true);
 
-    // Αν υπάρχει data-value χρησιμοποιείται, αλλιώς το textContent
+    // Αν υπάρχει data-value ή data-sort-value, να χρησιμοποιείται αυτό, αλλιώς, να χρησιμοποιείται το textContent
     clone.querySelectorAll('td, th').forEach(cell => {
       const dataValue = cell.getAttribute('data-value') ?? cell.getAttribute('data-sort-value');
       if (dataValue !== null && dataValue !== "") {

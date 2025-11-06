@@ -242,7 +242,8 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
         // ενώ για τις παλιότερες περιόδους, παίρνουμε όλες τις καντίνες (όχι πλήρως σωστό).
         // Θα πρέπει να κρατήσουμε ένα ιστορικό των canteen ids που ήταν ενεργές σε κάθε περίοδο (σε πεδίο του πίνακα periods)
         
-        let filter = {};
+        /** Το φίλτρο για το ποιες canteens είναι οι αυτές που πρέπει για την περίοδο */
+        let filter = {};   
         // Δυνατές τιμές για period.status: 'planned', 'open', 'closed' 'inactive'
         if (period.status == 'open' || period.status == 'planned') {
             filter = { active: true };

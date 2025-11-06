@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Button για εξαγωγή καρτέλας μίσθωσης σε Excel
     Q('#exportExcelBtn') && Q('#exportExcelBtn').on('click', function() {
-            const propertyAddress = '{{join leaseDetails.property.address leaseDetails.property.appartment_number}}'.substring(0, 30);
+            const propertyAddress = '{{join leaseDetails.property.address leaseDetails.property.appartment_number}}';
             const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
             const filename = `Καρτέλα Μίσθωσης - ${propertyAddress} - ${today}.xlsx`.replace(/[/\\?%*:|"<>]/g, '_');
             
