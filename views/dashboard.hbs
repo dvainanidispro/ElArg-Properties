@@ -15,7 +15,7 @@
                     
 
                     <!-- Κύριες μετρικές -->
-                    <div class="row mb-4 align-items-stretch g-4">
+                    <div class="row mb-5 align-items-stretch g-4">
 
                         <div class="col-md-6 col-xl-3">
                             <a class="card bg-success text-white h-100 dashboard-card" href="/canteens/canteens">
@@ -47,8 +47,8 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <div class="card-body pt-2">
-                                    <div class="row text-center">
+                                <div class="card-body pt-2 px-0">
+                                    <div class="row text-center gap-0">
                                         <div class="col-6">
                                             <h6 class="text-light mb-1">Ιδιόκτητα</h6>
                                             <h3 class="text-white mb-0">{{activeProperties.owned}}</h3>
@@ -57,7 +57,7 @@
                                             <h6 class="text-light mb-1">Εκμισθωμένα</h6>
                                             <h3 class="text-white mb-0">{{activeProperties.leasedOut}}</h3>
                                         </div>
-                                        {{!-- <div class="col-4">
+                                        {{!-- <div class="d-none d-xxl-block col-4">
                                             <h6 class="text-light mb-1">Μισθωμένα</h6>
                                             <h3 class="text-white mb-0">{{activeProperties.rented}}</h3>
                                         </div> --}}
@@ -114,7 +114,7 @@
 
                     
                     <!-- Ενεργή περίοδος υποβολών για Κυλικεία -->
-                    <div class="row mb-4">
+                    <div class="row my-5">
                         
                         <div class="col-12 mb-3">
                             <a class="card border-secondary dashboard-card" href="/canteens/submissions">
@@ -129,7 +129,7 @@
                                     <div class="">
                                         <h6 class="text-muted">Περίοδος</h6>
                                         <div class="text-primary fw-semibold h4">
-                                            <div>{{activeCanteenPeriod.code}}</div>
+                                            <div>{{activeCanteenPeriod.name}}</div>
                                             <div class="ms-2 text-muted" data-variable="period-description"></div>
                                         </div>
                                     </div>
@@ -142,7 +142,7 @@
                                         <h2 class="text-warning display-6 fw-semibold">{{activeCanteenPeriod.pending}}</h2>
                                     </div>
                                     <div>
-                                        <div class="easy-pie-chart" data-percent="{{activeCanteenPeriod.submittedPercent}}" data-bar-color="ForestGreen" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="80" data-animate="1000">
+                                        <div class="easy-pie-chart" data-percent="{{activeCanteenPeriod.submittedPercent}}" data-bar-color="ForestGreen" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="85" data-animate="1000">
                                             <span class="fw-bold"></span>
                                         </div>
                                     </div>

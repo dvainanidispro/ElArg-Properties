@@ -215,6 +215,7 @@ periods.get('/:periodId/logs', can('view:content'), async (req, res) => {
             period,
             logs: reminderLogs,
             user: req.user,
+            emailServer: process.env.EMAILHOST,
             title: `Υπενθυμίσεις - ${period.code}`
         });
     } catch (error) {

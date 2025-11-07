@@ -295,7 +295,13 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
 .big-shadow{
     box-shadow: 1px 3px 5px 0px rgba(0, 0, 0, 0.5);
 }
-
+.small-shadow{
+    box-shadow: 1px 2px 4px 0px rgba(0, 0, 0, 0.5);
+}
+.lg{
+    margin-inline: auto;
+    max-width: 1200px;
+}
 
 .dashboard-card{
     padding: 0.3rem;

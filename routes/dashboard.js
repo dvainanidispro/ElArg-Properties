@@ -88,6 +88,7 @@ dashboard.get(['/', '/dashboard'],
             activeCanteenPeriod.code = currentPeriod.code;
             activeCanteenPeriod.start = currentPeriod.start_date;
             activeCanteenPeriod.end = currentPeriod.end_date;
+            activeCanteenPeriod.name = currentPeriod.name;
             // Οι σωστές canteens για την περίοδο. activeCanteenPeriod = open ή closed (όχι planned ή inactive)
             periodCanteens = (currentPeriod.status=='open') ? activeCanteens : currentPeriod.canteens?.length??0;
 
