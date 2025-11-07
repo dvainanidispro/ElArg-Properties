@@ -63,6 +63,7 @@ dashboard.get(['/', '/dashboard'],
         // Populate objects
         activeProperties.rented = activePropertiesAll.filter(p => p.asset_type === 'rented').length;
         activeProperties.leasedOut = activePropertiesAll.filter(p => p.asset_type === 'leased_out').length;
+        activeProperties.owned = activePropertiesAll.filter(p => p.asset_type === 'owned').length;
         activeProperties.sum = activePropertiesAll.length;   // Δεν είναι το άθροισμα των παραπάνω. 
         
         // Filter leases expiring soon

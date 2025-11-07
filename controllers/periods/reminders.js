@@ -151,8 +151,9 @@ async function sendRemindersForPendingSubmissions () {
             success: result.success,
             skipped: result.skipped
         }));
-
-        let logEntryAfter = sendActualEmails && Models.Log.create({     // χωρίς await
+        
+        // Εδώ χρειάζεται await (για να τρέξει το .create στο event loop πριν τερματίσει το script)
+        let logEntryAfter = sendActualEmails && await Models.Log.create({     
             type: "reminder",
             severity: "info",
             source: "system",
@@ -235,6 +236,7 @@ async function updatePeriodCanteens(period, canteens) {
 
     // Ενημέρωση του πεδίου canteens στη βάση - αν χρειάζεται
     if (JSON.stringify(unionIds) === JSON.stringify(existingIds)) {
+        log.dev(`Δεν απαιτείται ενημέρωση canteens για την περίοδο ${period.id}, τα ids είναι ίδια.`);
         return;
     }
     try {

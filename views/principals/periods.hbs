@@ -120,19 +120,19 @@
                                                 <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
                                                    class="btn btn-primary btn-icon shake-it" 
                                                    title="Υποβολή στοιχείων">
-                                                    <i class="ti-plus" ></i>
+                                                    <i class="bi bi-plus-circle" ></i>
                                                     <span>Υποβολή στοιχείων</span>
                                                 </a>
                                             {{else if (eq this.status 'closed')}}
                                                 <a href="/canteens/mycanteen/{{../canteen.id}}/periods/{{this.id}}/submission" 
                                                    class="btn btn-primary btn-icon shake-it" 
                                                    title="Υποβολή στοιχείων (Εκπρόθεσμη)">
-                                                    <i class="ti-plus" ></i>
-                                                    <span>Υποβολή στοιχείων<br> (Εκπρόθεσμη)</span>
+                                                    <i class="bi bi-plus-circle" ></i>
+                                                    <span>Υποβολή στοιχείων<br> (εκπρόθεσμη)</span>
                                                 </a>
                                             {{else if (eq this.status 'planned')}}
                                                 <span class="text-muted small badge-icon">
-                                                    <i class="ti-time me-1"></i>
+                                                    <i class="ti-time ms-2"></i>
                                                     <span>Μελλοντική περίοδος</span>
                                                 </span>
                                             {{/if}}
