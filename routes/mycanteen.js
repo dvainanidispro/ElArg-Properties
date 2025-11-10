@@ -567,7 +567,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         }
 
         if (period.status !== 'open') {
-            log.warn(`Δεν επιτρέπεται επεξεργασία για περίοδο με status: ${period.status}`);
+            log.warn(`Δεν επιτρέπεται επεξεργασία υποβολών της περιόδου ${period.code} με status ${period.status} (Principal ${principalId}).`);
             return res.status(400).json({
                 success: false,
                 message: 'Δεν επιτρέπεται επεξεργασία στοιχείων για αυτή την περίοδο'

@@ -137,8 +137,8 @@ h3{font-size: 1.5rem} */
 input.form-control{
     border-color: hsl(240, 93%, 90%);
 }
-input[readonly]{
-    background-color: hsl(240, 50%, 92%) !important;
+input[readonly], input:disabled{
+    background-color: hsl(240, 50%, 93%) !important;
 }
 input::placeholder{
     color: gray !important;
