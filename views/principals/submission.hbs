@@ -7,7 +7,7 @@
                     <li class="breadcrumb-item"><a href="/canteens/mycanteen">Το κυλικείο μου</a></li>
                     <li class="breadcrumb-item"><a href="/canteens/mycanteen/{{canteen.id}}/periods">{{canteen.name}}</a></li>
                     <li class="breadcrumb-item active" aria-current="page">
-                        Υποβολή στοιχείων - {{canteen.name}}
+                        Υποβολή στοιχείων
                     </li>
                 </ol>
             </nav>
@@ -18,7 +18,7 @@
                 <div class="card-header">
                     <h4 class="card-title">
                         <i class="ti-clipboard me-2"></i>
-                        Υποβολή στοιχείων - {{canteen.name}} [{{period.code}}]
+                        Υποβολή στοιχείων - {{canteen.name}} [{{period.name}}]
                     </h4>
                     <div class="card-actions">
                         <a href="/canteens/mycanteen/{{canteen.id}}/periods" class="btn btn-secondary btn-icon">
@@ -55,7 +55,8 @@
                                     <strong>Περίοδος:</strong> {{period.name}}<br>
                                     <strong>Από:</strong> {{date period.start_date}}<br>
                                     <strong>Έως:</strong> {{date period.end_date}}<br>
-                                    <strong>Κατάσταση:</strong> 
+                                    <strong>Προθεσμία υποβολής:</strong> {{date period.submission_deadline}}<br>
+                                    <strong>Κατάσταση υποβολών:</strong> 
                                     {{#if (eq period.status 'open')}}
                                         <span class="badge bg-success">Ανοιχτή</span>
                                     {{else if (eq period.status 'closed')}}
@@ -70,7 +71,7 @@
                     {{#if submission}}
                         <div class="alert alert-info my-5" role="alert">
                             <i class="ti-check me-2"></i>
-                            <strong>Έχετε υποβάλει στοιχεία για αυτή την περίοδο.</strong>
+                            <strong>Έχετε υποβάλει στοιχεία για αυτήν την περίοδο.</strong>
                             {{#if (eq period.status 'open')}}
                                 Μπορείτε να τα επεξεργαστείτε παρακάτω.
                             {{/if}}

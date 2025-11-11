@@ -11,19 +11,23 @@
                         <div class="d-flex gap-2">
                             <a href="/properties/properties" class="btn btn-success ">
                                 {{!-- <i class="ti-plus me-1"></i> --}}
-                                <span>Όλα</span>
+                                <span >Όλα</span>
+                                <span id="count-all"></span>
                             </a>
                             <a href="/properties/properties?asset_type=leased_out" class="btn bg-purple">
                                 {{!-- <i class="ti-plus me-1"></i> --}}
                                 <span>Εκμισθωμένα</span>
+                                <span id="count-leased-out"></span>
                             </a>
                             <a href="/properties/properties?asset_type=rented" class="btn bg-pink">
                                 {{!-- <i class="ti-plus me-1"></i> --}}
                                 <span>Μισθωμένα</span>
+                                <span id="count-rented"></span>
                             </a>
                             <a href="/properties/properties?is_part_of_other=false" class="btn btn-secondary">
                                 {{!-- <i class="ti-plus me-1"></i> --}}
                                 <span>Όχι τμήματα άλλων ακινήτων</span>
+                                <span id="count-non-parts"></span>
                             </a>
                             <button id="exportExcelBtn" class="btn btn-excel btn-icon">
                                 <i class="excel-icon"></i>
@@ -72,10 +76,10 @@
                                     <td class="d-none">
                                         {{this.kaek}}
                                     </td>
-                                    <td class="d-none">
+                                    <td class="d-none" data-non-part="{{this.is_part_of_other}}">
                                         {{check this.is_part_of_other 'Ναι' 'Όχι'}}
                                     </td>
-                                    <td>
+                                    <td data-asset-type="{{this.asset_type}}">
                                         {{#if (eq this.asset_type 'leased_out')}}
                                             <span class="badge bg-purple fs-6">{{assetTypeText 'leased_out'}}</span>
                                         {{else if (eq this.asset_type 'rented')}}
@@ -132,6 +136,15 @@
 
 
 <script type="module">
+
+    // Μετρήσεις για τα φίλτρα
+    if (!(new URLSearchParams(window.location.search)).size) {
+        Q('#count-all').set(` (${Q.count(' #properties tbody tr')})`);
+        Q('#count-leased-out').set(` (${Q.count(' #properties [data-asset-type="leased_out"]')})`);
+        Q('#count-rented').set(` (${Q.count(' #properties [data-asset-type="rented"]')})`);
+        Q('#count-non-parts').set(` (${Q.count(' #properties [data-non-part="false"]')})`);
+    }
+
     // Έλεγχος λήξης μισθώσεων ακινήτων
     checkLeaseExpiry();
 

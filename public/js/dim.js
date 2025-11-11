@@ -133,6 +133,8 @@ Q.sum = array => array.reduce((prev,curr)=>prev+(+curr),0);   // +val converts t
 /** Delay function. Use: await delay(2) */
 Q.delay = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000));
 
+Q.count = selector => Q(selector).length;
+
 
 /** 
  * Fetch that returns the result as JSON or the desired property 

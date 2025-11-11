@@ -33,11 +33,11 @@ const Period = db.define('period',
                 const submission_deadline = new Date(this.submission_deadline);
                 if (this.active) {
                     if (today < endDate) {
-                        return 'planned'; // προγραμματισμένη
+                        return 'planned'; // προγραμματισμένη, δεν έχει φτάσει το end_date
                     } else if (today >= endDate && today <= submission_deadline) {
                         return 'open'; // ανοιχτή, μεταξύ end_date και submission_deadline
                     } else if (today > submission_deadline) {
-                        return 'closed'; // κλειστή
+                        return 'closed'; // κλειστή, έχει περάσει το submission_deadline
                     }
                 }
                 return 'inactive'; // ανενεργή

@@ -17,49 +17,56 @@
                     </div>
                 </div>
                 <div class="card-body ">
-                    <div class="row mb-4">
-                            <div class="col-12 my-3">
-                                <div class="card border-secondary small-shadow" href="#">
-                                    <div class="card-header">
-                                        <h5 class="card-title mb-0 d-flex align-items-center gap-3">
-                                            <i class="ti-calendar me-2"></i>
-                                            <span>Στατιστικά υποβολών για την περίοδο</span>
-                                        </h5>
-                                    </div>
-                                    <div class="center-contents">
-                                        <div class="card-body d-flex justify-content-around align-items-center flex-wrap text-center lg">
-                                            {{#if canteens}}
-                                            <div class="">
-                                                <h6 class="text-muted">Συνολικά Κυλικεία</h6>
-                                                <div class="text-primary fw-semibold display-6">
-                                                    {{canteens.length}}
+
+                    {{#if canteens}}
+                        <div class="row mb-4">
+                                <div class="col-12 my-3">
+                                    <div class="card border-secondary small-shadow" href="#">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0 d-flex align-items-center gap-3">
+                                                <i class="ti-calendar me-2"></i>
+                                                <span>Στατιστικά υποβολών για την περίοδο</span>
+                                            </h5>
+                                        </div>
+                                        <div class="center-contents">
+                                            <div class="card-body d-flex justify-content-around align-items-center flex-wrap text-center lg">
+                                                <div class="">
+                                                    <h6 class="text-muted">Συνολικά Κυλικεία</h6>
+                                                    <div class="text-primary fw-semibold display-6">
+                                                        {{canteens.length}}
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    <h6 class="text-muted">Υποβλήθηκαν</h6>
+                                                    <h2 class="text-success display-6 fw-semibold">{{submittedCount}}</h2>
+                                                </div>
+                                                <div class="">
+                                                    <h6 class="text-muted">Εκκρεμούν</h6>
+                                                    <h2 class="text-warning display-6 fw-semibold">{{pendingCount}}</h2>
+                                                </div>
+                                                <div>
+                                                    <div class="easy-pie-chart" data-percent="{{submittedPercent}}" data-bar-color="#177b45" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="85" data-animate="1000">
+                                                        <span class="fw-bold"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    <button id="exportExcelBtn" class="btn btn-excel btn-icon my-2 ">
+                                                        <i class="excel-icon"></i>
+                                                        <span>Εξαγωγή υποβολών σε Excel</span>
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <div class="">
-                                                <h6 class="text-muted">Υποβλήθηκαν</h6>
-                                                <h2 class="text-success display-6 fw-semibold">{{submittedCount}}</h2>
-                                            </div>
-                                            <div class="">
-                                                <h6 class="text-muted">Εκκρεμούν</h6>
-                                                <h2 class="text-warning display-6 fw-semibold">{{pendingCount}}</h2>
-                                            </div>
-                                            <div>
-                                                <div class="easy-pie-chart" data-percent="{{submittedPercent}}" data-bar-color="#177b45" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="85" data-animate="1000">
-                                                    <span class="fw-bold"></span>
-                                                </div>
-                                            </div>
-                                            <div class="">
-                                                <button id="exportExcelBtn" class="btn btn-excel btn-icon my-2 ">
-                                                    <i class="excel-icon"></i>
-                                                    <span>Εξαγωγή υποβολών σε Excel</span>
-                                                </button>
-                                            </div>
-                                            {{/if}}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                    </div>
+                        </div>
+                    {{else}}
+                                <div class="card-body">
+                                    <div class="alert alert-info mb-0">
+                                        Δεν υπάρχει ενεργή περίοδος υποβολών για Κυλικεία.
+                                    </div>
+                                </div>
+                    {{/if}}
                     
 
                     

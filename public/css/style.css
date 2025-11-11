@@ -164,7 +164,7 @@ input::placeholder{
     color: var(--bs-light) !important;
 }
 .bg-pink{
-    background-color: var(--bs-pink) !important;
+    background-color: hsl(322, 100%, 48%) !important;
     color: var(--bs-light) !important;
 }
 .bg-pink-light{
