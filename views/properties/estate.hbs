@@ -38,9 +38,12 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
-                                    <th class="sortable wide-cell">Διεύθυνση</th>
+                                    <th class="wide-cell">Διεύθυνση <span class="d-none"> - Διαμέρισμα</span></th>
+                                    <th class="d-none">Διεύθυνση</th>
+                                    <th class="d-none">Αριθμός Διαμερίσματος</th>
                                     <th class="sortable">Δημοτικό Διαμέρισμα</th>
                                     <th class="narrow-cell-m">ΚΑΕΚ</th>
+                                    <th class="d-none">ΑΤΑΚ</th>
                                     <th class="sortable narrow-cell-m">Ιδιοκτησιακό <br>Καθεστώς</th>
                                     <th class="sortable">Χρήση ακινήτου</th>
                                     <th class="d-none">Μέρος άλλου</th>
@@ -57,11 +60,20 @@
                                             {{join this.address this.appartment_number}}
                                         </a>
                                     </td>
+                                    <td class="d-none">
+                                        {{this.address}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{this.appartment_number}}
+                                    </td>
                                     <td>
                                         {{this.department}}
                                     </td>
                                     <td>
                                         {{this.kaek}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{this.atak}}
                                     </td>
                                     <td>
                                         {{#if (eq this.ownership_status 'sole_ownership')}}

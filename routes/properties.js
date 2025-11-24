@@ -403,7 +403,7 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
     try {
         const { 
             kaek, atak, address, department, appartment_number, is_part_of_other, usage, description, 
-            area, area_land, area_building, construction_year, permit, file_server_link, ownership_status, ownership_details,
+            area, area_land, area_building, supply_electricity, supply_water, supply_natural_gas, construction_year, permit, file_server_link, ownership_status, ownership_details,
             asset_type, active 
         } = req.body;
         
@@ -441,6 +441,9 @@ properties.post('/properties', can('edit:content'), async (req, res) => {
             area: area ? parseFloat(area) : null,
             area_land: area_land ? parseFloat(area_land) : null,
             area_building: area_building.trim() || '',
+            supply_electricity: supply_electricity ? supply_electricity.trim() : '',
+            supply_water: supply_water ? supply_water.trim() : '',
+            supply_natural_gas: supply_natural_gas ? supply_natural_gas.trim() : '',
             construction_year: construction_year ? parseInt(construction_year) : null,
             permit: permit ? permit.trim() : '',
             file_server_link: file_server_link || '',
@@ -474,7 +477,7 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
         const propertyId = parseInt(req.params.id);
         const { 
             kaek, atak, address, department, appartment_number, is_part_of_other, usage, description, 
-            area, area_land, area_building, construction_year, permit, file_server_link, ownership_status, ownership_details,
+            area, area_land, area_building, supply_electricity, supply_water, supply_natural_gas, construction_year, permit, file_server_link, ownership_status, ownership_details,
             asset_type, active 
         } = req.body;
         
@@ -516,6 +519,9 @@ properties.put('/properties/:id', can('edit:content'), async (req, res) => {
             area: area ? parseFloat(area) : null,
             area_land: area_land ? parseFloat(area_land) : null,
             area_building: area_building.trim(),
+            supply_electricity: supply_electricity ? supply_electricity.trim() : '',
+            supply_water: supply_water ? supply_water.trim() : '',
+            supply_natural_gas: supply_natural_gas ? supply_natural_gas.trim() : '',
             construction_year: construction_year ? parseInt(construction_year) : null,
             permit,
             file_server_link,

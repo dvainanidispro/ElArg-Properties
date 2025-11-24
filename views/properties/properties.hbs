@@ -50,9 +50,14 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th class="sortable d-none" data-sort-type="number">ID</th>
-                                    <th class="wide-cell">Διεύθυνση</th>
+                                    <th class="wide-cell">Διεύθυνση <span class="d-none"> - Διαμέρισμα</span></th>
+                                    <th class="d-none">Διεύθυνση</th>
+                                    <th class="d-none">Αριθμός Διαμερίσματος</th>
                                     <th >Δημοτικό Διαμέρισμα</th>
                                     <th class="d-none">ΚΑΕΚ</th>
+                                    <th class="d-none">ΑΤΑΚ</th>
+                                    <th class="d-none">Χρήση Ακινήτου</th>
+                                    <th class="d-none">Ιδιοκτησιακό Καθεστώς</th>
                                     <th class="d-none">Μέρος άλλου</th>
                                     <th class="sortable narrow-cell-m">Τύπος</th>
                                     <th>Συμβαλλόμενος</th>
@@ -70,11 +75,26 @@
                                             {{join this.address this.appartment_number}}
                                         </a>
                                     </td>
+                                    <td class="d-none">
+                                        {{this.address}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{this.appartment_number}}
+                                    </td>
                                     <td>
                                         {{this.department}}
                                     </td>
                                     <td class="d-none">
                                         {{this.kaek}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{this.atak}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{this.usage}}
+                                    </td>
+                                    <td class="d-none">
+                                        {{ownershipStatusText this.ownership_status}}
                                     </td>
                                     <td class="d-none" data-non-part="{{this.is_part_of_other}}">
                                         {{check this.is_part_of_other 'Ναι' 'Όχι'}}

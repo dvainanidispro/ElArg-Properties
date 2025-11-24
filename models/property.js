@@ -54,6 +54,18 @@ const Property = db.define('property',
             type: DataTypes.STRING,
             comment: 'Επιφάνεια κτίσματος (τ.μ.)'
         },
+        supply_electricity: {
+            type: DataTypes.STRING,
+            comment: 'Αριθμός παροχής ρεύματος'
+        },
+        supply_water: {
+            type: DataTypes.STRING,
+            comment: 'Αριθμός παροχής νερού'
+        },
+        supply_natural_gas: {
+            type: DataTypes.STRING,
+            comment: 'Αριθμός παροχής φυσικού αερίου'
+        },
         construction_year: {
             type: DataTypes.SMALLINT,
             comment: 'Έτος κατασκευής'
