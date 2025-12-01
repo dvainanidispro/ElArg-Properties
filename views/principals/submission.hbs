@@ -100,7 +100,7 @@
                                                value="{{this.rent}}" 
                                                step="0.01" 
                                                disabled>
-                                        <div class="form-text text-muted">Μίσθωμα για αυτή την υπο-περίοδο</div>
+                                        <div class="form-text text-muted">Μίσθωμα για αυτή την περίοδο</div>
                                     </div>
 
                                     {{!-- Students --}}
@@ -248,6 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const data = Object.fromEntries(formData);
         
         // Δεν ελέγχουμε εδώ αν η περίοδος είναι ανοιχτή (γίνεται server-side έλεγχος)
+
+        // Επίσης: Το HTML5 validation (για τα required πεδία) εγγυάται ότι όλα τα πεδία έχουν τιμές
+        // Οπότε δεν χρειάζεται να ελέγξουμε για κενά πεδία εδώ
         
         // Συλλογή δεδομένων από subperiods
         const subperiodsData = [];
@@ -255,12 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const students = card.querySelector(`input[name="subperiods[${index}][students]"]`).value;
             const workingDays = card.querySelector(`input[name="subperiods[${index}][working_days]"]`).value;
             const electricityCost = card.querySelector(`input[name="subperiods[${index}][electricity_cost]"]`).value;
-            
-            if (!students || !workingDays || !electricityCost) {
-                Q('bootstrap-spinner').show(false);
-                showErrorModal(`Παρακαλώ συμπληρώστε όλα τα πεδία για την περίοδο ${index + 1}.`);
-                return false;
-            }
             
             subperiodsData.push({
                 start_date: {{{objectify subperiods}}}.map(s => s.start_date)[index],
@@ -270,10 +267,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 electricity_cost: parseFloat(electricityCost)
             });
         });
-        
-        if (subperiodsData.length === 0) {
-            return; // Σφάλμα validation ήδη εμφανίστηκε
-        }
         
         // Αντικατάσταση των παλαιών πεδίων με το data array
         data.data = subperiodsData;

@@ -170,7 +170,7 @@
                                                 <div id="calculatedRent" class="fs-5 fw-bold">{{euro submission.rent}}</div>
                                             </div>
                                             <div class="">
-                                                <button type="button" id="caclulateRent" class="btn btn-outline-primary">Υπολογισμός</button>
+                                                <button type="button" id="calculateRent" class="btn btn-outline-primary">Υπολογισμός</button>
                                             </div>
                                         </div>
                                     </div>
@@ -261,7 +261,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Υπολογισμός καθαρού μισθώματος
-    document.getElementById('caclulateRent')?.addEventListener('click', function(e) {
+    document.getElementById('calculateRent')?.addEventListener('click', function(e) {
         e.preventDefault(); // Αποτροπή submit της φόρμας
         
         let totalRent = 0;
@@ -325,6 +325,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this);
         const data = Object.fromEntries(formData);
         
+        // Σημείωση: Το HTML5 validation (για τα required πεδία) εγγυάται ότι όλα τα πεδία έχουν τιμές
+        // Οπότε δεν χρειάζεται να ελέγξουμε για κενά πεδία εδώ
+
         // Συλλογή δεδομένων από subperiods
         const subperiodsData = [];
         document.querySelectorAll('.subperiod-card').forEach((card, index) => {
@@ -332,12 +335,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const students = card.querySelector(`input[name="subperiods[${index}][students]"]`).value;
             const workingDays = card.querySelector(`input[name="subperiods[${index}][working_days]"]`).value;
             const electricityCost = card.querySelector(`input[name="subperiods[${index}][electricity_cost]"]`).value;
-            
-            if (!rent || !students || !workingDays || !electricityCost) {
-                Q('bootstrap-spinner').show(false);
-                showErrorModal(`Παρακαλώ συμπληρώστε όλα τα πεδία για την υποπερίοδο ${index + 1}.`);
-                return false;
-            }
             
             subperiodsData.push({
                 start_date: {{{objectify subperiods}}}.map(s => s.start_date)[index],
@@ -348,10 +345,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 electricity_cost: parseFloat(electricityCost)
             });
         });
-        
-        if (subperiodsData.length === 0) {
-            return; // Σφάλμα validation ήδη εμφανίστηκε
-        }
         
         // Προσθήκη δεδομένων subperiods
         data.data = subperiodsData;
