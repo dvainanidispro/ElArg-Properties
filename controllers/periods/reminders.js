@@ -117,8 +117,8 @@ async function sendRemindersForPendingSubmissions () {
             },
         });
 
-        // Ενημέρωση canteens περιόδου
-        updatePeriodCanteens(period, pendingCanteens);      // χωρίς await
+        // Ενημέρωση canteens περιόδου με όλα τα active canteens
+        updatePeriodCanteens(period, activeCanteens);      // χωρίς await
 
         //# 5 Αποστολή email στους Διευθυντές των σχολείων που δεν έχουν υποβάλει στοιχεία
         // Παράλληλη αποστολή όλων των emails
@@ -230,9 +230,10 @@ function sendEmailForPendingCanteen (canteen, period) {
 async function updatePeriodCanteens(period, canteens) {
     // Εξαγωγή ids αν δοθεί array από αντικείμενα
     const newIds = canteens.map(c => typeof c === 'object' ? c.id : c);
-    // Ένωση με υπάρχοντα ids (μοναδικά)
+    // Ένωση με υπάρχοντα ids (μοναδικά) και ταξινόμηση
     const existingIds = Array.isArray(period.canteens) ? period.canteens : [];
-    const unionIds = Array.from(new Set([...existingIds, ...newIds]));
+    let unionIds = Array.from(new Set([...existingIds, ...newIds]));
+    unionIds.sort((a, b) => a - b);  // Αριθμητική ταξινόμηση (αύξουσα)
 
     // Ενημέρωση του πεδίου canteens στη βάση - αν χρειάζεται
     if (JSON.stringify(unionIds) === JSON.stringify(existingIds)) {
@@ -245,7 +246,7 @@ async function updatePeriodCanteens(period, canteens) {
             { where: { id: period.id } }
         );
         if (affectedRows > 0) {
-            log.success(`Ενημερώθηκαν οι Canteens της περιόδου ${period.name} στη Βάση Δεδομένων.`);
+            log.success(`Ενημερώθηκαν οι Canteens στη Βάση Δεδομένων για την περίοδο ${period.name} .`);
         } else {
             log.warn(`Period ${period.id} update: no rows affected (maybe not found).`);
         }

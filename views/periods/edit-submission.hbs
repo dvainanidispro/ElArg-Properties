@@ -214,9 +214,9 @@
                     <small class="text-muted">
                         <strong>ID:</strong> {{submission.id}}<br>
                         <strong>Υποβλήθηκε από:</strong> {{check submission.submittedByPrincipal submission.submittedByPrincipal.name 'Προσωπικό Δήμου'}}<br>
-                        <strong>Δημιουργήθηκε:</strong> {{date submission.createdAt}}<br>
+                        <strong>Δημιουργήθηκε:</strong> {{datetime submission.createdAt}}<br>
                         {{#if submission.updatedAt}}
-                        <strong>Τελευταία ενημέρωση:</strong> {{date submission.updatedAt}}<br>
+                        <strong>Τελευταία ενημέρωση:</strong> {{datetime submission.updatedAt}}<br>
                         {{/if}}
                         <strong>Συνολικό Ποσό Είσπραξης:</strong> {{submission.total}} €
                     </small>

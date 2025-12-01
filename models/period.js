@@ -22,13 +22,14 @@ const Period = db.define('period',
             type: DataTypes.ARRAY(DataTypes.INTEGER),
             allowNull: true,
             defaultValue: [],
-            comment: 'Array από canteen ids για την περίοδο'
+            comment: 'Array από canteen ids που συμμετέχουν στην περίοδο (ανεξάρτητα αν έχουν υποβάλει στοιχεία)'
         },
         status: {
             type: DataTypes.VIRTUAL,
             // Δυνατές τιμές για status: 'planned', 'open', 'closed' 'inactive'
             get() {
-                const today = new Date();
+                // χρησιμοποιεί FAKE_DATE από .env (π.χ. "2025-12-31") αν υπάρχει, για testing
+                const today = process.env.FAKE_DATE ? new Date(process.env.FAKE_DATE) : new Date();
                 const endDate = new Date(this.end_date);
                 const submission_deadline = new Date(this.submission_deadline);
                 if (this.active) {
