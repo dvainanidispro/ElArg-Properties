@@ -23,9 +23,6 @@ myCanteen.use(can('edit:ownschool'));
 
 
 
-
-
-
 /**
  * GET / - Εμφάνιση όλων των κυλικείων του συνδεδεμένου principal
  */
@@ -235,9 +232,6 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
 
 
 
-
-
-
 /**
  * GET /:canteenId/periods/:periodId/submission - Εμφάνιση φόρμας υποβολής στοιχείων για συγκεκριμένη περίοδο
  */
@@ -437,9 +431,13 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
             });
         }
 
-        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία και είναι αριθμοί
         for (const subperiod of subperiodsData) {
-            if (!subperiod.students || !subperiod.working_days || subperiod.electricity_cost === undefined) {
+            const students = Number(subperiod.students);
+            const workingDays = Number(subperiod.working_days);
+            const electricityCost = Number(subperiod.electricity_cost);
+            
+            if (isNaN(students) || isNaN(workingDays) || isNaN(electricityCost)) {
                 return res.status(400).json({
                     success: false,
                     message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία για όλες τις περιόδους'
@@ -455,7 +453,7 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
         // Το πεδίο rent του front-end, αν σταλεί κακόβουλα, αντικαθίσταται με το σωστό από το lease
         const completeSubperiodsData = subperiodsData.map((data, index) => ({
             ...data,        // Δεδομένα από το frontend
-            rent: subperiods[index]?.rent || 0     
+            rent: subperiods[index]?.rent || 0     //TODO: αριθμός ή string;
         }));
         
         // Υπολογισμός των πεδίων rent και tax_stamp
@@ -600,9 +598,13 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
             });
         }
 
-        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία και είναι αριθμοί
         for (const subperiod of subperiodsData) {
-            if (!subperiod.students || !subperiod.working_days || subperiod.electricity_cost === undefined) {
+            const students = Number(subperiod.students);
+            const workingDays = Number(subperiod.working_days);
+            const electricityCost = Number(subperiod.electricity_cost);
+            
+            if (isNaN(students) || isNaN(workingDays) || isNaN(electricityCost)) {
                 return res.status(400).json({
                     success: false,
                     message: 'Παρακαλώ συμπληρώστε όλα τα απαιτούμενα πεδία για όλες τις περιόδους'
@@ -617,7 +619,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         // Συγχώνευση subperiods με subperiodsData
         const completeSubperiodsData = subperiodsData.map((data, index) => ({
             ...data,
-            rent: subperiods[index]?.rent || 0
+            rent: subperiods[index]?.rent || 0          //TODO: αριθμός ή string; 
         }));
         
         // Υπολογισμός των πεδίων rent και tax_stamp

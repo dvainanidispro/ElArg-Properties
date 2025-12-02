@@ -26,7 +26,7 @@ const handlebarsConfig = {
         deepLookup: (obj, ...keys) => {
             // Remove the Handlebars context object (last argument)
             const actualKeys = keys.slice(0, -1);
-            return actualKeys.reduce((current, key) => current?.[key], obj) || '';
+            return actualKeys.reduce((current, key) => current?.[key], obj) ?? '';
         },
         /* example: <script> let obj = {{{objectify obj}}}; </script> */      
         objectify: (object) => JSON.stringify(object),  

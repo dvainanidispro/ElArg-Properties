@@ -22,18 +22,6 @@ const Submission = db.define('submission',
         },
         principal_id: DataTypes.INTEGER,
         rent_offer: DataTypes.DECIMAL(10, 2),
-        // students: {
-        //     type: DataTypes.INTEGER,
-        //     comment: 'Αριθμός μαθητών σχολείου για την περίοδο'
-        // },
-        // working_days: {
-        //     type: DataTypes.INTEGER,
-        //     comment: 'Αριθμός εργάσιμων ημερών για την περίοδο'
-        // },
-        // electricity_cost: {
-        //     type: DataTypes.DECIMAL(10, 2),
-        //     comment: 'Κόστος ρεύματος για την περίοδο'
-        // },
         data: {
             type: DataTypes.JSONB,
             comment: 'Array από subperiods/sub-submissions με πεδία: start_date, end_date, students, working_days, electricity_cost',

@@ -143,9 +143,14 @@ periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (
             });
         }
         
-        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία και είναι αριθμοί
         for (const subperiod of subperiodsData) {
-            if (!subperiod.rent || !subperiod.students || !subperiod.working_days || !subperiod.electricity_cost) {
+            const rent = Number(subperiod.rent);
+            const students = Number(subperiod.students);
+            const workingDays = Number(subperiod.working_days);
+            const electricityCost = Number(subperiod.electricity_cost);
+            
+            if (isNaN(rent) || isNaN(students) || isNaN(workingDays) || isNaN(electricityCost)) {
                 return res.status(400).json({
                     success: false,
                     message: 'Όλα τα πεδία των υποπεριόδων είναι υποχρεωτικά'
@@ -613,9 +618,14 @@ periods.post('/submissions', can('edit:content'), async (req, res) => {
             });
         }
         
-        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία
+        // Έλεγχος ότι όλα τα subperiods έχουν τα απαιτούμενα πεδία και είναι αριθμοί
         for (const subperiod of subperiodsData) {
-            if (!subperiod.rent || !subperiod.students || !subperiod.working_days || !subperiod.electricity_cost) {
+            const rent = Number(subperiod.rent);
+            const students = Number(subperiod.students);
+            const workingDays = Number(subperiod.working_days);
+            const electricityCost = Number(subperiod.electricity_cost);
+            
+            if (isNaN(rent) || isNaN(students) || isNaN(workingDays) || isNaN(electricityCost)) {
                 return res.status(400).json({
                     success: false,
                     message: 'Όλα τα πεδία των υποπεριόδων είναι υποχρεωτικά'
