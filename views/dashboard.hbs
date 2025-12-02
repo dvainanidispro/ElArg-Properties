@@ -142,7 +142,7 @@
                                         <h2 class="text-warning display-6 fw-semibold">{{activeCanteenPeriod.pending}}</h2>
                                     </div>
                                     <div>
-                                        <div class="easy-pie-chart" data-percent="{{activeCanteenPeriod.submittedPercent}}" data-bar-color="ForestGreen" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="85" data-animate="1000">
+                                        <div class="easy-pie-chart" data-percent="{{activeCanteenPeriod.submittedPercent}}" data-bar-color="ForestGreen" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="85" data-animate="1000" {{#if activeCanteenPeriod.confetti}}data-confetti="true"{{/if}}>
                                             <span class="fw-bold"></span>
                                         </div>
                                     </div>

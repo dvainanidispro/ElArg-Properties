@@ -333,6 +333,11 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
         const submittedCount = canteensWithSubmissions.filter(c => c.hasSubmission).length;
         const pendingCount = canteensWithSubmissions.length - submittedCount;
         const submittedPercent = canteensWithSubmissions.length > 0 ? Math.round((submittedCount / canteensWithSubmissions.length) * 100) : 0;
+        
+        // Confetti animation όταν όλες οι καντίνες έχουν υποβάλει και η περίοδος είναι ανοιχτή
+        const confetti = (submittedCount === canteensWithSubmissions.length) && 
+                         (canteensWithSubmissions.length > 0) && 
+                         (period.status === 'open');
 
         //# 6 Render
         res.render('periods/submissions', {
@@ -341,6 +346,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             submittedCount,
             submittedPercent,
             pendingCount,
+            confetti,
             user: req.user,
             title: `Υποβολές Στοιχείων - ${period.code}`
         });

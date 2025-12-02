@@ -12,6 +12,7 @@ const SecurityHelmet = helmet({
             "style-src": ["'self'", "https:", "'unsafe-inline'"],
             "script-src": ["'self'", "www.gstatic.com", "ajax.googleapis.com", "cdn.jsdelivr.net", "cdn.sheetjs.com", "'unsafe-inline'", "'unsafe-eval'"], // 'unsafe-eval' for Alpine
             "script-src-attr": ["'unsafe-inline'"],     // 'none' prevent scripts in html attributes (onclick, img onerror, etc.)
+            "worker-src": ["'self'", "blob:"],          // allow blob workers for confetti.js
             "img-src": ["*", "data:"],      // without "data:", we get a Bootstrap svg error
             upgradeInsecureRequests: [],
         },

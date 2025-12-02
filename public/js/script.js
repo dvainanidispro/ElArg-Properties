@@ -358,5 +358,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Confetti animation για elements με data-confetti attribute
+    initConfetti();
 
 });
+
+
+/**
+ * Εμφανίζει confetti animation γύρω από elements που έχουν data-confetti="true"
+ * Απαιτεί το canvas-confetti library (https://cdn.jsdelivr.net/npm/canvas-confetti)
+ */
+function initConfetti() {
+    // Έλεγχος αν το library έχει φορτώσει
+    if (typeof confetti === 'undefined') {
+        console.warn('canvas-confetti library not loaded');
+        return;
+    }
+    
+    const confettiElements = document.querySelectorAll('[data-confetti="true"]');
+    
+    confettiElements.forEach(element => {
+        // Υπολογισμός της θέσης του element στη σελίδα
+        const rect = element.getBoundingClientRect();
+        const originX = (rect.left + rect.width / 2) / window.innerWidth;
+        const originY = (rect.top + rect.height / 2) / window.innerHeight;
+        
+        // Περίμενε λίγο να φορτώσει η σελίδα
+        setTimeout(() => {
+            // Μικρό, subtle confetti burst γύρω από το element
+            confetti({
+                particleCount: 60,
+                spread: 60,
+                startVelocity: 25,
+                origin: { x: originX, y: originY },
+                colors: ['#177b45', '#28a745', '#20c997', '#ffc107', '#FFD700' , '#dd5507ff'],
+                ticks: 120,
+                gravity: 1.2,
+                scalar: 0.8
+            });
+        }, 800);
+    });
+}
