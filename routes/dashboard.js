@@ -98,11 +98,6 @@ dashboard.get(['/', '/dashboard'],
             });
             activeCanteenPeriod.pending = periodCanteens - activeCanteenPeriod.completed;
             activeCanteenPeriod.submittedPercent = (periodCanteens > 0) ? Math.round((activeCanteenPeriod.completed / periodCanteens) * 100) : 0;
-            
-            // Confetti animation όταν όλες οι καντίνες έχουν υποβάλει και η περίοδος είναι ανοιχτή
-            activeCanteenPeriod.confetti = (activeCanteenPeriod.completed === periodCanteens) && 
-                                           (periodCanteens > 0) && 
-                                           (currentPeriod.status === 'open');                        
         }
 
 

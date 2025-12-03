@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 /**
- * Εμφανίζει confetti animation γύρω από elements που έχουν data-confetti="true"
+ * Εμφανίζει confetti animation γύρω από elements που έχουν data-confetti, .easy-pie-chart class και data-percent="100"
  * Απαιτεί το canvas-confetti library (https://cdn.jsdelivr.net/npm/canvas-confetti)
  */
 function initConfetti() {
@@ -375,7 +375,7 @@ function initConfetti() {
         return;
     }
     
-    const confettiElements = document.querySelectorAll('[data-confetti="true"]');
+    const confettiElements = document.querySelectorAll('[data-confetti].easy-pie-chart[data-percent="100"]');
     
     confettiElements.forEach(element => {
         // Υπολογισμός της θέσης του element στη σελίδα
