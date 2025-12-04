@@ -47,8 +47,12 @@
                                                     <h2 class="text-warning display-6 fw-semibold">{{pendingCount}}</h2>
                                                 </div>
                                                 <div>
-                                                    <div class="easy-pie-chart" data-percent="{{submittedPercent}}" data-bar-color="#177b45" data-track-color="Wheat" data-scale-color="false" data-line-width="6" data-size="85" data-animate="1000" data-confetti>
-                                                        <span class="fw-bold"></span>
+                                                    <div class="easy-pie-chart" 
+                                                        data-percent="{{submittedPercent}}" 
+                                                        data-bar-color="#177b45" data-track-color="Wheat" data-scale-color="false" data-line-width="6" 
+                                                        data-size="85" data-animate="1000" 
+                                                        data-confetti data-period-status="{{period.status}}">
+                                                            <span class="fw-bold"></span>
                                                     </div>
                                                 </div>
                                                 <div class="">

@@ -375,8 +375,8 @@ function initConfetti() {
         return;
     }
     
-    const confettiElements = document.querySelectorAll('[data-confetti].easy-pie-chart[data-percent="100"]');
-    
+    const confettiElements = document.querySelectorAll('[data-confetti].easy-pie-chart[data-percent="100"][data-period-status="open"]');
+
     confettiElements.forEach(element => {
         // Υπολογισμός της θέσης του element στη σελίδα
         const rect = element.getBoundingClientRect();

@@ -312,8 +312,11 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
         transform: translateY(-3px);
     }
     hr {
-        margin-inline: 0.7rem;
+        margin: 0.5rem 0.7rem;
         border-top: 1px solid var(--border-color);
+        @media (width>1650px) {
+            margin-block: 1.5rem;
+        }
     }
     i{
         font-size: 3rem;
