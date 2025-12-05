@@ -44,6 +44,10 @@
                         {{/if}}
                     </div>
                 </div>
+
+
+
+
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="properties" class="dim-table table table-striped table-hover align-middle">
@@ -155,15 +159,19 @@
 </div>
 
 
-<script type="module">
-
+<script>
     // Μετρήσεις για τα φίλτρα
     if (!(new URLSearchParams(window.location.search)).size) {
-        Q('#count-all').set(` (${Q.count(' #properties tbody tr')})`);
-        Q('#count-leased-out').set(` (${Q.count(' #properties [data-asset-type="leased_out"]')})`);
-        Q('#count-rented').set(` (${Q.count(' #properties [data-asset-type="rented"]')})`);
-        Q('#count-non-parts').set(` (${Q.count(' #properties [data-non-part="false"]')})`);
+        const el = selector => document.getElementById(selector);
+        const q = selector => [...document.querySelectorAll(selector)];
+        el('count-all').textContent = ` (${q(' #properties tbody tr').length})`;
+        el('count-leased-out').textContent = ` (${q(' #properties [data-asset-type="leased_out"]').length})`;
+        el('count-rented').textContent = ` (${q(' #properties [data-asset-type="rented"]').length})`;
+        el('count-non-parts').textContent = ` (${q(' #properties [data-non-part="false"]').length})`;
     }
+</script>
+
+<script type="module">
 
     // Έλεγχος λήξης μισθώσεων ακινήτων
     checkLeaseExpiry();
