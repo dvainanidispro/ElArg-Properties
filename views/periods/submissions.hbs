@@ -143,7 +143,7 @@
                                             </span>
                                         {{/if}}
                                     </td>
-                                    <td>
+                                    <td data-sort-value="{{dateInput this.submission.updatedAt}}">
                                         {{#if this.submission.updatedAt}}
                                             {{date this.submission.updatedAt}}
                                         {{else}}
