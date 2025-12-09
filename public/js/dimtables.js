@@ -94,6 +94,20 @@ window.dimtables.defaultOptions = {
     return new Date(year, month - 1, day).getTime();
   }
 
+  // Μετατροπή αριθμού σε float (υποστήριξη ελληνικής και διεθνούς μορφής)
+  // Ελληνική: 1.234,56 → 1234.56
+  // Διεθνής: 1,234.56 → 1234.56
+  function parseNumericValue(str) {
+    if (!str) return 0;
+    const val = String(str).trim();
+    // Αν υπάρχει κόμμα, είναι ελληνική μορφή (1.234,56)
+    if (val.includes(',')) {
+      return parseFloat(val.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+    // Αλλιώς διεθνής μορφή (1,234.56) ή απλός αριθμός (1234.56)
+    return parseFloat(val.replace(/,/g, '')) || 0;
+  }
+
   // --- Βοηθητικά για ορατότητα γραμμών (flags + μία CSS κλάση) ---
   function syncRowHiddenClass(tr, opts) {
     const hidden = tr.dataset.dtFilterHidden === '1' || tr.dataset.dtPageHidden === '1';
@@ -290,8 +304,8 @@ window.dimtables.defaultOptions = {
           let bVal = bCell.getAttribute("data-sort-value") || bCell.textContent.trim();
 
           if (sortType === "number") {
-            aVal = parseFloat(aVal.replace(/\./g, '').replace(',', '.')) || 0;
-            bVal = parseFloat(bVal.replace(/\./g, '').replace(',', '.')) || 0;
+            aVal = parseNumericValue(aVal);
+            bVal = parseNumericValue(bVal);
           } else if (sortType === "date-gr") {
             aVal = parseGreekDate(aVal);
             bVal = parseGreekDate(bVal);

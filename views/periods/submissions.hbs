@@ -33,13 +33,13 @@
                                         <div class="center-contents">
                                             <div class="card-body d-flex justify-content-around align-items-center flex-wrap text-center lg">
                                                 <div class="">
-                                                    <h6 class="text-muted">Συνολικά Κυλικεία</h6>
+                                                    <h6 class="text-muted">Κυλικεία</h6>
                                                     <div class="text-primary fw-semibold display-6">
                                                         {{canteens.length}}
                                                     </div>
                                                 </div>
                                                 <div class="">
-                                                    <h6 class="text-muted">Υποβλήθηκαν</h6>
+                                                    <h6 class="text-muted">Υποβολές</h6>
                                                     <h2 class="text-success display-6 fw-semibold">{{submittedCount}}</h2>
                                                 </div>
                                                 <div class="">
@@ -90,7 +90,7 @@
                                     <th class="d-none">Λήξη <br> Μίσθωσης</th>
                                     <th class="sortable narrow-cell-m">Υποβολή <br>Στοιχείων</th>
                                     <th class="sortable narrow-cell-sm">Ημερομηνία <br>Υποβολής</th>
-                                    <th class="sortable narrow-cell-sm d-none d-xxl-table-cell" data-sort-type="number">Κόστος <br>Ρεύματος</th>
+                                    <th class="sortable narrow-cell-sm d-none d-xxl-table-cell" data-sort-type="number" >Κόστος <br>Ρεύματος</th>
                                     <th class="sortable narrow-cell-sm" data-sort-type="number">Μίσθωμα</th>
                                     <th class="narrow-cell-m">Ενέργειες</th>
                                 </tr>
@@ -151,10 +151,10 @@
                                         {{/if}}
                                     </td>
                                     <td class="d-none d-xxl-table-cell" data-sort-value="{{this.submission.electricity_cost}}" >
-                                        {{check this.submission.electricity_cost (euro this.submission.electricity_cost) '-'}}
+                                        {{euro this.submission.electricity_cost }}
                                     </td>
                                     <td class="" data-sort-value="{{this.submission.rent}}">
-                                        {{check this.submission.rent (euro this.submission.rent) '-'}}
+                                        {{euro this.submission.rent }}
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}
