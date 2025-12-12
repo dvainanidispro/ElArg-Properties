@@ -205,6 +205,7 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
             return {
                 ...period.toJSON(),
                 hasSubmission,
+                submission: hasSubmission ? period.submissions[0] : null,
                 submissionStatus: hasSubmission ? 'Έχουν υποβληθεί στοιχεία' : 'Εκκρεμεί υποβολή στοιχείων'
             };
         });

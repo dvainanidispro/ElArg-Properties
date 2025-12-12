@@ -54,16 +54,17 @@
                                         <th class="sortable" data-sort-type="date-gr">Προθεσμία <br>υποβολής</th>
                                         <th class="narrow-cell-l">Κατάσταση <br>Περιόδου</th>
                                         <th class="wide-cell">Κατάσταση Υποβολής</th>
+                                        <th class="sortable" data-sort-type="number">Μίσθωμα</th>
                                         <th class="wide-cell-m">Ενέργειες</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {{#each periods}}
                                     <tr>
-                                        <td>
+                                        <td class="text-wrap">
                                             <strong>{{this.name}}</strong>
                                         </td>
-                                        <td>
+                                        <td class="text-wrap">
                                             {{date this.start_date}} - {{date this.end_date}}
                                         </td>
                                         <td>{{date this.submission_deadline}}</td>
@@ -98,6 +99,9 @@
                                                     <span>Εκκρεμεί υποβολή στοιχείων</span>
                                                 </span>
                                             {{/if}}
+                                        </td>
+                                        <td>
+                                            {{check this.submission.rent (euro this.submission.rent) ''}}
                                         </td>
                                         <td>
                                             {{#if this.hasSubmission}}

@@ -160,7 +160,7 @@
                                     <div class="alert alert-warning my-4">
                                         <i class="ti-alert me-2"></i>
                                         <strong>Προσοχή:</strong> Η προθεσμία υποβολών έχει παρέλθει. 
-                                        Συνεπώς δεν μπορείτε να τροποποιήσετε τα παραπάνω στοιχεία.
+                                        Συνεπώς, δεν μπορείτε να τροποποιήσετε τα παραπάνω στοιχεία.
                                         Σε περίπτωση που διαπιστώσετε ότι χρειάζεται να γίνουν αλλαγές, παρακαλούμε, επικοινωνήστε με το Δήμο.
                                     </div>
                                     {{else}}
@@ -170,6 +170,11 @@
                                     </div>
                                     {{/if}}
                                 {{/unless}}
+
+                                <div class="alert alert-info my-4">
+                                    <i class="ti-info me-2"></i>
+                                    <strong>Σημείωση:</strong> Μετά την υποβολή των στοιχείων, το ποσό του μισθώματος θα εμφανίζεται στη <a href="/canteens/mycanteen/{{canteen.id}}/periods">σελίδα των περιόδων</a>.
+                                </div>
                                 
                                 <div class="d-flex gap-2">
                                     <button type="submit" class="btn btn-success btn-icon">
