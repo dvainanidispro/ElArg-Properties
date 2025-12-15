@@ -47,13 +47,14 @@ async function sendRemindersForPendingSubmissions () {
 
         //# 1 Βρίσκουμε την ενεργή περίοδο
         // Δεν βάζουμε onlyOpen=true στο getActiveCanteenPeriod, 
-        // γιατί μπορεί να θέλουμε να στείλουμε υπενθυμίσεις και μετά την προθεσμία υποβολής.
+        // γιατί στέλνουμε υπενθυμίσεις και μετά την προθεσμία υποβολής.
         const period = await getActiveCanteenPeriod();
         if (!period) {
-            log.info("Δεν βρέθηκε ενεργή ανοιτκή περίοδος. Δεν στάλθηκαν υπενθυμίσεις.");
+            log.info("Δεν βρέθηκε ενεργή περίοδος. Δεν στάλθηκαν υπενθυμίσεις.");
             return;
         }
         log.info(`Αποστολή υπενθυμίσεων για την ενεργή περίοδο: ${period.code}`);
+        const periodIsOpen = (period.status === 'open');
 
         //# 2 Βρίσκουμε όλα τα σχολεία για τα οποία δεν έχουν υποβληθεί στοιχεία
         const activeCanteens = await Models.Canteen.findAll({
@@ -82,8 +83,15 @@ async function sendRemindersForPendingSubmissions () {
             nest: true
         });
         
-        // log.info(canteens);
-        const canteensWithoutSubmission = activeCanteens.filter(c => !c.submissions || !c.submissions.id);
+        // log.info(activeCanteens);
+        let canteensWithoutSubmission = activeCanteens.filter(c => !c.submissions || !c.submissions.id);
+        
+        // Αν η περίοδος είναι κλειστή, κρατάμε μόνο τα αποθεκευμένα στο period.canteens (όχι όλα τα τρέχοντα ενεργά)
+        if (!periodIsOpen && period.canteens?.length) {
+            canteensWithoutSubmission = canteensWithoutSubmission.filter(c => period.canteens.includes(c.id));
+        }
+        log.info(canteensWithoutSubmission);
+        
         if (canteensWithoutSubmission.length === 0) {
             log.info("Όλα τα κυλικεία έχουν υποβάλει στοιχεία. Δεν στάλθηκαν υπενθυμίσεις.");
             return;
@@ -118,7 +126,7 @@ async function sendRemindersForPendingSubmissions () {
         });
 
         // Ενημέρωση canteens περιόδου με όλα τα active canteens
-        updatePeriodCanteens(period, activeCanteens);      // χωρίς await
+        periodIsOpen && updatePeriodCanteens(period, activeCanteens);      // χωρίς await
 
         //# 5 Αποστολή email στους Διευθυντές των σχολείων που δεν έχουν υποβάλει στοιχεία
         // Παράλληλη αποστολή όλων των emails
@@ -246,7 +254,7 @@ async function updatePeriodCanteens(period, canteens) {
             { where: { id: period.id } }
         );
         if (affectedRows > 0) {
-            log.success(`Ενημερώθηκαν οι Canteens στη Βάση Δεδομένων για την περίοδο ${period.name} .`);
+            log.success(`Ενημερώθηκαν οι Canteens στη Βάση Δεδομένων για την περίοδο ${period.name}.`);
         } else {
             log.warn(`Period ${period.id} update: no rows affected (maybe not found).`);
         }

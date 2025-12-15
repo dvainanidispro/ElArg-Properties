@@ -61,8 +61,8 @@
                                 <tbody>
                                     {{#each periods}}
                                     <tr>
-                                        <td class="text-wrap">
-                                            <strong>{{this.name}}</strong>
+                                        <td class="text-wrap period-name fw-bold">
+                                            {{this.name}}
                                         </td>
                                         <td class="text-wrap">
                                             {{date this.start_date}} - {{date this.end_date}}
