@@ -23,7 +23,7 @@
                                     <th class="wide-cell">Όνομα</th>
                                     <th class="wide-cell">Email</th>
                                     <th>Ρόλος</th>
-                                    <th class="narrow-cell-m">Κατάσταση</th>
+                                    <th class="narrow-cell-m">Ενεργός</th>
                                     <th>Δημιουργία</th>
                                     <th>Επεξεργασία</th>
                                 </tr>
@@ -41,9 +41,9 @@
                                     </td>
                                     <td>
                                         {{#if this.active}}
-                                            <span title="Ενεργός">✅</span>
+                                            <span title="Ενεργός"><i class="bi bi-check-circle-fill text-success"></i></span>
                                         {{else}}
-                                            <span title="Ανενεργός">❌</span>
+                                            <span title="Ανενεργός"><i class="bi bi-x-circle text-dark"></i></span>
                                         {{/if}}
                                     </td>
                                     <td>{{date this.createdAt}}</td>

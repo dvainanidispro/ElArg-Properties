@@ -172,7 +172,7 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
         });
 
         if (!canteen) {
-            log.warn(`Canteen ${canteenId} δεν βρέθηκε ή δεν ανήκει στον principal ${principal.id}`);
+            log.warn(`Canteen ${canteenId} δεν βρέθηκε, δεν είναι ενεργό ή δεν ανήκει στον principal ${principal.id}`);
             return res.status(403).render('errors/403', { 
                 message: 'Δεν έχετε δικαίωμα πρόσβασης σε αυτό το κυλικείο' 
             });

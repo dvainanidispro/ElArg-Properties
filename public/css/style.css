@@ -12,7 +12,7 @@
 
     --bs-btn-bg: green;
     --bs-orange: hsl(39, 100%, 46%);
-    --bs-warning2: hsl(28, 100%, 50%);
+    --bs-warning2: hsl(28, 100%, 48%);
     --bs-warning-rgb: 235, 152, 0;
     /* --bs-btn-bg: hsl(39, 100%, 36%); */
     --bs-pink: hsl(332, 100%, 60%);
@@ -181,6 +181,10 @@ input::placeholder{
 }
 .bg-danger-light{
     background-color: hsl(27, 100%, 84%) !important;
+}
+.bg-blue{
+    background-color: hsl(231, 97%, 65%) !important;
+    color: var(--bs-light) !important;
 }
 .bg-blue-light{
     background-color: hsl(210, 100%, 86%) !important;
