@@ -10,13 +10,6 @@ import log from '../logger.js';
 import { createPeriodEndingInMonthOf } from './functions.js';
 
 
-log.system("Ξεκινά η διαδικασία δημιουργίας περιόδου...");
-
-const dateForPeriodGeneration = new Date(); // σημερινή ημερομηνία
-// const dateForPeriodGeneration = '2025-11-02'; // συγκεκριμένη ημερομηνία για δοκιμές
-
-
-
 
 
 /**
@@ -24,10 +17,17 @@ const dateForPeriodGeneration = new Date(); // σημερινή ημερομην
  * @param {string|Date} date - Η ημερομηνία για την οποία θα δημιουργηθεί η περίοδος (προαιρετική, default: σημερινή ημερομηνία)
  * @returns {Promise<Object|null>} Η νέα περίοδος που δημιουργήθηκε ή null αν δεν χρειαζόταν δημιουργία
  */
-async function generatePeriod(date = dateForPeriodGeneration) {
+async function generatePeriod(date = new Date()) {
+
+    // date = '2026-02-11'; // συγκεκριμένη ημερομηνία για δοκιμές
+    log.dev(date);
+
+    log.info("Ξεκινά η διαδικασία δημιουργίας περιόδου.");
+
     try {
         // Βρίσκουμε ποια περίοδος λήγει στον μήνα της δοσμένης ημερομηνίας
         const periodData = createPeriodEndingInMonthOf(date);
+        log.dev(periodData);
         
         if (!periodData) {
             log.info(`Δεν υπάρχει περίοδος προς δημιουργία για αυτό το μήνα.`);
@@ -42,7 +42,7 @@ async function generatePeriod(date = dateForPeriodGeneration) {
         });
 
         if (existingPeriod) {
-            log.info(`Η περίοδος ${periodData.code} υπάρχει ήδη στη βάση δεδομένων`);
+            log.info(`Η περίοδος ${periodData.code} υπάρχει ήδη στη βάση δεδομένων.`);
             return null;
         }
 
@@ -56,12 +56,20 @@ async function generatePeriod(date = dateForPeriodGeneration) {
         log.error(`Σφάλμα κατά τη δημιουργία περιόδου: ${error.message}`);
         throw error;
     } finally {
-        log.system("Ολοκληρώθηκε η διαδικασία δημιουργίας περιόδου.");
+        // log.success("Ολοκληρώθηκε η διαδικασία δημιουργίας περιόδου.");
     }
 }
 
 
+/**
+ * Επιστρέφει χωρίς να δημιουργεί, την επόμενη περίοδο που λήγει στον μήνα της δοσμένης ημερομηνίας
+ * @param {string|Date} date
+ * @returns {Object|null} Η επόμενη περίοδος
+ */
+function justShowNextPeriod(date = new Date()) {
+    return createPeriodEndingInMonthOf(date);
+}
 
-export { generatePeriod };
 
 
+export { generatePeriod, justShowNextPeriod };

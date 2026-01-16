@@ -2,6 +2,7 @@ import { Router } from 'express';
 import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
 import { subperiodsFor, calculateRentFields, getActiveCanteenPeriod } from '../controllers/periods/periods.js';
+import { generatePeriod, justShowNextPeriod } from '../controllers/periods/generate.js';
 import log from '../controllers/logger.js';
 
 /**
@@ -359,6 +360,20 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
 
 
 /**
+ * POST /periods/generate - Δημιουργία νέας περιόδου
+ */
+periods.post('/generate', can('edit:content'), async (req, res) => {
+    log.info('Αίτημα για δημιουργία νέας περιόδου κυλικείων');
+    try {
+        await generatePeriod();
+        res.json({ success: true, message: 'Η διαδικασία ολοκληρώθηκε' });
+    } catch (error) {
+        log.error(`Σφάλμα κατά τη δημιουργία περιόδου: ${error}`);
+        res.status(500).json({ success: false, message: 'Σφάλμα κατά τη δημιουργία περιόδου' });
+    }
+});
+
+/**
  * GET /periods - Εμφάνιση λίστας όλων των periods για canteens
  */
 periods.get('/', can('view:content'), async (req, res) => {
@@ -368,9 +383,13 @@ periods.get('/', can('view:content'), async (req, res) => {
             attributes: ['id', 'code', 'name', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'status', 'createdAt'],
             order: [['end_date', 'DESC']]
         });
+
+        const nextPeriodId = justShowNextPeriod()?.code ?? null;
+        const showNextPeriodButton = nextPeriodId && !periods.some(p => p.code === nextPeriodId);
         
         res.render('periods/periods', { 
             periods,
+            showNextPeriodButton,
             user: req.user,
             title: 'Περίοδοι Κυλικείων'
         });
