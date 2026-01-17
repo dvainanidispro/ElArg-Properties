@@ -1,6 +1,13 @@
 import Models from '../../models/models.js';
 
 /**
+ * Μετατρέπει ένα Date object σε string μορφής YYYY-MM-DD
+ */
+function dateOnly(date) {
+    return date.toISOString().split('T')[0];
+}
+
+/**
  * Φέρνει την πιο πρόσφατη περίοδο με status 'open' ή 'closed'. 
  * Σημείωση: Το status της περιόδου είναι ένα virtual πεδίο που υπολογίζεται από τις ημερομηνίες και το πεδίο active.
  * Αν το onlyOpen είναι ρητά true, μόνο οι 'open' periods λαμβάνονται υπόψη.
@@ -48,16 +55,35 @@ async function getActiveCanteenPeriod(onlyOpen = false) {
  * // ]
  */
 function subperiodsFor(period, lease) {
-    const periodStart = new Date(period.start_date);
-    const periodEnd = new Date(period.end_date);
+    let periodStart = new Date(period.start_date);
+    let periodEnd = new Date(period.end_date);
+    const leaseStart = new Date(lease.start_date);
+    const leaseEnd = new Date(lease.end_date);
+    
+    // Περιορισμός της περιόδου στην έναρξη του lease (αν το lease.start_date είναι μετά το period.start_date)
+    if (leaseStart > periodStart) {
+        periodStart = leaseStart;
+    }
+    
+    // Περιορισμός της περιόδου στη λήξη του lease (αν το lease.end_date είναι πριν το period.end_date)
+    if (leaseEnd < periodEnd) {
+        periodEnd = leaseEnd;
+    }
+    
+    // Αν το lease δεν επικαλύπτει καθόλου την περίοδο, επιστρέφουμε κενό array
+    // Αυτό μπορεί να συμβεί διότι μετά τις προσαρμογές, το periodStart μπορεί να είναι μετά το periodEnd
+    if (periodStart > periodEnd) {
+        return [];
+    }
+    
     const rentAdjustments = lease.rent_adjustments;
     const defaultRent = lease.rent;
     
     // Αν δεν υπάρχουν rent adjustments, επιστρέφουμε την ολόκληρη περίοδο
     if (!rentAdjustments || !Array.isArray(rentAdjustments) || rentAdjustments.length === 0) {
         return [{
-            start_date: period.start_date,
-            end_date: period.end_date,
+            start_date: dateOnly(periodStart),
+            end_date: dateOnly(periodEnd),
             rent: defaultRent
         }];
     }
@@ -75,8 +101,8 @@ function subperiodsFor(period, lease) {
     // Αν κανένα adjustment δεν επικαλύπτει την περίοδο, επιστρέφουμε την ολόκληρη περίοδο
     if (relevantAdjustments.length === 0) {
         return [{
-            start_date: period.start_date,
-            end_date: period.end_date,
+            start_date: dateOnly(periodStart),
+            end_date: dateOnly(periodEnd),
             rent: defaultRent
         }];
     }
@@ -94,8 +120,8 @@ function subperiodsFor(period, lease) {
             gapEnd.setDate(gapEnd.getDate() - 1); // Μια μέρα πριν από το adjustment
             
             subperiods.push({
-                start_date: currentDate.toISOString().split('T')[0],
-                end_date: gapEnd.toISOString().split('T')[0],
+                start_date: dateOnly(currentDate),
+                end_date: dateOnly(gapEnd),
                 rent: defaultRent
             });
         }
@@ -105,8 +131,8 @@ function subperiodsFor(period, lease) {
         const subEnd = periodEnd < adjEnd ? periodEnd : adjEnd;
         
         subperiods.push({
-            start_date: subStart.toISOString().split('T')[0],
-            end_date: subEnd.toISOString().split('T')[0],
+            start_date: dateOnly(subStart),
+            end_date: dateOnly(subEnd),
             rent: adjustment.rent
         });
         
@@ -118,13 +144,52 @@ function subperiodsFor(period, lease) {
     // Αν υπάρχει υπολειπόμενη περίοδος μετά τα adjustments, χρησιμοποιούμε default rent
     if (currentDate <= periodEnd) {
         subperiods.push({
-            start_date: currentDate.toISOString().split('T')[0],
-            end_date: period.end_date,
+            start_date: dateOnly(currentDate),
+            end_date: dateOnly(periodEnd),
             rent: defaultRent
         });
     }
     
     return subperiods;
+}
+
+/**
+ * Επιστρέφει σε array το union των subperiods για όλα τα leases και για μία περίοδο.
+ * Αν δεν υπάρχουν leases ή δεν προκύψουν subperiods (δηλαδή όλα τα leases είναι "εκτός" περιόδου), 
+ * επιστρέφει ένα default array με ένα subperiod με rent: 0.
+ * NOTE: Δεν καλύπτεται (με ακρίβεια) η περίπτωση όπου μέρος της περιόδου δεν καλύπτεται από κανένα lease.
+ * Ίσως θα πρέπει, μελλοντικά, τα κενά να καλύπτονται με subperiods με rent: 0 
+ * (όπως συμβαίνει αν ολόκληρη η περίοδος είναι ακάλυπτη).
+ * 
+ * @param {object} period - Το period object με start_date και end_date
+ * @param {array} leases - Array από lease objects
+ * @returns {array} Array από όλα τα subperiods για όλα τα leases
+ */
+function getSubperiods(period, leases) {
+
+    const defaultSubperiods= [{
+        start_date: period.start_date,
+        end_date: period.end_date,
+        rent: 0
+    }];
+
+    // Αν δεν υπάρχουν leases, επιστρέφουμε ένα fallback subperiod με rent: 0
+    if (!leases || !Array.isArray(leases) || leases.length === 0) {
+        return defaultSubperiods;
+    }
+    
+    const allSubperiods = [];
+    
+    for (const lease of leases) {
+        const leaseSubperiods = subperiodsFor(period, lease);
+        allSubperiods.push(...leaseSubperiods);
+    }
+
+    if (allSubperiods.length === 0) {
+        return defaultSubperiods;
+    }
+    
+    return allSubperiods;
 }
 
 /**
@@ -151,4 +216,4 @@ function calculateRentFields(subperiodsData) {
     };
 }
 
-export { getActiveCanteenPeriod, subperiodsFor, calculateRentFields };
+export { getActiveCanteenPeriod, subperiodsFor, getSubperiods, calculateRentFields };

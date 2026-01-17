@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
-import { subperiodsFor, calculateRentFields } from '../controllers/periods/periods.js';
+import { getSubperiods, calculateRentFields } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 
@@ -264,11 +264,11 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
                 model: Models.Lease,
                 as: 'leases',
                 where: {
-                    property_type: 'canteen'
+                    property_type: 'canteen',
+                    active: true
                 },
                 required: false,
-                order: [['lease_end', 'DESC']],
-                limit: 1
+                order: [['lease_end', 'DESC']]
             }]
         });
 
@@ -311,16 +311,12 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
             }]
         });
 
-        // Πάρε το πιο πρόσφατο lease και δημιούργησε subperiods
-        const latestLease = canteen.leases?.[0];
-        const rentOffer = latestLease?.rent || 0;
+        // Δημιούργησε subperiods για όλα τα ενεργά leases
+        const activeLeases = canteen.leases || [];
+        const rentOffer = activeLeases[0]?.rent || 0;
         
-        // Δημιουργία subperiods με βάση το lease και την περίοδο
-        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{
-            start_date: period.start_date,
-            end_date: period.end_date,
-            rent: 0
-        }];
+        // Δημιουργία subperiods με βάση όλα τα leases και την περίοδο
+        const subperiods = getSubperiods(period, canteen.leases);
 
         res.render('principals/submission', {
             canteen,
@@ -365,11 +361,11 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
                 model: Models.Lease,
                 as: 'leases',
                 where: {
-                    property_type: 'canteen'
+                    property_type: 'canteen',
+                    active: true
                 },
                 required: false,
-                order: [['lease_end', 'DESC']],
-                limit: 1
+                order: [['lease_end', 'DESC']]
             }]
         });
 
@@ -447,10 +443,10 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
         }
 
         // Πάρε τα subperiods με τα rent values και συγχώνευσε με τα δεδομένα από το frontend
-        const latestLease = canteen.leases?.[0];
-        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{ start_date: period.start_date, end_date: period.end_date, rent: 0 }];
+        const subperiods = getSubperiods(period, canteen.leases);
         
         // Συγχώνευση subperiods με subperiodsData
+        // Ίσως θα έπρεπε, ως validation, να ελέγχουμε αν subperiodsData.length !== subperiods.length.
         // Το πεδίο rent του front-end, αν σταλεί κακόβουλα, αντικαθίσταται με το σωστό από το lease
         const completeSubperiodsData = subperiodsData.map((data, index) => ({
             ...data,        // Δεδομένα από το frontend
@@ -532,11 +528,11 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
                 model: Models.Lease,
                 as: 'leases',
                 where: {
-                    property_type: 'canteen'
+                    property_type: 'canteen',
+                    active: true
                 },
                 required: false,
-                order: [['lease_end', 'DESC']],
-                limit: 1
+                order: [['lease_end', 'DESC']]
             }]
         });
 
@@ -614,8 +610,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         }
 
         // Πάρε τα subperiods με τα rent values και συγχώνευσε με τα δεδομένα από το frontend
-        const latestLease = canteen.leases?.[0];
-        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{ start_date: period.start_date, end_date: period.end_date, rent: 0 }];
+        const subperiods = getSubperiods(period, canteen.leases);
         
         // Συγχώνευση subperiods με subperiodsData
         const completeSubperiodsData = subperiodsData.map((data, index) => ({

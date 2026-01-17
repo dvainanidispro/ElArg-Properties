@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
-import { subperiodsFor, calculateRentFields, getActiveCanteenPeriod } from '../controllers/periods/periods.js';
+import { getSubperiods, calculateRentFields } from '../controllers/periods/periods.js';
 import { generatePeriod, justShowNextPeriod } from '../controllers/periods/generate.js';
 import log from '../controllers/logger.js';
 
@@ -532,10 +532,10 @@ periods.get('/submissions/new', can('edit:content'), async (req, res) => {
                         }
                     ],
                     where: {
-                        property_type: 'canteen'
+                        property_type: 'canteen',
+                        active: true
                     },
                     order: [['lease_end', 'DESC']],
-                    limit: 1,
                     required: false
                 }
             ]
@@ -558,13 +558,8 @@ periods.get('/submissions/new', can('edit:content'), async (req, res) => {
             return res.redirect(`/canteens/periods/${periodId}/submissions/${existingSubmission.id}`);
         }
 
-        // Πάρε το πιο πρόσφατο lease και δημιούργησε subperiods
-        const latestLease = canteen.leases?.[0];
-        const subperiods = latestLease ? subperiodsFor(period, latestLease) : [{
-            start_date: period.start_date,
-            end_date: period.end_date,
-            rent: 0
-        }];
+        // Δημιούργησε subperiods για όλα τα ενεργά leases
+        const subperiods = getSubperiods(period, canteen.leases);
 
         res.render('periods/edit-submission', {
             period,
