@@ -6,6 +6,14 @@ import log from '../controllers/logger.js';
 
 /**
  * Routes for managing canteens of the logged-in principal.
+ * 
+ * Available routes:
+ * - GET    /                                             - Εμφάνιση όλων των κυλικείων του συνδεδεμένου principal
+ * - GET    /:canteenId/periods                           - Εμφάνιση περιόδων συγκεκριμένου κυλικείου
+ * - GET    /:canteenId/periods/:periodId/submission      - Εμφάνιση φόρμας υποβολής στοιχείων
+ * - POST   /:canteenId/periods/:periodId/submission      - Δημιουργία νέου submission
+ * - PUT    /:canteenId/periods/:periodId/submission      - Ενημέρωση υπάρχοντος submission
+ * 
  * @type {Router}
  */
 const myCanteen = Router();

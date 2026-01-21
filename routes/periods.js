@@ -8,6 +8,19 @@ import log from '../controllers/logger.js';
 /**
  * Routes for managing periods (canteens only). Path: /canteens/periods
  * @type {Router}
+ * 
+ * Routes defined in this file: 
+ * TODO: Να αλλάξει η σειρά στο αρχείο ώστε να ταιρίαζει με αυτά εδώ: 
+ * - GET    /                       - Εμφάνιση λίστας όλων των periods για canteens
+ * - POST   /generate               - Δημιουργία νέας περιόδου
+ * - GET    /:id                    - Εμφάνιση στοιχείων συγκεκριμένης περιόδου
+ * - PUT    /:id                    - Ενημέρωση στοιχείων περιόδου
+ * - GET    /:id/logs               - Εμφάνιση logs reminders για συγκεκριμένη περίοδο
+ * - GET    /submissions/new        - Φόρμα για δημιουργία νέας υποβολής
+ * - POST   /submissions            - Δημιουργία νέας υποβολής στοιχείων
+ * - GET    /:periodId/submissions                  - Εμφάνιση υποβολών στοιχείων για συγκεκριμένη περίοδο
+ * - GET    /:periodId/submissions/:submissionId    - Εμφάνιση συγκεκριμένης υποβολής
+ * - PUT    /:periodId/submissions/:submissionId    - Ενημέρωση υποβολής στοιχείων
  */
 
 const periods = Router();
@@ -186,11 +199,11 @@ periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (
 });
 
 /**
- * GET /periods/:periodId/logs - Εμφάνιση logs reminders για συγκεκριμένη περίοδο
+ * GET /periods/:id/logs - Εμφάνιση logs reminders για συγκεκριμένη περίοδο
  */
-periods.get('/:periodId/logs', can('view:content'), async (req, res) => {
+periods.get('/:id/logs', can('view:content'), async (req, res) => {
     try {
-        const periodId = parseInt(req.params.periodId);
+        const periodId = parseInt(req.params.id);
         
         // Βρίσκουμε την περίοδο
         const period = await Models.Period.findByPk(periodId);

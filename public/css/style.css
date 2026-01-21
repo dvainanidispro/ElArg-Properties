@@ -345,6 +345,20 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     90% { transform: translateY(0); }
 }
 
+.flash-it{
+    animation: flash-shadow 1s alternate;
+	animation-iteration-count: 6;	/* 3 φορές */
+}
+
+@keyframes flash-shadow {
+	from {
+		box-shadow: 0 0 10px -8px gold;	
+	}
+	to {
+		box-shadow: 0 0 10px 8px gold;
+	}
+}
+
 .rent-adjustment-item{
     padding: 0.6rem 1.2rem !important;
     background-color: hsl(240, 67%, 94%);

@@ -7,6 +7,42 @@ import { getActiveCanteenPeriod } from '../controllers/periods/periods.js';
 
 /**
  * Router for canteens-related routes.
+ * 
+ * Available routes:
+ * PRINCIPALS:
+ * - GET    /principals                         - Εμφάνιση λίστας όλων των principals
+ * - GET    /principals/new                     - Φόρμα για νέο principal
+ * - GET    /principals/:id                     - Εμφάνιση στοιχείων συγκεκριμένου principal
+ * - POST   /principals                         - Δημιουργία νέου principal
+ * - PUT    /principals/:id                     - Ενημέρωση στοιχείων principal
+ * - DELETE /principals/:id                     - Διαγραφή principal
+ * 
+ * CANTEENS:
+ * - GET    /                                   - Redirect στο /canteens/canteens
+ * - GET    /canteens                           - Εμφάνιση λίστας όλων των canteens
+ * - GET    /canteens/new                       - Φόρμα για νέο canteen
+ * - GET    /canteens/:id                       - Εμφάνιση στοιχείων συγκεκριμένου canteen
+ * - POST   /canteens                           - Δημιουργία νέου canteen
+ * - PUT    /canteens/:id                       - Ενημέρωση στοιχείων canteen
+ * - DELETE /canteens/:id                       - Διαγραφή canteen
+ * 
+ * LEASES:
+ * - GET    /leases                             - Εμφάνιση λίστας όλων των leases για canteens
+ * - GET    /leases/new                         - Φόρμα για νέο lease
+ * - GET    /leases/:id                         - Εμφάνιση στοιχείων συγκεκριμένου lease
+ * - POST   /leases                             - Δημιουργία νέου lease
+ * - PUT    /leases/:id                         - Ενημέρωση στοιχείων lease
+ * - DELETE /leases/:id                         - Διαγραφή lease
+ * 
+ * ADDITIONAL ROUTES FOR LEASES:
+ * - GET    /canteens/:id/leases                - Λίστα leases συγκεκριμένου canteen
+ * - GET    /canteens/:id/leases/history        - Ιστορικό όλων των μισθώσεων συγκεκριμένου canteen
+ * - GET    /submissions, /pending              - Redirect σε ενεργή περίοδο
+ * 
+ * SUBROUTES (imported from other files):
+ * - /periods                                   - Διαχείριση περιόδων (periods router)
+ * - /mycanteen                                 - Διαχείριση κυλικείων principals (myCanteen router)
+ * 
  * @type {Router}
  */
 const canteens = Router();
@@ -913,7 +949,8 @@ canteens.delete('/leases/:id', can('edit:content'), async (req, res) => {
 
 
 
-////////////////////   AUXILIARY ROUTES ΓΙΑ LEASES   ////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////         ADDITIONAL ROUTES ΓΙΑ LEASES         ///////////////////////////
 
 /**
  * GET /canteens/canteens/:id/leases - Λίστα leases συγκεκριμένου canteen

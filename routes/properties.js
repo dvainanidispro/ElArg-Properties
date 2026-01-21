@@ -6,6 +6,37 @@ import { Op } from 'sequelize';
 
 /**
  * Router for properties-related routes.
+ * 
+ * Available routes:
+ * PARTIES:
+ * - GET    /parties                            - Εμφάνιση λίστας όλων των parties
+ * - GET    /parties/new                        - Φόρμα για νέο party
+ * - GET    /parties/:id                        - Εμφάνιση στοιχείων συγκεκριμένου party
+ * - POST   /parties                            - Δημιουργία νέου party
+ * - PUT    /parties/:id                        - Ενημέρωση στοιχείων party
+ * - DELETE /parties/:id                        - Διαγραφή party
+ * 
+ * PROPERTIES:
+ * - GET    /, /properties, /estate             - Εμφάνιση λίστας όλων των properties
+ * - GET    /properties/new                     - Φόρμα για νέο property
+ * - GET    /properties/:id, /estate/:id        - Εμφάνιση στοιχείων συγκεκριμένου property
+ * - POST   /properties                         - Δημιουργία νέου property
+ * - PUT    /properties/:id                     - Ενημέρωση στοιχείων property
+ * - DELETE /properties/:id                     - Διαγραφή property
+ * 
+ * LEASES:
+ * - GET    /leases                             - Εμφάνιση λίστας όλων των leases
+ * - GET    /leases/new                         - Φόρμα για νέο lease
+ * - GET    /leases/:id                         - Εμφάνιση στοιχείων συγκεκριμένου lease
+ * - POST   /leases                             - Δημιουργία νέου lease
+ * - PUT    /leases/:id                         - Ενημέρωση στοιχείων lease
+ * - DELETE /leases/:id                         - Διαγραφή lease
+ * 
+ * ADDITIONAL ROUTES FOR LEASES:
+ * - GET    /properties/:id/leases              - Λίστα leases συγκεκριμένου property
+ * - GET    /parties/:id/leases                 - Λίστα leases συγκεκριμένου party
+ * - GET    /properties/:id/leases/history      - Ιστορικό όλων των μισθώσεων συγκεκριμένου property
+ * 
  * @type {Router}
  */
 const properties = Router();
@@ -900,7 +931,9 @@ properties.delete('/leases/:id', can('edit:content'), async (req, res) => {
 });
 
 
-////////////////////   AUXILIARY ROUTES ΓΙΑ LEASES   ////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////       ADDITIONAL ROUTES ΓΙΑ LEASES        //////////////////////////////
 
 /**
  * GET /properties/properties/:id/leases - Λίστα leases συγκεκριμένου property

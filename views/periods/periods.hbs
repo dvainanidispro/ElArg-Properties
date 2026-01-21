@@ -14,7 +14,7 @@
                         <div class="mb-3">
                             <button 
                                 type="button" 
-                                class="btn btn-success"
+                                class="btn btn-icon bg-purple flash-it"
                                 x-data
                                 @click="
                                     fetch('/canteens/periods/generate', { 
@@ -25,8 +25,8 @@
                                     .then(() => window.location.reload())
                                     .catch(() => window.location.reload())
                                 ">
-                                <i class="ti-plus me-2"></i>
-                                Δημιουργία επόμενης περιόδου
+                                <i class="bi bi-calendar-plus"></i>
+                                <span>Δημιουργία επόμενης περιόδου</span>
                             </button>
                         </div>
                     {{/if}}
