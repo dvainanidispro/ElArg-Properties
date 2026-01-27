@@ -137,9 +137,9 @@
                                     </td>
                                     <td>
                                         {{#if (eq this.lease_direction 'incoming')}}
-                                            <span class="badge bg-info">Εισερχόμενη</span>
+                                            <span class="badge bg-pink fs-6">{{leaseDirectionShortText 'incoming'}}</span>
                                         {{else if (eq this.lease_direction 'outgoing')}}
-                                            <span class="badge bg-warning">Εξερχόμενη</span>
+                                            <span class="badge bg-purple fs-6">{{leaseDirectionShortText 'outgoing'}}</span>
                                         {{else}}
                                             <span class="text-muted">-</span>
                                         {{/if}}

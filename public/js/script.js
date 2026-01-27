@@ -138,29 +138,45 @@ function periodDescription(startDate, endDate) {
 
 /**
  * Ελέγχει τα ενεργά badges για ληγμένες μισθώσεις και μισθώσεις που λήγουν σύντομα
- * @param {number} monthsBeforeExpiry - Αριθμός μηνών πριν τη λήξη για να θεωρηθεί "λήγει σύντομα" (προεπιλογή: 6)
+ * @param {number} thresholdMonths - Αριθμός μηνών για το όριο "λήγει σύντομα" και "πολύ παλιά λήξη" (προεπιλογή: 6)
  * @param {string} expiredText - Το κείμενο για ληγμένες μισθώσεις (προεπιλογή: "Έχει λήξει")
  * @param {string} expiringSoonText - Το κείμενο για μισθώσεις που λήγουν σύντομα (προεπιλογή: "Λήγει σύντομα")
  */
-function checkLeaseExpiry(monthsBeforeExpiry = 6, expiredText = 'Έχει λήξει', expiringSoonText = 'Λήγει σύντομα') {
-    const statusBadges = document.querySelectorAll('.status-badge');
+function checkLeaseExpiry(thresholdMonths = 6, expiredText = 'Έχει λήξει', expiringSoonText = 'Λήγει σύντομα') {
+    const statusBadges = document.querySelectorAll('.status-badge.bg-success');
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD format
     
     // Υπολογισμός ημερομηνίας όριου λήξης
     const expiryThreshold = new Date(today);
-    expiryThreshold.setMonth(today.getMonth() + monthsBeforeExpiry);
+    expiryThreshold.setMonth(today.getMonth() + thresholdMonths);
     const expiryThresholdStr = expiryThreshold.toISOString().split('T')[0];
+    // Υπολογισμός ημερομηνίας πολύ παλιάς λήξης
+    const oldExpiryThreshold = new Date(today);
+    oldExpiryThreshold.setMonth(today.getMonth() - thresholdMonths);
+    const oldExpiryThresholdStr = oldExpiryThreshold.toISOString().split('T')[0];
     
     statusBadges.forEach(badge => {
         const leaseEndStr = badge.getAttribute('data-lease-end');
+        const isLatestStr = badge.getAttribute('data-is-latest');
         
         if (leaseEndStr) {
-            if (leaseEndStr < todayStr) {
-                // Ληγμένη μίσθωση
+            if (leaseEndStr < oldExpiryThresholdStr){
+                // Ληγμένη μίσθωση εδώ και πολύ καιρό
                 badge.textContent = expiredText;
                 badge.classList.remove('bg-success');
-                badge.classList.add('bg-danger', 'text-light');
+                badge.classList.add('bg-gray');
+            } else if (leaseEndStr < todayStr) {
+                // Πρόσφατα ληγμένη μίσθωση
+                badge.textContent = expiredText;
+                badge.classList.remove('bg-success');
+                if (isLatestStr !== 'false') {
+                    // Ληγμένη ΜΕ πρόβλημα (δεν υπάρχει νεότερη ή δεν υπάρχει το attribute)
+                    badge.classList.add('bg-danger', 'text-light');
+                } else {
+                    // Ληγμένη αλλά ΟΚ (υπάρχει νεότερη)
+                    badge.classList.add('bg-gray');
+                }
             } else if (leaseEndStr <= expiryThresholdStr) {
                 // Μίσθωση που λήγει σύντομα
                 badge.textContent = expiringSoonText;

@@ -3,6 +3,7 @@ import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 import { Op } from 'sequelize';
+import { markLatestLeases } from '../controllers/utils.js';
 
 /**
  * Router for properties-related routes.
@@ -670,6 +671,9 @@ properties.get('/leases', can('view:content'), async (req, res) => {
             ],
             order: [['id', 'DESC']],
         });
+        
+        // Μαρκάρισμα του πιο πρόσφατου lease για κάθε property
+        markLatestLeases(leases);
         
         res.render('properties/leases', { 
             leases,

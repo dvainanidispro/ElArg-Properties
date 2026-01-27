@@ -85,4 +85,29 @@ let descriptions = {
     },
 };
 
-export { presentTime, greekdate, descriptions };
+
+
+
+/**
+ * Μαρκάρει το πιο πρόσφατο lease για κάθε property (με βάση το lease_end).
+ * Προσθέτει το πεδίο isLatest σε κάθε lease.
+ * @param {Array} leases - Array από leases
+ * @returns {Array} Το ίδιο array με τα leases μαρκαρισμένα
+ */
+let markLatestLeases = (leases) => {
+    // Ομαδοποίηση leases ανά property_id
+    const leasesByProperty = Object.groupBy(leases, lease => lease.property_id);
+    
+    // Μαρκάρισμα του πιο πρόσφατου lease για κάθε property
+    Object.values(leasesByProperty).forEach(propertyLeases => {
+        const latestLease = propertyLeases.reduce((latest, lease) => {
+            lease.isLatest = false; // Αρχικοποίηση με false κατά το loop
+            return (lease.lease_end > latest.lease_end) ? lease : latest;
+        });
+        latestLease.isLatest = true;  // true μόνο για το πιο πρόσφατο lease
+    });
+    
+    return leases;
+};
+
+export { presentTime, greekdate, descriptions, markLatestLeases };

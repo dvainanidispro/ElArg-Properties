@@ -4,6 +4,7 @@ import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
 import { Op } from 'sequelize';
 import { getActiveCanteenPeriod } from '../controllers/periods/periods.js';
+import { markLatestLeases } from '../controllers/utils.js';
 
 /**
  * Router for canteens-related routes.
@@ -650,6 +651,8 @@ canteens.get('/leases', can('view:content'), async (req, res) => {
             ],
             order: [['id', 'DESC']],
         });
+    
+        markLatestLeases(leases);       // Μαρκάρισμα κάθε lease αν είναι το πιο πρόσφατο για το property του
         
         res.render('canteens/leases', { 
             leases,
