@@ -100,6 +100,10 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
         // Πάρε τα αποθηκευμένα δεδομένα από την υποβολή
         const subperiods = submission.data || [];
         
+        // Flatten party και lease για εύκολη πρόσβαση στο view
+        submission.canteen.party = submission.canteen.leases?.[0]?.party || null;
+        submission.canteen.lease = submission.canteen.leases?.[0] || null;
+        
         res.render('periods/edit-submission', {
             period,
             submission,

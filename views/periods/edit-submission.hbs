@@ -37,12 +37,12 @@
                                         <i class="ti-info-alt me-2"></i>
                                         Πληροφορίες Κυλικείου
                                     </h6>
-                                    <strong>Όνομα:</strong> {{canteen.name}}<br>
+                                    <strong>Όνομα:</strong> <a href="/canteens/canteens/{{canteen.id}}">{{canteen.name}}</a><br>
                                     {{#if canteen.principal}}
-                                        <strong>Διευθυντής:</strong> {{canteen.principal.name}}<br>
+                                        <strong>Διευθυντής:</strong> <a href="/canteens/principals/{{canteen.principal.id}}">{{canteen.principal.name}}</a><br>
                                     {{/if}}
                                     {{#if canteen.party}}
-                                        <strong>Μισθωτής:</strong> {{canteen.party.name}}<br>
+                                        <strong>Μισθωτής:</strong> <a href="/properties/parties/{{canteen.party.id}}">{{canteen.party.name}}</a><br>
                                     {{/if}}
                                     {{#if canteen.area}}
                                         <strong>Επιφάνεια:</strong> {{canteen.area}} τ.μ.<br>
@@ -60,7 +60,7 @@
                                         <i class="ti-calendar me-2"></i>
                                         Πληροφορίες Περιόδου
                                     </h6>
-                                    <strong>Περίοδος:</strong> {{period.name}}<br>
+                                    <strong>Περίοδος:</strong> <a href="/canteens/periods/{{period.id}}">{{period.name}}</a><br>
                                     <strong>Από:</strong> {{date period.start_date}}<br>
                                     <strong>Έως:</strong> {{date period.end_date}}<br>
                                     <strong>Προθεσμία:</strong> {{date period.submission_deadline}}<br>
@@ -202,8 +202,47 @@
 
         {{!-- Sidebar με πληροφορίες --}}
         <div class="col-lg-4">
-            {{#unless newSubmission}}
             <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="ti-settings me-2"></i>
+                        Άλλες Ενέργειες
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {{#if canteen}}
+                        <a href="/canteens/canteens/{{canteen.id}}" class="btn btn-info">
+                            <i class="bi bi-shop me-1"></i>
+                            Προβολή Κυλικείου
+                        </a>
+                        {{/if}}
+                        
+                        {{#if canteen.principal}}
+                        <a href="/canteens/principals/{{canteen.principal.id}}" class="btn btn-warning2">
+                            <i class="ti-agenda me-1"></i>
+                            Προβολή Διευθυντή
+                        </a>
+                        {{/if}}
+                        
+                        {{#if canteen.lease}}
+                        <a href="/canteens/leases/{{canteen.lease.id}}" class="btn btn-success">
+                            <i class="bi bi-arrow-left-right me-1"></i>
+                            Προβολή Μίσθωσης
+                        </a>
+                        {{/if}}
+                        
+                        
+                        <button type="button" class="btn btn-secondary my-3" onclick="history.back()">
+                            <i class="ti-arrow-left me-1"></i>
+                            Πίσω
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {{#unless newSubmission}}
+            <div class="card mt-3">
                 <div class="card-header">
                     <h6 class="card-title">
                         <i class="ti-info me-2"></i>
@@ -226,7 +265,7 @@
 
             {{!-- Οδηγίες συμπλήρωσης --}}
 
-            <div class="card {{#unless newSubmission}}mt-3{{/unless}}">
+            <div class="d-none card {{#unless newSubmission}}mt-3{{/unless}}">
                 <div class="card-header">
                     <h6 class="card-title">
                         <i class="ti-help me-2"></i>

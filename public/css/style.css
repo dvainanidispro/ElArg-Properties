@@ -1,6 +1,7 @@
 :root{
     --bs-body-bg: hsl(240, 67%, 97%);
     --bs-heading-color: hsl(277, 100%, 15%);
+    --bs-link-color: hsl(220, 100%, 35%);
 
     --bs-nav-text-color: rgb(0, 0, 63%);
     --nav-hover-color: purple;
@@ -97,6 +98,10 @@ div {
 }
 
 h3,h4,h5,p{margin-bottom: revert;}
+
+a{
+    color: var(--bs-link-color);
+}
 
 .table td{min-width: 18ch}
 
