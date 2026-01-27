@@ -138,18 +138,19 @@ function periodDescription(startDate, endDate) {
 
 /**
  * Ελέγχει τα ενεργά badges για ληγμένες μισθώσεις και μισθώσεις που λήγουν σύντομα
+ * @param {number} monthsBeforeExpiry - Αριθμός μηνών πριν τη λήξη για να θεωρηθεί "λήγει σύντομα" (προεπιλογή: 6)
  * @param {string} expiredText - Το κείμενο για ληγμένες μισθώσεις (προεπιλογή: "Έχει λήξει")
  * @param {string} expiringSoonText - Το κείμενο για μισθώσεις που λήγουν σύντομα (προεπιλογή: "Λήγει σύντομα")
  */
-function checkLeaseExpiry(expiredText = 'Έχει λήξει', expiringSoonText = 'Λήγει σύντομα') {
+function checkLeaseExpiry(monthsBeforeExpiry = 6, expiredText = 'Έχει λήξει', expiringSoonText = 'Λήγει σύντομα') {
     const statusBadges = document.querySelectorAll('.status-badge');
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD format
     
-    // Υπολογισμός ημερομηνίας 6 μηνών από σήμερα
-    const sixMonthsFromNow = new Date(today);
-    sixMonthsFromNow.setMonth(today.getMonth() + 6);
-    const sixMonthsFromNowStr = sixMonthsFromNow.toISOString().split('T')[0];
+    // Υπολογισμός ημερομηνίας όριου λήξης
+    const expiryThreshold = new Date(today);
+    expiryThreshold.setMonth(today.getMonth() + monthsBeforeExpiry);
+    const expiryThresholdStr = expiryThreshold.toISOString().split('T')[0];
     
     statusBadges.forEach(badge => {
         const leaseEndStr = badge.getAttribute('data-lease-end');
@@ -160,13 +161,44 @@ function checkLeaseExpiry(expiredText = 'Έχει λήξει', expiringSoonText 
                 badge.textContent = expiredText;
                 badge.classList.remove('bg-success');
                 badge.classList.add('bg-danger', 'text-light');
-            } else if (leaseEndStr <= sixMonthsFromNowStr) {
-                // Μίσθωση που λήγει σύντομα (σε λιγότερο από 6 μήνες)
+            } else if (leaseEndStr <= expiryThresholdStr) {
+                // Μίσθωση που λήγει σύντομα
                 badge.textContent = expiringSoonText;
                 badge.classList.remove('bg-success');
                 badge.classList.add('bg-warning');
             }
         }
+    });
+}
+
+/**
+ * Υπολογίζει τη διάρκεια των μισθώσεων και την εμφανίζει σε ανθρώπινη μορφή
+ */
+function calculateLeaseDuration() {
+    const leaseDurationElements = document.querySelectorAll('.lease-duration');
+    leaseDurationElements.forEach(element => {
+        const startDate = new Date(element.getAttribute('data-start'));
+        const endDateStr = element.getAttribute('data-end');
+        const endDate = endDateStr ? new Date(endDateStr) : new Date();
+        
+        const diffTime = Math.abs(endDate - startDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const years = Math.floor(diffDays / 365);
+        const months = Math.floor((diffDays % 365) / 30);
+        const days = diffDays % 30;
+        
+        let durationText = '';
+        if (years > 0) {
+            durationText += years + ' έτη ';
+        }
+        if (months > 0) {
+            durationText += months + ' μήνες ';
+        }
+        if (days > 0 && years === 0) {
+            durationText += days + ' ημέρες';
+        }
+        
+        element.textContent = durationText.trim() || '0 ημέρες';
     });
 }
 

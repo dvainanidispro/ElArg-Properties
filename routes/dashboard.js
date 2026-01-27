@@ -66,9 +66,9 @@ dashboard.get(['/', '/dashboard'],
         activeProperties.owned = activePropertiesAll.filter(p => p.asset_type === 'owned').length;
         activeProperties.sum = activePropertiesAll.length;   // Δεν είναι το άθροισμα των παραπάνω. 
         
-        // Filter leases expiring soon
+        // Filter leases expiring soon (από σήμερα έως και σε 6 μήνες)
         const leasesExpiringSoonFiltered = activeLeases.filter(l => 
-            l.lease_end && new Date(l.lease_end) <= expiringSoonDate
+            l.lease_end && new Date(l.lease_end) >= Date.now() && new Date(l.lease_end) <= expiringSoonDate
         );
         leasesExpiringSoon.canteens = leasesExpiringSoonFiltered.filter(l => l.property_type === 'canteen').length;
         leasesExpiringSoon.properties = leasesExpiringSoonFiltered.filter(l => l.property_type === 'property').length;
