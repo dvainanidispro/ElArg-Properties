@@ -260,11 +260,9 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
         }
         
-        //# 2 Βρίσκουμε όλα τα canteens της περιόδου
-        // TODO: Για τις παλιότερες περιόδους, θα πρέπει να παίρνουμε τις καντίνες που ήταν ενεργές εκείνη την περίοδο.
-        // Τι γίνεται τώρα: Για την ενεργή περίοδο παίρνουμε μόνο τις ενεργές καντίνες (σωστό),
-        // ενώ για τις παλιότερες περιόδους, παίρνουμε όλες τις καντίνες (όχι πλήρως σωστό).
-        // Θα πρέπει να κρατήσουμε ένα ιστορικό των canteen ids που ήταν ενεργές σε κάθε περίοδο (σε πεδίο του πίνακα periods)
+        //# 2 Βρίσκουμε όλα τα canteens της περιόδου 
+        // Αν η περίδος είναι η ενεργή ή προγραμματισμένη, τότε όλα τα ενεργά canteens
+        // Αν η περίοδος είναι κλειστή, τότε μόνο τα canteens που είναι αποθηκευμένα στην database εγγραφή της περιόδου
         
         /** Το φίλτρο για το ποιες canteens είναι οι αυτές που πρέπει για την περίοδο */
         let filter = {};   
@@ -272,7 +270,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
         if (period.status == 'open' || period.status == 'planned') {
             filter = { active: true };
         } else if (period.status == 'closed') {
-            filter = { id: period.canteens || [] };    // id είναι ένα από τα id της περιόδου
+            filter = { id: period.canteens || [] };    // το id ανήκει στα (SQL "WHERE id IN ...") canteen id της περιόδου
         } else if (period.status == 'inactive') {
             filter = (period.canteens?.length) ? { id: period.canteens } : { active: true };
         }
