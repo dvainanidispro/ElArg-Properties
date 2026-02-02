@@ -113,7 +113,7 @@ myCanteen.get('/', async (req, res) => {
                 const missingPeriods = periods
                     .filter(p => !submittedPeriodIds.has(p.id))     // Φιλτράρω τις περιόδους χωρίς submission
                     .filter(p => {      // Φιλτράρω τις περιόδους που εφαρμόζεται το κυλικείο
-                        const isApplicable = p.canteens.length === 0 || p.canteens.includes(canteen.id);
+                        const isApplicable = p.status=='open' || p.canteens.includes(canteen.id);
                         return isApplicable;
                     })
                     .map(p => ({ id: p.id, code: p.code, status: p.status }));
@@ -211,7 +211,7 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
         // Φιλτράρω τις περιόδους που δεν έχουν status 'inactive' (το virtual field δεν μπορεί να φιλτραριστεί με το query)
         const activePeriods = periods.filter(period => period.status !== 'inactive');
 
-        log.dev(periods);
+        // log.dev(periods);
 
         // Προσθέτω πληροφορία για το αν έχει υποβληθεί submission
         const periodsWithSubmissionStatus = activePeriods.map(period => {
@@ -228,7 +228,7 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
                 } else {
                     submissionStatus = 'overdue'; // Εκπρόθεσμη
                 }
-            } else {
+            } else {    // status: 'open' ή 'planned'
                 submissionStatus = 'pending'; // Εκκρεμεί
             }
             
@@ -240,7 +240,7 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
             };
         });
 
-        log.dev(periodsWithSubmissionStatus);
+        // log.dev(periodsWithSubmissionStatus);
 
         res.render('principals/periods', { 
             periods: periodsWithSubmissionStatus,
@@ -329,7 +329,7 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
 
 
         // Βρες υπάρχον submission αν υπάρχει
-        const existingSubmission = await Models.Submission.findOne({
+        let existingSubmission = await Models.Submission.findOne({
             where: {
                 period_id: periodId,
                 property_id: canteenId,
@@ -350,12 +350,21 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
         // Δημιουργία subperiods με βάση όλα τα leases και την περίοδο
         const subperiods = getSubperiods(period, canteen.leases);
 
+        // Απλός/επιφανιακός έλεγχος αν τα subperiods έχουν αλλάξει από την τελευταία υποβολή
+        let subperiodsChanged = false;
+        if (existingSubmission?.data?.length !== subperiods.length) {
+            subperiodsChanged = true;
+            existingSubmission = null; // Αγνόησε την υπάρχουσα υποβολή (δείξε κενή φόρμα)
+        }
+
+        // Render
         res.render('principals/submission', {
             canteen,
             period,
             submission: existingSubmission,
             rentOffer,
             subperiods,
+            subperiodsChanged,
             principal,
             user: req.user,
             title: `Υποβολή στοιχείων - ${canteen.name} - ${period.name}`
@@ -482,7 +491,7 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
         // Το πεδίο rent του front-end, αν σταλεί κακόβουλα, αντικαθίσταται με το σωστό από το lease
         const completeSubperiodsData = subperiodsData.map((data, index) => ({
             ...data,        // Δεδομένα από το frontend
-            rent: subperiods[index]?.rent || 0     //TODO: αριθμός ή string;
+            rent: subperiods[index]?.rent || 0  
         }));
         
         // Υπολογισμός των πεδίων rent και tax_stamp
@@ -647,7 +656,7 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         // Συγχώνευση subperiods με subperiodsData
         const completeSubperiodsData = subperiodsData.map((data, index) => ({
             ...data,
-            rent: subperiods[index]?.rent || 0          //TODO: αριθμός ή string; 
+            rent: subperiods[index]?.rent || 0  
         }));
         
         // Υπολογισμός των πεδίων rent και tax_stamp

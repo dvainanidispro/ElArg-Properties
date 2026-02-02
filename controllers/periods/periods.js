@@ -78,7 +78,7 @@ function subperiodsFor(period, lease) {
     }
     
     const rentAdjustments = lease.rent_adjustments;
-    const defaultRent = lease.rent;
+    const defaultRent = parseFloat(lease.rent);
     
     // Αν δεν υπάρχουν rent adjustments, επιστρέφουμε την ολόκληρη περίοδο
     if (!rentAdjustments || !Array.isArray(rentAdjustments) || rentAdjustments.length === 0) {

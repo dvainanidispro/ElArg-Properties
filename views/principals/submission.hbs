@@ -28,6 +28,15 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    {{!-- Προειδοποίηση αν τα subperiods άλλαξαν --}}
+                    {{#if subperiodsChanged}}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="ti-alert me-2"></i>
+                        <strong>Προσοχή!</strong> Τα στοιχεία της μίσθωσης έχουν αλλάξει. Παρακαλώ υποβάλετε ξανά τα στοιχεία σας.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {{/if}}
+                    
                     {{!-- Πληροφορίες περιόδου και κυλικείου --}}
                     <div class="row mb-4">
                         <div class="col-md-6">
