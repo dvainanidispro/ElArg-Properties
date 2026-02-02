@@ -1,4 +1,5 @@
 import Models from '../../models/models.js';
+// import log from '../logger.js';
 
 /**
  * Μετατρέπει ένα Date object σε string μορφής YYYY-MM-DD
@@ -57,8 +58,8 @@ async function getActiveCanteenPeriod(onlyOpen = false) {
 function subperiodsFor(period, lease) {
     let periodStart = new Date(period.start_date);
     let periodEnd = new Date(period.end_date);
-    const leaseStart = new Date(lease.start_date);
-    const leaseEnd = new Date(lease.end_date);
+    const leaseStart = new Date(lease.lease_start);
+    const leaseEnd = new Date(lease.lease_end);
     
     // Περιορισμός της περιόδου στην έναρξη του lease (αν το lease.start_date είναι μετά το period.start_date)
     if (leaseStart > periodStart) {
