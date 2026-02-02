@@ -111,7 +111,11 @@ myCanteen.get('/', async (req, res) => {
 
                 const submittedPeriodIds = new Set(submissions.map(s => s.period_id));
                 const missingPeriods = periods
-                    .filter(p => !submittedPeriodIds.has(p.id))
+                    .filter(p => !submittedPeriodIds.has(p.id))     // Φιλτράρω τις περιόδους χωρίς submission
+                    .filter(p => {      // Φιλτράρω τις περιόδους που εφαρμόζεται το κυλικείο
+                        const isApplicable = p.canteens.length === 0 || p.canteens.includes(canteen.id);
+                        return isApplicable;
+                    })
                     .map(p => ({ id: p.id, code: p.code, status: p.status }));
 
                 return {
@@ -207,16 +211,36 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
         // Φιλτράρω τις περιόδους που δεν έχουν status 'inactive' (το virtual field δεν μπορεί να φιλτραριστεί με το query)
         const activePeriods = periods.filter(period => period.status !== 'inactive');
 
+        log.dev(periods);
+
         // Προσθέτω πληροφορία για το αν έχει υποβληθεί submission
         const periodsWithSubmissionStatus = activePeriods.map(period => {
             const hasSubmission = period.submissions && period.submissions.length > 0;
+            let submissionStatus;
+            
+            if (hasSubmission) {
+                submissionStatus = 'ok';
+            } else if (period.status === 'closed') {
+                // Έλεγχος αν το canteen εφαρμόζεται στην περίοδο
+                const isApplicable = period.canteens.length === 0 || period.canteens.includes(canteenId);
+                if (!isApplicable) {
+                    submissionStatus = 'unapplicable'; // Δεν εφαρμόζεται - δεν απαιτείται
+                } else {
+                    submissionStatus = 'overdue'; // Εκπρόθεσμη
+                }
+            } else {
+                submissionStatus = 'pending'; // Εκκρεμεί
+            }
+            
             return {
                 ...period.toJSON(),
                 hasSubmission,
                 submission: hasSubmission ? period.submissions[0] : null,
-                submissionStatus: hasSubmission ? 'Έχουν υποβληθεί στοιχεία' : 'Εκκρεμεί υποβολή στοιχείων'
+                submissionStatus,
             };
         });
+
+        log.dev(periodsWithSubmissionStatus);
 
         res.render('principals/periods', { 
             periods: periodsWithSubmissionStatus,
