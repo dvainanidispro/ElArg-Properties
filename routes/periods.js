@@ -30,9 +30,6 @@ const periods = Router();
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////   ROUTES ΓΙΑ ΔΙΑΧΕΙΡΙΣΗ PERIOD SUBMISSIONS   ////////////////////
 
-//* Πρέπει πχ το GET '/:periodId/submissions' να δηλωθεί πριν το GET /:id
-// Για αυτό, η σειρά είναι λίγο μπερδεμένη σε αυτό το αρχείο. 
-
 
 /**
  * GET /periods/:periodId/submissions/:submissionId - Εμφάνιση συγκεκριμένης υποβολής
@@ -418,9 +415,12 @@ periods.get('/', can('view:content'), async (req, res) => {
 /**
  * GET /periods/:id - Εμφάνιση στοιχείων συγκεκριμένης περιόδου
  */
-periods.get('/:id', can('view:content'), async (req, res) => {
+periods.get('/:id', can('view:content'), async (req, res, next) => {
     try {
         const periodId = parseInt(req.params.id);
+        if (isNaN(periodId)) {
+            return next();
+        }
         const period = await Models.Period.findByPk(periodId, {
             attributes: ['id', 'code', 'name', 'property_type', 'start_date', 'end_date', 'submission_deadline', 'active', 'createdAt', 'updatedAt'],
             raw: true

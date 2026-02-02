@@ -7,12 +7,12 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "node --env-file=.env --watch server.js",
+    "dev": "node --env-file=config/.env --watch server.js",
     "start": "node server.js",
-    "start:local": "node --env-file=.env server.js",
-    "generate:period:local": "node --env-file=.env controllers/actions/generate-period.js",
-    "remind:principals:local": "node --env-file=.env controllers/actions/remind-principals.js",
-    "backup:db": "node --env-file=.env controllers/actions/take-db-backup.js",
+    "start:local": "node --env-file=config/.env server.js",
+    "generate:period:local": "node --env-file=config/.env controllers/actions/generate-period.js",
+    "remind:principals:local": "node --env-file=config/.env controllers/actions/remind-principals.js",
+    "backup:db": "node --env-file=config/.env controllers/actions/take-db-backup.js",
     "generate:period": "node controllers/actions/generate-period.js",
     "remind:principals": "node controllers/actions/remind-principals.js"
   },
