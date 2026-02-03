@@ -298,6 +298,10 @@ periods.get('/submissions/new', can('edit:content'), async (req, res) => {
         // Δημιούργησε subperiods για όλα τα ενεργά leases
         const subperiods = getSubperiods(period, canteen.leases);
 
+        // Flatten party και lease για εύκολη πρόσβαση στο view
+        canteen.party = canteen.leases?.[0]?.party || null;
+        canteen.lease = canteen.leases?.[0] || null;
+
         res.render('periods/edit-submission', {
             period,
             canteen,

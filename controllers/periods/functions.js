@@ -39,9 +39,10 @@
   }
 
 
+3 μήνες για κάθε περίοδο, ως εξής:
 
 D1: Σεπτέμβριος - Οκτώβριος - Νοέμβριος, 1η Δόση
-D2: Νοέμβριος προηγούμενου έτους - Ιανουάριος - Φεβρουάριος, 2η Δόση
+D2: Δεκέμβριος προηγούμενου έτους - Ιανουάριος - Φεβρουάριος, 2η Δόση
 D3: Μάρτιος - Απρίλιος - Μάιος, 3η Δόση
 D4: Ιούνιος - Ιούλιος - Αύγουστος, 4η Δόση (ανενεργό για τα σχολεία)
 
@@ -88,7 +89,7 @@ function createPeriodByInstallment(year, installment) {
     
     switch (installment) {
         case 'D2':
-            start_date = firstDayOf(year - 1, 11);
+            start_date = firstDayOf(year - 1, 12);
             end_date = lastDayOf(year, 2);
             submission_deadline = addDays(end_date, deadlineDelay);
             active = true;
@@ -166,14 +167,14 @@ function createPeriodEndingInMonthOf(date) {
 
 
 
-// tests
+// tests   // node ./controllers/periods/functions.js
 // console.log(createPeriodEndingInMonthOf('2025-02-15'));     // C-2425-D2
 // console.log(createPeriodEndingInMonthOf('2025-03-12'));     // null
 // console.log(createPeriodEndingInMonthOf('2025-05-01'));     // C-2425-D3
 // console.log(createPeriodEndingInMonthOf('2025-08-20'));     // null
 // console.log(createPeriodEndingInMonthOf('2025-09-15'));     // null ή C-2526-D1 
 // console.log(createPeriodEndingInMonthOf('2025-10-18'));     // null
-// console.log(createPeriodEndingInMonthOf('2025-11-23'));     // C-2425-D4
+// console.log(createPeriodEndingInMonthOf('2025-11-23'));     // C-2425-D1
 // console.log(createPeriodEndingInMonthOf('2025-12-21'));     // null
 // console.log(createPeriodEndingInMonthOf(new Date()));       // ???
 
