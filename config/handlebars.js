@@ -15,6 +15,7 @@ const handlebarsConfig = {
     helpers: {
         /* example: {{#if (eq user.attend 'live')}} Δια ζώσης {{else if (eq user.attend 'internet')}} Διαδικτυακά {{/if}} */  
         eq: (a, b) => a == b, 
+        neq: (a, b) => a != b,
         and: (...args) => args.slice(0, -1).every(Boolean), // Handlebars 'and' helper
         /* Check if array includes a value: {{#if (includes array 'value')}} */
         includes: (array, value) => Array.isArray(array) && array.includes(value),

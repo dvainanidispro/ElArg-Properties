@@ -28,6 +28,7 @@ async function getActiveCanteenPeriod(onlyOpen = false) {
 
 /**
  * Δημιουργεί subperiods για μια περίοδο με βάση τα rent adjustments του lease.
+ * Αν ολόκληρη η μίσθωση είναι εκτός της περιόδου, επιστρέφει κενό array.
  * 
  * @param {object} period - Το period object με start_date και end_date
  * @param {object} lease - Το lease object με rent και rent_adjustments
@@ -72,7 +73,7 @@ function subperiodsFor(period, lease) {
     }
     
     // Αν το lease δεν επικαλύπτει καθόλου την περίοδο, επιστρέφουμε κενό array
-    // Αυτό μπορεί να συμβεί διότι μετά τις προσαρμογές, το periodStart μπορεί να είναι μετά το periodEnd
+    // Αυτό μπορεί να συμβεί διότι, μετά τις προσαρμογές, το periodStart μπορεί να είναι μετά το periodEnd
     if (periodStart > periodEnd) {
         return [];
     }
@@ -157,24 +158,27 @@ function subperiodsFor(period, lease) {
 /**
  * Επιστρέφει σε array το union των subperiods για όλα τα leases και για μία περίοδο.
  * Αν δεν υπάρχουν leases ή δεν προκύψουν subperiods (δηλαδή όλα τα leases είναι "εκτός" περιόδου), 
- * επιστρέφει ένα default array με ένα subperiod με rent: 0.
+ * τότε: με fallback==true (default), επιστρέφει ένα default subperiod με rent: 0 για ολόκληρη την περίοδο,
+ * ενώ με fallback==false επιστρέφει κενό array.
  * NOTE: Δεν καλύπτεται (με ακρίβεια) η περίπτωση όπου μέρος της περιόδου δεν καλύπτεται από κανένα lease.
- * Ίσως θα πρέπει, μελλοντικά, τα κενά να καλύπτονται με subperiods με rent: 0 
+ * Ίσως θα πρέπει, μελλοντικά, τα κενά να καλύπτονται με subperiods με rent: 0. Προς το παρόν, το θέλουν όπως είναι.
  * (όπως συμβαίνει αν ολόκληρη η περίοδος είναι ακάλυπτη).
  * 
  * @param {object} period - Το period object με start_date και end_date
  * @param {array} leases - Array από lease objects
+ * @param {boolean} fallback - Αν είναι true (default), επιστρέφει default subperiod αν δεν υπάρχουν leases ή subperiods
  * @returns {array} Array από όλα τα subperiods για όλα τα leases
  */
-function getSubperiods(period, leases) {
+function getSubperiods(period, leases, fallback = true) {
 
-    const defaultSubperiods= [{
+    const fallbackSubperiods= [{
         start_date: period.start_date,
         end_date: period.end_date,
         rent: 0
     }];
+    const defaultSubperiods = fallback ? fallbackSubperiods : [];
 
-    // Αν δεν υπάρχουν leases, επιστρέφουμε ένα fallback subperiod με rent: 0
+    // Αν δεν υπάρχουν leases, επιστρέφουμε το default
     if (!leases || !Array.isArray(leases) || leases.length === 0) {
         return defaultSubperiods;
     }

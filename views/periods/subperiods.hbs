@@ -1,0 +1,172 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title h3">
+                        <i class="ti-files me-2"></i>
+                        <span>Υποπερίοδοι Κυλικείων για Περίοδο: {{period.name}}</span>
+                        <span data-variable="period-description"></span>
+                    </h1>
+                    <div class="card-subtitle text-muted mt-2">
+                        <i class="ti-calendar me-1"></i>
+                        Διάστημα: {{date period.start_date}} - {{date period.end_date}}
+                        <span class="mx-2">|</span>
+                        <i class="ti-alarm-clock me-1"></i>
+                        Προθεσμία υποβολών: {{date period.submission_deadline}}
+                        <span class="mx-2">|</span>
+                        <a href="/canteens/periods/{{period.id}}/logs" class="">Προβολή logs υπενθυμίσεων</a>
+                    </div>
+                </div>
+                <div class="card-body ">
+
+                    {{#if canteens}}
+                        <div class="row mb-4">
+                                <div class="col-12 my-3">
+                                    <div class="card border-secondary small-shadow" href="#">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0 d-flex align-items-center gap-3">
+                                                <i class="ti-calendar me-2"></i>
+                                                <span>Στατιστικά υποβολών για την περίοδο</span>
+                                            </h5>
+                                        </div>
+                                        <div class="center-contents">
+                                            <div class="card-body d-flex justify-content-around align-items-center flex-wrap text-center lg">
+                                                <div class="">
+                                                    <h6 class="text-muted">Κυλικεία</h6>
+                                                    <div class="text-primary fw-semibold display-6">
+                                                        {{canteens.length}}
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    <h6 class="text-muted">Υποβολές</h6>
+                                                    <h2 class="text-success display-6 fw-semibold">{{submittedCount}}</h2>
+                                                </div>
+                                                <div class="">
+                                                    <h6 class="text-muted">Εκκρεμούν</h6>
+                                                    <h2 class="text-warning display-6 fw-semibold">{{pendingCount}}</h2>
+                                                </div>
+                                                <div>
+                                                    <div class="easy-pie-chart" 
+                                                        data-percent="{{submittedPercent}}" 
+                                                        data-bar-color="#177b45" data-track-color="Wheat" data-scale-color="false" data-line-width="6" 
+                                                        data-size="85" data-animate="1000" 
+                                                        data-confetti data-period-status="{{period.status}}">
+                                                            <span class="fw-bold"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="">
+                                                    <button id="exportExcelBtn" class="btn btn-excel btn-icon my-2 ">
+                                                        <i class="excel-icon"></i>
+                                                        <span>Εξαγωγή υποβολών σε Excel</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    {{else}}
+                                <div class="card-body">
+                                    <div class="alert alert-info mb-0">
+                                        Δεν υπάρχει ενεργή περίοδος υποβολών για Κυλικεία.
+                                    </div>
+                                </div>
+                    {{/if}}
+                    
+
+                    
+                    <div class="table-responsive">
+                        <table id="submissions" class="dim-table table table-striped table-hover align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="sortable d-none" data-sort-type="number">ID</th>
+                                    <th class="sortable " >Όνομα Κυλικείου</th>
+                                    <th class="">Διευθυντής</th>
+                                    <th class="">Μισθωτής</th>
+                                    <th class="sortable ">Υποβολή <br>Στοιχείων</th>
+                                    <th class="sortable ">Ημερομηνία <br>Υποβολής</th>
+                                    <th class="sortable " data-sort-type="number" >Υπολογιζόμενες <br>Υποπερίοδοι</th>
+                                    <th class="sortable " data-sort-type="number">Υποβλειθείσες <br>Υποπερίοδοι</th>
+                                    <th class="">Ενέργειες</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each canteens}}
+                                <tr>
+                                    <td class="d-none">{{this.id}}</td>
+                                    <td class="fw-semibold">
+                                        <a href="/canteens/canteens/{{this.id}}" class="text-primary text-decoration-none">
+                                            {{this.name}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{#if this.principal}}
+                                            <a href="/canteens/principals/{{this.principal.id}}" class="text-primary text-decoration-none">{{this.principal.name}}</a>
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{this.party.name}}
+                                    </td>
+                                    <td>
+                                        {{#if this.hasSubmission}}
+                                            <span class="badge bg-success fs-6">
+                                                {{!-- <i class="ti-check me-1"></i> --}}
+                                                <span>Υποβλήθηκε</span>
+                                            </span>
+                                        {{else}}
+                                            <span class="badge bg-warning fs-6">
+                                                {{!-- <i class="ti-alert me-1"></i> --}}
+                                                <span>Εκκρεμεί</span>
+                                            </span>
+                                        {{/if}}
+                                    </td>
+                                    <td data-sort-value="{{dateInput this.submission.updatedAt}}">
+                                        {{#if this.submission.updatedAt}}
+                                            {{date this.submission.updatedAt}}
+                                        {{else}}
+                                            <span class="text-muted">-</span>
+                                        {{/if}}
+                                    </td>
+                                    <td data-sort-value="{{this.subperiods.length}}">
+                                        <div class="badge {{#if (neq this.subperiods.length 1)}}bg-warning{{/if}} text-dark">{{this.subperiods.length}}</div>
+                                    </td>
+                                    <td class="" data-sort-value="{{this.submittedSubperiods.length}}">
+                                        {{#if this.submittedSubperiods.length}}
+                                        <div class="badge {{#if (neq this.submittedSubperiods.length this.subperiods.length)}}bg-warning{{/if}} text-dark">{{this.submittedSubperiods.length}}</div>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.hasSubmission}}
+                                            <a href="/canteens/periods/{{../period.id}}/submissions/{{this.submission.id}}" class="btn btn-outline-primary btn-sm me-1" title="Προβολή Υποβολής">
+                                                <i class="ti-eye" ></i>
+                                            </a>
+                                        {{else}}
+                                            <a href="/canteens/periods/submissions/new?period_id={{../period.id}}&canteen_id={{this.id}}" class="btn btn-primary btn-sm btn-icon {{#unless (can2 'edit:content' ../user)}}d-none{{/unless}}" title="Νέα Υποβολή">
+                                                <i class="bi bi-plus"></i>
+                                                <span>Υποβολή</span>
+                                            </a>
+                                        {{/if}}
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="module">
+    Q('~period-description').set(`(${periodDescription('{{period.start_date}}' , '{{period.end_date}}')})`);
+
+    Q('#exportExcelBtn') && Q('#exportExcelBtn').on('click', function() {
+        downloadTableAsExcel('submissions', 'Υποβολές Στοιχείων Κυλικείων - Περίοδος {{period.code}}.xlsx', '{{period.code}}');
+    });
+</script>

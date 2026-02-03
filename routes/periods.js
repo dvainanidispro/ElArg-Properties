@@ -435,9 +435,10 @@ periods.post('/submissions', can('edit:content'), async (req, res) => {
 /**
  * GET /periods/:periodId/submissions - Εμφάνιση υποβολών στοιχείων για συγκεκριμένη περίοδο
  */
-periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
+periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:content'), async (req, res) => {
     try {
         const periodId = parseInt(req.params.periodId);
+        const showSubperiods = req.path.includes('subperiods');
         
         //# 1 Βρίσκουμε την περίοδο
         const period = await Models.Period.findByPk(periodId);
@@ -483,7 +484,7 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
                         property_type: 'canteen'
                     },
                     order: [['lease_end', 'DESC']],
-                    limit: 1,
+                    limit: showSubperiods ? 5 : 1,
                     required: false
                 },
                 {
@@ -509,7 +510,9 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
             lease: canteen.leases?.[0] || null,
             party: canteen.leases?.[0]?.party || null,
             hasSubmission: canteen.submissions && canteen.submissions.length > 0,
-            submission: canteen.submissions?.[0] || null
+            submission: canteen.submissions?.[0] || null,
+            subperiods: getSubperiods(period, canteen.leases, false),
+            submittedSubperiods: canteen.submissions?.[0]?.data ?? [],
         }));
         // log.dev(canteensWithSubmissions);
 
@@ -536,14 +539,14 @@ periods.get('/:periodId/submissions', can('view:content'), async (req, res) => {
         const submittedPercent = canteensWithSubmissions.length > 0 ? Math.round((submittedCount / canteensWithSubmissions.length) * 100) : 0;
 
         //# 6 Render
-        res.render('periods/submissions', {
+        res.render(showSubperiods ? 'periods/subperiods' : 'periods/submissions', {
             period,
             canteens: canteensWithSubmissions,
             submittedCount,
             submittedPercent,
             pendingCount,
             user: req.user,
-            title: `Υποβολές Στοιχείων - ${period.code}`
+            title: showSubperiods ? `Υποπερίοδοι Κυλικείων - ${period.code}` : `Υποβολές Στοιχείων - ${period.code}`
         });
 
     } catch (error) {
