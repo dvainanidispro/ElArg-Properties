@@ -343,7 +343,18 @@ periods.post('/submissions', can('edit:content'), async (req, res) => {
         }
         
         // Βρίσκουμε το κυλικείο
-        const canteen = await Models.Canteen.findByPk(canteen_id);
+        const canteen = await Models.Canteen.findByPk(canteen_id, {
+            include: [{
+                model: Models.Lease,
+                as: 'leases',
+                where: {
+                    property_type: 'canteen',
+                    active: true
+                },
+                required: false,
+                order: [['lease_end', 'DESC']]
+            }]
+        });
         if (!canteen) {
             return res.status(404).json({ 
                 success: false, 
@@ -389,9 +400,19 @@ periods.post('/submissions', can('edit:content'), async (req, res) => {
                 });
             }
         }
+
+        // Πάρε τα subperiods και συγχώνευσε με τα δεδομένα από το frontend
+        const subperiods = getSubperiods(period, canteen.leases);
+        
+        // Τα πεδία lease_id και party_id συμπληρώνονται από το getSubperiods
+        const completeSubperiodsData = subperiodsData.map((data, index) => ({
+            ...data,        // Δεδομένα από το frontend (συμπεριλαμβανομένου του rent)
+            lease_id: subperiods[index]?.lease_id,
+            party_id: subperiods[index]?.party_id
+        }));
         
         // Υπολογισμός των πεδίων rent και tax_stamp
-        const calculatedFields = calculateRentFields(subperiodsData);
+        const calculatedFields = calculateRentFields(completeSubperiodsData);
         
         // Δημιουργία νέας υποβολής
         const newSubmission = await Models.Submission.create({
@@ -399,7 +420,7 @@ periods.post('/submissions', can('edit:content'), async (req, res) => {
             property_id: canteen_id,
             property_type: 'canteen',
             principal_id: principal_id || null,
-            data: subperiodsData,
+            data: completeSubperiodsData,
             rent: calculatedFields.rent,
             tax_stamp: calculatedFields.tax_stamp
         });
@@ -686,7 +707,21 @@ periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (
                 id: submissionId,
                 period_id: periodId,
                 property_type: 'canteen'
-            }
+            },
+            include: [{
+                model: Models.Canteen,
+                as: 'canteen',
+                include: [{
+                    model: Models.Lease,
+                    as: 'leases',
+                    where: {
+                        property_type: 'canteen',
+                        active: true
+                    },
+                    required: false,
+                    order: [['lease_end', 'DESC']]
+                }]
+            }]
         });
         
         if (!submission) {
@@ -721,12 +756,22 @@ periods.put('/:periodId/submissions/:submissionId', can('edit:content'), async (
             }
         }
         
+        // Πάρε τα subperiods με τα lease_id και party_id και συγχώνευσε με τα δεδομένα από το frontend
+        const subperiods = getSubperiods(period, submission.canteen.leases);
+        
+        // Συγχώνευση subperiods με subperiodsData
+        const completeSubperiodsData = subperiodsData.map((data, index) => ({
+            ...data,        // Δεδομένα από το frontend (συμπεριλαμβανομένου του rent)
+            lease_id: subperiods[index]?.lease_id,
+            party_id: subperiods[index]?.party_id
+        }));
+        
         // Υπολογισμός των πεδίων rent και tax_stamp
-        const calculatedFields = calculateRentFields(subperiodsData);
+        const calculatedFields = calculateRentFields(completeSubperiodsData);
         
         // Ενημέρωση του submission
         await submission.update({
-            data: subperiodsData,
+            data: completeSubperiodsData,
             rent: calculatedFields.rent,
             tax_stamp: calculatedFields.tax_stamp
         });

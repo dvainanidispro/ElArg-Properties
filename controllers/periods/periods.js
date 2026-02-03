@@ -86,7 +86,9 @@ function subperiodsFor(period, lease) {
         return [{
             start_date: dateOnly(periodStart),
             end_date: dateOnly(periodEnd),
-            rent: defaultRent
+            rent: defaultRent,
+            lease_id: lease.id,
+            party_id: lease.party_id
         }];
     }
     
@@ -105,7 +107,9 @@ function subperiodsFor(period, lease) {
         return [{
             start_date: dateOnly(periodStart),
             end_date: dateOnly(periodEnd),
-            rent: defaultRent
+            rent: defaultRent,
+            lease_id: lease.id,
+            party_id: lease.party_id
         }];
     }
     
@@ -124,7 +128,9 @@ function subperiodsFor(period, lease) {
             subperiods.push({
                 start_date: dateOnly(currentDate),
                 end_date: dateOnly(gapEnd),
-                rent: defaultRent
+                rent: defaultRent,
+                lease_id: lease.id,
+                party_id: lease.party_id
             });
         }
         
@@ -135,7 +141,9 @@ function subperiodsFor(period, lease) {
         subperiods.push({
             start_date: dateOnly(subStart),
             end_date: dateOnly(subEnd),
-            rent: adjustment.rent
+            rent: adjustment.rent,
+            lease_id: lease.id,
+            party_id: lease.party_id
         });
         
         // Ενημερώνουμε το currentDate για την επόμενη επανάληψη
@@ -148,7 +156,9 @@ function subperiodsFor(period, lease) {
         subperiods.push({
             start_date: dateOnly(currentDate),
             end_date: dateOnly(periodEnd),
-            rent: defaultRent
+            rent: defaultRent,
+            lease_id: lease.id,
+            party_id: lease.party_id
         });
     }
     
@@ -174,6 +184,8 @@ function getSubperiods(period, leases, fallback = true) {
     const fallbackSubperiods= [{
         start_date: period.start_date,
         end_date: period.end_date,
+        lease_id: null,
+        party_id: null,
         rent: 0
     }];
     const defaultSubperiods = fallback ? fallbackSubperiods : [];
@@ -193,7 +205,11 @@ function getSubperiods(period, leases, fallback = true) {
     if (allSubperiods.length === 0) {
         return defaultSubperiods;
     }
-    
+
+    // Ταξινόμηση των subperiods κατά start_date (για να είναι πάντα στην ίδια σειρά)
+    allSubperiods.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+    // log.dev(allSubperiods);
     return allSubperiods;
 }
 

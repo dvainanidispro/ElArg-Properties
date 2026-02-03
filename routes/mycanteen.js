@@ -343,6 +343,8 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
             }]
         });
 
+        const hasSubmission = !!existingSubmission;
+
         // Δημιούργησε subperiods για όλα τα ενεργά leases
         const activeLeases = canteen.leases || [];
         const rentOffer = activeLeases[0]?.rent || 0;
@@ -350,17 +352,18 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
         // Δημιουργία subperiods με βάση όλα τα leases και την περίοδο
         const subperiods = getSubperiods(period, canteen.leases);
 
-        // Απλός/επιφανιακός έλεγχος αν τα subperiods έχουν αλλάξει από την τελευταία υποβολή
+        // Απλός/επιφανειακός έλεγχος αν τα subperiods έχουν αλλάξει από την τελευταία υποβολή
         let subperiodsChanged = false;
-        if (existingSubmission?.data?.length !== subperiods.length) {
+        if (existingSubmission?.data?.length && existingSubmission.data.length !== subperiods.length) {
             subperiodsChanged = true;
-            existingSubmission = null; // Αγνόησε την υπάρχουσα υποβολή (δείξε κενή φόρμα)
+            existingSubmission = null; // Αγνόησε την υπάρχουσα υποβολή (δείξε κενή φόρμα), αλλά άσε hasSubmission=true
         }
 
         // Render
         res.render('principals/submission', {
             canteen,
             period,
+            hasSubmission,
             submission: existingSubmission,
             rentOffer,
             subperiods,
@@ -488,10 +491,13 @@ myCanteen.post('/:canteenId/periods/:periodId/submission', async (req, res) => {
         
         // Συγχώνευση subperiods με subperiodsData
         // Ίσως θα έπρεπε, ως validation, να ελέγχουμε αν subperiodsData.length !== subperiods.length.
-        // Το πεδίο rent του front-end, αν σταλεί κακόβουλα, αντικαθίσταται με το σωστό από το lease
+        // Τα πεδία rent, lease_id και party_id του front-end, αν σταλούν κακόβουλα, 
+        // αντικαθίστανται με τα σωστά από το lease
         const completeSubperiodsData = subperiodsData.map((data, index) => ({
             ...data,        // Δεδομένα από το frontend
-            rent: subperiods[index]?.rent || 0  
+            rent: subperiods[index]?.rent || 0,
+            lease_id: subperiods[index]?.lease_id,
+            party_id: subperiods[index]?.party_id
         }));
         
         // Υπολογισμός των πεδίων rent και tax_stamp
@@ -656,7 +662,9 @@ myCanteen.put('/:canteenId/periods/:periodId/submission', async (req, res) => {
         // Συγχώνευση subperiods με subperiodsData
         const completeSubperiodsData = subperiodsData.map((data, index) => ({
             ...data,
-            rent: subperiods[index]?.rent || 0  
+            rent: subperiods[index]?.rent || 0,
+            lease_id: subperiods[index]?.lease_id,
+            party_id: subperiods[index]?.party_id
         }));
         
         // Υπολογισμός των πεδίων rent και tax_stamp

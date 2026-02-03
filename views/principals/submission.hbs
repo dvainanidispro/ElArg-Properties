@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        const hasSubmission = {{#if submission}}true{{else}}false{{/if}};
+        const hasSubmission = {{hasSubmission}};
         const isEdit = hasSubmission; // true αν υπάρχει submission (επεξεργασία)
         
         try {
