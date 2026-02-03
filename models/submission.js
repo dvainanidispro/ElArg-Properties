@@ -21,7 +21,6 @@ const Submission = db.define('submission',
             comment: "'property' ή 'canteen'"
         },
         principal_id: DataTypes.INTEGER,
-        rent_offer: DataTypes.DECIMAL(10, 2),
         data: {
             type: DataTypes.JSONB,
             comment: 'Array από subperiods/sub-submissions με πεδία: start_date, end_date, students, working_days, electricity_cost',

@@ -491,6 +491,14 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
                     model: Models.Submission,
                     as: 'submissions',
                     attributes: ['id', 'period_id', 'property_id', 'property_type', 'updatedAt', 'rent', 'data', 'electricity_cost'],
+                    include: [
+                        {
+                            model: Models.Principal,
+                            as: 'principal',
+                            attributes: ['id', 'name', 'email'],
+                            required: false
+                        }
+                    ],
                     where: {
                         period_id: periodId,
                         property_type: 'canteen'
@@ -506,7 +514,9 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
             id: canteen.id,
             name: canteen.name,
             active: canteen.active,
-            principal: canteen.principal,
+            principal: period.status === 'closed' 
+                ? (canteen.submissions?.[0]?.principal || null)
+                : (canteen.submissions?.[0]?.principal ?? canteen.principal),
             lease: canteen.leases?.[0] || null,
             party: canteen.leases?.[0]?.party || null,
             hasSubmission: canteen.submissions && canteen.submissions.length > 0,
@@ -610,6 +620,12 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
                 },
                 {
                     model: Models.Principal,
+                    as: 'principal',
+                    attributes: ['id', 'name', 'email'],
+                    required: false
+                },
+                {
+                    model: Models.Principal,
                     as: 'submittedByPrincipal',
                     attributes: ['id', 'name'],
                     required: false
@@ -627,6 +643,11 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
         // Flatten party και lease για εύκολη πρόσβαση στο view
         submission.canteen.party = submission.canteen.leases?.[0]?.party || null;
         submission.canteen.lease = submission.canteen.leases?.[0] || null;
+        
+        // Καθορισμός του principal με βάση το status της περιόδου
+        submission.canteen.principal = period.status === 'closed'
+            ? (submission.principal || null)
+            : (submission.principal ?? submission.canteen.principal);
         
         res.render('periods/edit-submission', {
             period,

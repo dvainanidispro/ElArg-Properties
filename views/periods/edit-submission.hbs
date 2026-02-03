@@ -39,17 +39,22 @@
                                     </h6>
                                     <strong>Όνομα:</strong> <a href="/canteens/canteens/{{canteen.id}}">{{canteen.name}}</a><br>
                                     {{#if canteen.principal}}
-                                        <strong>Διευθυντής:</strong> <a href="/canteens/principals/{{canteen.principal.id}}">{{canteen.principal.name}}</a><br>
+                                        {{#if (eq period.status 'closed')}}
+                                        <strong>Διευθυντής κατά την υποβολή:</strong>
+                                        {{else}}
+                                        <strong>Διευθυντής:</strong>
+                                        {{/if}}
+                                        <a href="/canteens/principals/{{canteen.principal.id}}">{{canteen.principal.name}}</a><br>
                                     {{/if}}
-                                    {{#if canteen.party}}
+                                    {{!-- {{#if canteen.party}}
                                         <strong>Μισθωτής:</strong> <a href="/properties/parties/{{canteen.party.id}}">{{canteen.party.name}}</a><br>
-                                    {{/if}}
+                                    {{/if}} --}}
                                     {{#if canteen.area}}
                                         <strong>Επιφάνεια:</strong> {{canteen.area}} τ.μ.<br>
                                     {{/if}}
-                                    {{#if canteen.lease}}
+                                    {{!-- {{#if canteen.lease}}
                                         <strong>Λήξη Μίσθωσης:</strong> {{date canteen.lease.lease_end}}<br>
-                                    {{/if}}
+                                    {{/if}} --}}
                                 </div>
                             </div>
                         </div>
