@@ -113,6 +113,7 @@ const handlebarsConfig = {
         leaseDirectionShortText: descriptions.leaseDirectionShort,
         rentFrequencyText: descriptions.rentFrequency,
         periodStatusText: descriptions.periodStatus,
+        periodStatusBadge: descriptions.periodStatusBadge,
         greekMonthText: descriptions.greekMonths,
         ownershipStatusText: descriptions.ownershipStatus,
         assetTypeText: descriptions.assetType,

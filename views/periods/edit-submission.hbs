@@ -65,11 +65,7 @@
                                     <strong>Έως:</strong> {{date period.end_date}}<br>
                                     <strong>Προθεσμία:</strong> {{date period.submission_deadline}}<br>
                                     <strong>Κατάσταση:</strong> 
-                                    {{#if period.active}}
-                                        <span class="badge bg-success">Ενεργή</span>
-                                    {{else}}
-                                        <span class="badge bg-secondary">Ανενεργή</span>
-                                    {{/if}}
+                                        <span class="badge {{periodStatusBadge period.status}}">{{periodStatusText period.status}}</span>
                                 </div>
                             </div>
                         </div>

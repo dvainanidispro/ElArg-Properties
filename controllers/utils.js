@@ -65,6 +65,15 @@ let descriptions = {
         };
         return statuses[status] || status;
     },
+    periodStatusBadge: (status) => {
+        const statuses = {
+            planned: 'bg-info',
+            open: 'bg-success',
+            closed: 'bg-blue',
+            inactive: 'bg-secondary',
+        };
+        return statuses[status] || 'badge bg-secondary';
+    },
     greekMonths: (monthNumber) => {
         const months = {
             1: 'Ιανουάριος',

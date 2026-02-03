@@ -66,15 +66,7 @@
                                     </td>
                                     <td>{{date this.submission_deadline}}</td>
                                     <td>
-                                        {{#if (eq this.status 'planned')}}
-                                            <span class="badge bg-info fs-6">Προγραμματισμένη</span>
-                                        {{else if (eq this.status 'open')}}
-                                            <span class="badge bg-success fs-6">Ανοιχτή</span>
-                                        {{else if (eq this.status 'closed')}}
-                                            <span class="badge bg-blue fs-6">Κλειστή</span>
-                                        {{else if (eq this.status 'inactive')}}
-                                            <span class="badge bg-secondary fs-6">Ανενεργή</span>
-                                        {{/if}}
+                                        <span class="badge {{periodStatusBadge this.status}} fs-6">{{periodStatusText this.status}}</span>
                                     </td>
                                     {{!-- <td>
                                         {{#if this.active}}
