@@ -52,8 +52,8 @@
                                         <th class="sortable">Περίοδος</th>
                                         <th class="sortable" data-sort-type="date-gr">Χρονικό <br>διάστημα</th>
                                         <th class="sortable" data-sort-type="date-gr">Προθεσμία <br>υποβολής</th>
-                                        <th class="narrow-cell-l">Κατάσταση <br>Περιόδου</th>
-                                        <th class="wide-cell">Κατάσταση Υποβολής</th>
+                                        <th class="narrow-cell-l">Κατάσταση <br>περιόδου</th>
+                                        <th class="wide-cell">Κατάσταση υποβολής</th>
                                         <th class="sortable" data-sort-type="number">Μίσθωμα</th>
                                         <th class="wide-cell-m">Ενέργειες</th>
                                     </tr>
@@ -109,7 +109,10 @@
                                         {{#if this.submission.rent}}
                                             {{euro this.submission.rent}}
                                             {{#unless (and this.submission.isTheSameParty)}} 
-                                                <span class="text-red" data-bs-toggle="tooltip" title="Το μίσθωμα μοιράζεται σε πολλούς μισθωτές">*</span>
+                                                <span class="text-red" data-bs-toggle="tooltip" 
+                                                title="Το ποσό μοιράζεται σε πολλούς μισθωτές. Επιμέρους μισθώματα: {{joinEuro this.submission.subrents ', '}}.">
+                                                 *
+                                                </span>
                                             {{/unless}}
                                         {{/if}}
                                         </td>

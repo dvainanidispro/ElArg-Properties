@@ -243,11 +243,13 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
                 const submittedSubperiods = submission.data || [];
                 submittedSubperiods.forEach(subperiod => {
                     subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
+                    subperiod.rent = calculateRentFields([subperiod]).rent;
                 });
                 submission.isTheSameParty = (() => {
                     const partyIds = submittedSubperiods.map(sp => sp.party_id).filter(Boolean);
                     return partyIds.length ? partyIds.every(id => id === partyIds[0]) : true;
                 })();
+                submission.subrents = submittedSubperiods.map(sp => sp.rent);
             }
             
             return {
@@ -362,10 +364,6 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
         });
 
         const hasSubmission = !!existingSubmission;
-
-        // Δημιούργησε subperiods για όλα τα ενεργά leases
-        const activeLeases = canteen.leases || [];
-        const rentOffer = activeLeases[0]?.rent || 0;
         
         // Δημιουργία subperiods με βάση όλα τα leases και την περίοδο
         const subperiods = getSubperiods(period, canteen.leases);
@@ -383,8 +381,8 @@ myCanteen.get('/:canteenId/periods/:periodId/submission', async (req, res) => {
             period,
             hasSubmission,
             submission: existingSubmission,
-            rentOffer,
             subperiods,
+            multipleSubmissions: subperiods?.length > 1,
             subperiodsChanged,
             principal,
             user: req.user,

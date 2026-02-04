@@ -43,6 +43,11 @@ const handlebarsConfig = {
             return new Handlebars.SafeString(escapedItems.join(separator));     // για αποφυγή τριπλών αγκυλών
         },
         euro: (price) => new Intl.NumberFormat('el-GR', {style: 'currency', currency: 'EUR'}).format(price),
+        joinEuro: (amounts, separator=', ') => {
+            if (!Array.isArray(amounts)) return '';
+            const formattedAmounts = amounts.map(amount => new Intl.NumberFormat('el-GR', {style: 'currency', currency: 'EUR'}).format(amount));
+            return formattedAmounts.join(separator);
+        },
         time: (date) => {
             if (!date) return '';
             try {
