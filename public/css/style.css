@@ -99,7 +99,7 @@ div {
 
 h3,h4,h5,p{margin-bottom: revert;}
 
-a{
+a, .text-blue{
     color: var(--bs-link-color);
 }
 

@@ -46,15 +46,9 @@
                                         {{/if}}
                                         <a href="/canteens/principals/{{canteen.principal.id}}">{{canteen.principal.name}}</a><br>
                                     {{/if}}
-                                    {{!-- {{#if canteen.party}}
-                                        <strong>Μισθωτής:</strong> <a href="/properties/parties/{{canteen.party.id}}">{{canteen.party.name}}</a><br>
-                                    {{/if}} --}}
                                     {{#if canteen.area}}
                                         <strong>Επιφάνεια:</strong> {{canteen.area}} τ.μ.<br>
                                     {{/if}}
-                                    {{!-- {{#if canteen.lease}}
-                                        <strong>Λήξη Μίσθωσης:</strong> {{date canteen.lease.lease_end}}<br>
-                                    {{/if}} --}}
                                 </div>
                             </div>
                         </div>
@@ -83,11 +77,16 @@
                         <input type="hidden" name="principal_id" value="{{canteen.principal.id}}">
 
                         {{#each subperiods}}
-                        <div class="card mb-4 subperiod-card" data-index="{{@index}}">
+                        <div class="card my-5 subperiod-card small-shadow" data-index="{{@index}}">
                             <div class="card-header">
                                 <h6 class="mb-0">
                                     <i class="ti-calendar me-2"></i>
-                                    <span class="larger">{{check (eq ../subperiods.length 1) 'Περίοδος' 'Υποπερίοδος'}}: {{date this.start_date}} - {{date this.end_date}}</span>
+                                    <span class="larger">
+                                        {{check ../moreThanOneSubperiod 'Υποπερίοδος' 'Περίοδος'}}: 
+                                        {{date this.start_date}}-{{date this.end_date}} 
+                                        {{#if this.party}} - 
+                                        {{this.party.name}}
+                                        {{/if}}</span>
                                 </h6>
                             </div>
                             <div class="card-body">
@@ -152,23 +151,39 @@
                                         <div class="form-text text-muted">Κόστος ρεύματος για αυτή την περίοδο</div>
                                     </div>
                                 </div>
+
+                                {{!-- Καθαρό Μίσθωμα Περιόδου --}}
+                                {{#if ../moreThanOneSubperiod}}
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="mb-0">
+                                                    <i class="ti-control-forward me-2"></i>
+                                                    Καθαρό Μίσθωμα Υποπεριόδου: <span class="text-blue subperiod-calculated-rent" data-index="{{@index}}">{{#if this.calculated_rent}}{{euro this.calculated_rent}}{{else}}-{{/if}}</span>
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{/if}}
                             </div>
                         </div>
                         {{/each}}
                         
                         {{!-- Υπολογισμός συνόλου --}}
                         {{#if submission}}
-                        <div class="row mb-3">
+                        <div class="row my-5 ms-4">
                             <div class="col-md-6">
-                                <div class="card bg-light">
+                                <div class="card bg-light small-shadow">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div>
                                                 <h6 class="card-title">
                                                     <i class="ti-control-forward me-2"></i>
-                                                    Καθαρό Μίσθωμα:
+                                                    {{check moreThanOneSubperiod 'Συνολικό' ''}} Καθαρό Μίσθωμα:
                                                 </h6>
-                                                <div id="calculatedRent" class="fs-5 fw-bold">{{euro submission.rent}}</div>
+                                                <div id="calculatedRent" class="fs-5 fw-bold text-blue">{{euro submission.rent}}</div>
                                             </div>
                                             <div class="">
                                                 <button type="button" id="calculateRent" class="btn btn-outline-primary">Υπολογισμός</button>
@@ -312,23 +327,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const rentInput = card.querySelector(`input[name="subperiods[${index}][rent]"]`);
             const studentsInput = card.querySelector(`input[name="subperiods[${index}][students]"]`);
             const workingDaysInput = card.querySelector(`input[name="subperiods[${index}][working_days]"]`);
+            const subperiodRentDisplay = card.querySelector('.subperiod-calculated-rent');
             
-            const rent = parseFloat(rentInput.value) || 0;
-            const students = parseInt(studentsInput.value) || 0;
-            const workingDays = parseInt(workingDaysInput.value) || 0;
-            
-            // Έλεγχος αν όλα τα πεδία είναι συμπληρωμένα
-            if (!rent || !students || !workingDays) {
+            // Έλεγχος αν όλα τα πεδία είναι συμπληρωμένα (δεκτό και το 0)
+            if (rentInput.value === '' || studentsInput.value === '' || workingDaysInput.value === '') {
                 hasErrors = true;
                 // Προσθήκη red border στα κενά πεδία
                 [rentInput, studentsInput, workingDaysInput].forEach(input => {
-                    if (!input.value) {
+                    if (input.value === '') {
                         input.classList.add('is-invalid');
                     } else {
                         input.classList.remove('is-invalid');
                     }
                 });
+                // Καθαρισμός επιμέρους καθαρού μισθώματος
+                if (subperiodRentDisplay) {
+                    subperiodRentDisplay.textContent = '-';
+                }
             } else {
+                const rent = parseFloat(rentInput.value);
+                const students = parseInt(studentsInput.value);
+                const workingDays = parseInt(workingDaysInput.value);
+                
                 // Αφαίρεση red borders αν τα πεδία είναι συμπληρωμένα
                 [rentInput, studentsInput, workingDaysInput].forEach(input => {
                     input.classList.remove('is-invalid');
@@ -337,6 +357,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Υπολογισμός για αυτή την υποπερίοδο: (1/189) * rent * students * working_days
                 const subperiodRent = (1/189) * rent * students * workingDays;
                 totalRent += subperiodRent;
+                
+                // Ενημέρωση του επιμέρους καθαρού μισθώματος
+                if (subperiodRentDisplay) {
+                    subperiodRentDisplay.textContent = subperiodRent.toLocaleString('el-GR', {
+                        style: 'currency',
+                        currency: 'EUR',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
             }
         });
         

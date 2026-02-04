@@ -299,9 +299,12 @@ periods.get('/submissions/new', can('edit:content'), async (req, res) => {
         // Δημιούργησε subperiods για όλα τα ενεργά leases
         const subperiods = getSubperiods(period, canteen.leases);
 
-        // Flatten party και lease για εύκολη πρόσβαση στο view
-        canteen.party = canteen.leases?.[0]?.party || null;
-        canteen.lease = canteen.leases?.[0] || null;
+        // Party και lease για εύκολη πρόσβαση στο view
+        const allParties = await TableData.Party;
+        const partyMap = new Map(allParties.map(p => [p.id, p]));
+        subperiods.forEach(subperiod => {
+            subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
+        });
 
         res.render('periods/edit-submission', {
             period,
@@ -572,7 +575,7 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
                 submittedData,
             };
         });
-        log.dev(canteensWithSubmissions);
+        // log.dev(canteensWithSubmissions);
 
         //# 5 Ταξινόμηση με βάση τις υποβολές
         // Καντίνες χωρίς υποβολή πρώτες. Μετά, ταξινόμιση κατά submission.updatedAt (χρονική σειρά).
@@ -624,13 +627,13 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
         const periodId = parseInt(req.params.periodId);
         const submissionId = parseInt(req.params.submissionId);
         
-        // Βρίσκουμε την περίοδο
+        //# 1 Βρίσκουμε την περίοδο
         const period = await Models.Period.findByPk(periodId);
         if (!period || period.property_type !== 'canteen') {
             return res.status(404).render('errors/404', { message: 'Η περίοδος κυλικείων δεν βρέθηκε' });
         }
         
-        // Βρίσκουμε την υποβολή με όλα τα σχετικά δεδομένα
+        //# 2 Βρίσκουμε την υποβολή με όλα τα σχετικά δεδομένα
         const submission = await Models.Submission.findOne({
             where: {
                 id: submissionId,
@@ -684,24 +687,31 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
         if (!submission) {
             return res.status(404).render('errors/404', { message: 'Η υποβολή δεν βρέθηκε' });
         }
-        
-        // Πάρε τα αποθηκευμένα δεδομένα από την υποβολή
-        const subperiods = submission.data || [];
-        
-        // Flatten party και lease για εύκολη πρόσβαση στο view
-        submission.canteen.party = submission.canteen.leases?.[0]?.party || null;
-        submission.canteen.lease = submission.canteen.leases?.[0] || null;
-        
-        // Καθορισμός του principal με βάση το status της περιόδου
+
+        //# 3 Καθορισμός του principal με βάση το status της περιόδου
         submission.canteen.principal = period.status === 'closed'
             ? (submission.principal || null)
             : (submission.principal ?? submission.canteen.principal);
         
+        //# 4 Για κάθε συμπληρωμένη υποπερίοδο, φέρνουμε party και καθαρό μίσθωμα υποπεριόδου
+        const allParties = await TableData.Party;
+        const partyMap = new Map(allParties.map(p => [p.id, p]));
+        
+        const subperiods = (submission.data || []).map(subperiod => ({
+            ...subperiod,
+            party: subperiod.party_id ? partyMap.get(subperiod.party_id) : null,
+            calculated_rent: calculateRentFields([subperiod]).rent
+        }));
+
+        
+        
+        //# 5 Render
         res.render('periods/edit-submission', {
             period,
             submission,
             canteen: submission.canteen,
             subperiods,
+            moreThanOneSubperiod: subperiods.length > 1,
             user: req.user,
             title: `Υποβολή Στοιχείων - ${submission.canteen.name}`
         });
