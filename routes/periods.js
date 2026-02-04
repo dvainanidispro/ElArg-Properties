@@ -509,7 +509,7 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
                         property_type: 'canteen'
                     },
                     order: [['lease_end', 'DESC']],
-                    limit: showSubperiods ? 5 : 1,
+                    limit: 5,
                     required: false
                 },
                 {
@@ -556,8 +556,8 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
                 partiesNames: partyIds.map(id => partyMap.get(id)?.name),
                 subrents: submittedSubperiods.map(subperiod => calculateRentFields([subperiod]).rent),
                 isTheSameParty: partyIds.length ? partyIds.every(id => id === partyIds[0]) : true,
-                moreThanOneLease: new Set(submittedSubperiods.map(s => s.lease_id)).size > 1,
             };
+            // log.dev(submittedData);
 
             const subperiods = getSubperiods(period, canteen.leases, false);
             subperiods.forEach(subperiod => {

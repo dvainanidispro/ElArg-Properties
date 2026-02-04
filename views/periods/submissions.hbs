@@ -147,7 +147,9 @@
                                     </td>
                                     <td class="" data-sort-value="{{this.submission.rent}}">
                                         {{euro this.submission.rent }}
-                                        {{#if this.submittedData.moreThanOneLease}} * {{/if}}
+                                        {{#unless this.submittedData.isTheSameParty}} 
+                                        <span data-bs-toggle="tooltip" title="Το μίσθωμα μοιράζεται σε πολλούς μισθωτές">*</span>
+                                        {{/unless}}
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}
