@@ -4,6 +4,7 @@ import { can } from '../controllers/roles.js';
 import { getSubperiods, calculateRentFields } from '../controllers/periods/periods.js';
 import { generatePeriod, justShowNextPeriod } from '../controllers/periods/generate.js';
 import log from '../controllers/logger.js';
+import TableData from '../controllers/queries.js';
 
 /**
  * Routes for managing periods (canteens only). Path: /canteens/periods
@@ -530,24 +531,50 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
             order: [['name', 'ASC']]
         });
 
-        //# 3 Μετασχηματίζουμε τα δεδομένα για το view
-        const canteensWithSubmissions = canteens.map(canteen => ({
-            id: canteen.id,
-            name: canteen.name,
-            active: canteen.active,
-            principal: period.status === 'closed' 
-                ? (canteen.submissions?.[0]?.principal || null)
-                : (canteen.submissions?.[0]?.principal ?? canteen.principal),
-            lease: canteen.leases?.[0] || null,
-            party: canteen.leases?.[0]?.party || null,
-            hasSubmission: canteen.submissions && canteen.submissions.length > 0,
-            submission: canteen.submissions?.[0] || null,
-            subperiods: getSubperiods(period, canteen.leases, false),
-            submittedSubperiods: canteen.submissions?.[0]?.data ?? [],
-        }));
-        // log.dev(canteensWithSubmissions);
+        //# 3 Φέρε ολόκληρους τους πίνακες leases και parties για join με submittedSubperiods
+        const [/*allLeases, */allParties] = await Promise.all([
+            // TableData.Lease,
+            TableData.Party
+        ]);
+        
+        // Δημιουργία maps για γρήγορη αναζήτηση
+        // const leaseMap = new Map(allLeases.map(l => [l.id, l]));
+        const partyMap = new Map(allParties.map(p => [p.id, p]));
+        
+        //# 4 Μετασχηματίζουμε τα δεδομένα για το view
+        const canteensWithSubmissions = canteens.map(canteen => {
+            const submittedSubperiods = canteen.submissions?.[0]?.data ?? [];
+            // const leaseIds = submittedSubperiods.map(s => s.lease_id).filter(Boolean);
+            const partyIds = submittedSubperiods.map(s => s.party_id).filter(Boolean);
 
-        //# 4 Ταξινόμηση με βάση τις υποβολές
+            const submittedData = {
+                // leases: leaseIds.map(id => leaseMap.get(id)).filter(Boolean),
+                parties: partyIds.map(id => partyMap.get(id)).filter(Boolean),
+                partiesNames: partyIds.map(id => partyMap.get(id)?.name),
+                subrents: submittedSubperiods.map(subperiod => calculateRentFields([subperiod]).rent),
+                isTheSameParty: partyIds.length ? partyIds.every(id => id === partyIds[0]) : true,
+                moreThanOneLease: new Set(submittedSubperiods.map(s => s.lease_id)).size > 1,
+            };
+            
+            return {
+                id: canteen.id,
+                name: canteen.name,
+                active: canteen.active,
+                principal: period.status === 'closed' 
+                    ? (canteen.submissions?.[0]?.principal || null)
+                    : (canteen.submissions?.[0]?.principal ?? canteen.principal),
+                lease: canteen.leases?.[0] || null,     // τρέχον lease
+                party: canteen.leases?.[0]?.party || null,  // τρέχον party
+                hasSubmission: canteen.submissions && canteen.submissions.length > 0,
+                submission: canteen.submissions?.[0] || null,
+                subperiods: getSubperiods(period, canteen.leases, false),
+                submittedSubperiods,
+                submittedData,
+            };
+        });
+        log.dev(canteensWithSubmissions);
+
+        //# 5 Ταξινόμηση με βάση τις υποβολές
         // Καντίνες χωρίς υποβολή πρώτες. Μετά, ταξινόμιση κατά submission.updatedAt (χρονική σειρά).
         canteensWithSubmissions.sort((a, b) => {
             const aHas = !!(a.submission);
@@ -564,12 +591,12 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
             return new Date(a.submission.updatedAt) - new Date(b.submission.updatedAt);
         });
 
-        //# 5 Υπολογισμός στατιστικών
+        //# 6 Υπολογισμός στατιστικών
         const submittedCount = canteensWithSubmissions.filter(c => c.hasSubmission).length;
         const pendingCount = canteensWithSubmissions.length - submittedCount;
         const submittedPercent = canteensWithSubmissions.length > 0 ? Math.round((submittedCount / canteensWithSubmissions.length) * 100) : 0;
 
-        //# 6 Render
+        //# 7 Render
         res.render(showSubperiods ? 'periods/subperiods' : 'periods/submissions', {
             period,
             canteens: canteensWithSubmissions,

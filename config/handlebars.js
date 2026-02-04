@@ -36,6 +36,7 @@ const handlebarsConfig = {
         array: (...items) => items.slice(0, -1), // -1: Remove the Handlebars context object
         /* example {{join 'a' 'b' 'c'}} => a, b, c */
         join: (...items) => items.slice(0, -1).filter(Boolean).join(', '),
+        uniqueJoin: (array, separator=', ') => [...new Set(array.filter(Boolean))].join(separator),
         euro: (price) => new Intl.NumberFormat('el-GR', {style: 'currency', currency: 'EUR'}).format(price),
         time: (date) => {
             if (!date) return '';

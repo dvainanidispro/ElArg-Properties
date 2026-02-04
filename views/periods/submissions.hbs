@@ -86,8 +86,6 @@
                                     <th class="d-none" >email Διευθυντή</th>
                                     <th class="">Μισθωτής</th>
                                     <th class="d-none">ΑΦΜ Μισθωτή</th>
-                                    {{!-- <th>Κατάσταση Κυλικείου</th> --}}
-                                    <th class="d-none">Λήξη <br> Μίσθωσης</th>
                                     <th class="sortable narrow-cell-m">Υποβολή <br>Στοιχείων</th>
                                     <th class="sortable narrow-cell-sm">Ημερομηνία <br>Υποβολής</th>
                                     <th class="sortable narrow-cell-sm d-none d-xxl-table-cell" data-sort-type="number" >Κόστος <br>Ρεύματος</th>
@@ -115,20 +113,10 @@
                                         {{this.principal.email}}
                                     </td>
                                     <td>
-                                        {{this.party.name}}
+                                        {{{uniqueJoin submittedData.partiesNames '<br>'}}}
                                     </td>
                                     <td class="d-none">
                                         {{this.party.afm}}
-                                    </td>
-                                    {{!-- <td>
-                                        {{#if this.active}}
-                                            <span class="badge bg-success fs-6">Ενεργό</span>
-                                        {{else}}
-                                            <span class="badge bg-secondary fs-6">Ανενεργό</span>
-                                        {{/if}}
-                                    </td> --}}
-                                    <td class="d-none " data-value="{{this.lease.lease_end}}">
-                                            {{date this.lease.lease_end}}
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}
@@ -155,6 +143,7 @@
                                     </td>
                                     <td class="" data-sort-value="{{this.submission.rent}}">
                                         {{euro this.submission.rent }}
+                                        {{#if this.submittedData.moreThanOneLease}} * {{/if}}
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}
