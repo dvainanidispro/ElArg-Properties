@@ -113,7 +113,11 @@
                                         {{this.principal.email}}
                                     </td>
                                     <td>
-                                        {{{uniqueJoin submittedData.partiesNames '<br>'}}}
+                                        {{#if this.hasSubmission}}
+                                            {{uniqueJoin submittedData.partiesNames '<br>'}}
+                                        {{else}}
+                                            {{uniqueJoin this.subperiodPartyNames '<br>'}}
+                                        {{/if}}
                                     </td>
                                     <td class="d-none">
                                         {{this.party.afm}}

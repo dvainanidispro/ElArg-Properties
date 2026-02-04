@@ -558,6 +558,12 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
                 isTheSameParty: partyIds.length ? partyIds.every(id => id === partyIds[0]) : true,
                 moreThanOneLease: new Set(submittedSubperiods.map(s => s.lease_id)).size > 1,
             };
+
+            const subperiods = getSubperiods(period, canteen.leases, false);
+            subperiods.forEach(subperiod => {
+                subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
+            });
+            const subperiodPartyNames = subperiods.map(sp => sp.party.name);
             
             return {
                 id: canteen.id,
@@ -570,7 +576,8 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
                 party: canteen.leases?.[0]?.party || null,  // τρέχον party
                 hasSubmission: canteen.submissions && canteen.submissions.length > 0,
                 submission: canteen.submissions?.[0] || null,
-                subperiods: getSubperiods(period, canteen.leases, false),
+                subperiods,
+                subperiodPartyNames,
                 submittedSubperiods,
                 submittedData,
             };

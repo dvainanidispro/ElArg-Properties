@@ -1,4 +1,5 @@
 import { create as HandlebarsCreator } from 'express-handlebars';
+import Handlebars from 'handlebars';
 import { userHasPermission } from '../controllers/roles.js';
 import { descriptions } from '../controllers/utils.js';
 
@@ -36,7 +37,11 @@ const handlebarsConfig = {
         array: (...items) => items.slice(0, -1), // -1: Remove the Handlebars context object
         /* example {{join 'a' 'b' 'c'}} => a, b, c */
         join: (...items) => items.slice(0, -1).filter(Boolean).join(', '),
-        uniqueJoin: (array, separator=', ') => [...new Set(array.filter(Boolean))].join(separator),
+        uniqueJoin: (array, separator=', ') => {
+            const uniqueItems = [...new Set(array.filter(Boolean))];
+            const escapedItems = uniqueItems.map(item => Handlebars.escapeExpression(item));
+            return new Handlebars.SafeString(escapedItems.join(separator));     // για αποφυγή τριπλών αγκυλών
+        },
         euro: (price) => new Intl.NumberFormat('el-GR', {style: 'currency', currency: 'EUR'}).format(price),
         time: (date) => {
             if (!date) return '';
