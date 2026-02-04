@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
+import TableData from '../controllers/queries.js';
 import { getSubperiods, calculateRentFields } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
@@ -213,9 +214,14 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
 
         // log.dev(periods);
 
+        // Φέρνω όλους τους συμβαλλόμενους
+        const allParties = await TableData.Party;
+        const partyMap = new Map(allParties.map(p => [p.id, p]));
+
         // Προσθέτω πληροφορία για το αν έχει υποβληθεί submission
-        const periodsWithSubmissionStatus = activePeriods.map(period => {
-            const hasSubmission = period.submissions && period.submissions.length > 0;
+        const periodsWithSubmissionData = activePeriods.map(period => {
+            const hasSubmission = period?.submissions?.length > 0;
+            const submission = hasSubmission ? period.submissions[0] : null;
             let submissionStatus;
             
             if (hasSubmission) {
@@ -231,19 +237,31 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
             } else {    // status: 'open' ή 'planned'
                 submissionStatus = 'pending'; // Εκκρεμεί
             }
+
+            if (hasSubmission){
+                // Προσθέτω πληροφορίες για τα subperiods της υποβολής
+                const submittedSubperiods = submission.data || [];
+                submittedSubperiods.forEach(subperiod => {
+                    subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
+                });
+                submission.isTheSameParty = (() => {
+                    const partyIds = submittedSubperiods.map(sp => sp.party_id).filter(Boolean);
+                    return partyIds.length ? partyIds.every(id => id === partyIds[0]) : true;
+                })();
+            }
             
             return {
                 ...period.toJSON(),
                 hasSubmission,
-                submission: hasSubmission ? period.submissions[0] : null,
+                submission,
                 submissionStatus,
             };
         });
 
-        // log.dev(periodsWithSubmissionStatus);
+        // log.dev(periodsWithSubmissionData);
 
         res.render('principals/periods', { 
-            periods: periodsWithSubmissionStatus,
+            periods: periodsWithSubmissionData,
             canteen,
             principal,
             user: req.user,

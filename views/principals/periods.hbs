@@ -106,7 +106,12 @@
                                             {{/if}}
                                         </td>
                                         <td>
-                                            {{check this.submission.rent (euro this.submission.rent) ''}}
+                                        {{#if this.submission.rent}}
+                                            {{euro this.submission.rent}}
+                                            {{#unless (and this.submission.isTheSameParty)}} 
+                                                <span class="text-red" data-bs-toggle="tooltip" title="Το μίσθωμα μοιράζεται σε πολλούς μισθωτές">*</span>
+                                            {{/unless}}
+                                        {{/if}}
                                         </td>
                                         <td>
                                             {{#if this.hasSubmission}}

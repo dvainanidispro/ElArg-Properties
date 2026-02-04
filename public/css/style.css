@@ -204,6 +204,10 @@ a.text-primary, .btn-outline-primary, .btn-outline-primary i{
     }
 }
 
+.text-red{
+    color: crimson;
+}
+
 .btn-warning{
     background-color: var(--bs-orange) !important;
     border-color: var(--bs-orange) !important;
