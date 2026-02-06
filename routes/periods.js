@@ -577,7 +577,7 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
                     const lease = leaseMap.get(leaseId);
                     return lease ? partyMap.get(lease.party_id)?.afm || 'Άγνωστο' : 'Άγνωστο';
                 }) || [];
-                submission.isTheSameParty = submission.arrayOf.partyIds?.length <= 1;
+                submission.hasMultipleParties = submission.arrayOf.partyIds?.length > 1;
 
             }
             

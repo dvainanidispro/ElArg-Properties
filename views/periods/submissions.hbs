@@ -149,9 +149,9 @@
                                     </td>
                                     <td class="" data-sort-value="{{this.submission.rent}}" data-value-array="{{this.submission.arrayOf.subRents}}">
                                         {{joinEuro this.submission.arrayOf.subRents '<br>'}}
-                                        {{!-- {{#unless this.submission.isTheSameParty}} 
+                                        {{!-- {{#if this.submission.hasMultipleParties}} 
                                         <span class="text-red" data-bs-toggle="tooltip" title="Το ποσό μοιράζεται σε πολλούς μισθωτές">*</span>
-                                        {{/unless}} --}}
+                                        {{/if}} --}}
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}

@@ -108,12 +108,12 @@
                                         <td>
                                         {{#if this.submission.rent}}
                                             {{euro this.submission.rent}}
-                                            {{#unless (and this.submission.isTheSameParty)}} 
+                                            {{#if this.submission.hasMultipleParties}} 
                                                 <span class="text-red" data-bs-toggle="tooltip" 
                                                 title="Το ποσό μοιράζεται σε πολλούς μισθωτές. Επιμέρους μισθώματα: {{joinEuro this.submission.subrents ', '}}.">
                                                  *
                                                 </span>
-                                            {{/unless}}
+                                            {{/if}}
                                         {{/if}}
                                         </td>
                                         <td>

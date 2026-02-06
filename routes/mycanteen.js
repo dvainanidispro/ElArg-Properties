@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
-import TableData from '../controllers/queries.js';
 import { getSubperiods, calculateRentFields } from '../controllers/periods/periods.js';
 import { can } from '../controllers/roles.js';
 import log from '../controllers/logger.js';
@@ -214,10 +213,6 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
 
         // log.dev(periods);
 
-        // Φέρνω όλους τους συμβαλλόμενους
-        const allParties = await TableData.Party;
-        const partyMap = new Map(allParties.map(p => [p.id, p]));
-
         // Προσθέτω πληροφορία για το αν έχει υποβληθεί submission
         const periodsWithSubmissionData = activePeriods.map(period => {
             const hasSubmission = period?.submissions?.length > 0;
@@ -242,13 +237,9 @@ myCanteen.get('/:canteenId/periods', async (req, res) => {
                 // Προσθέτω πληροφορίες για τα subperiods της υποβολής
                 const submittedSubperiods = submission.data || [];
                 submittedSubperiods.forEach(subperiod => {
-                    subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
                     subperiod.rent = calculateRentFields([subperiod]).rent;
                 });
-                submission.isTheSameParty = (() => {
-                    const partyIds = submittedSubperiods.map(sp => sp.party_id).filter(Boolean);
-                    return partyIds.length ? partyIds.every(id => id === partyIds[0]) : true;
-                })();
+                submission.hasMultipleParties = new Set(submittedSubperiods.map(sp => sp.party_id).filter(Boolean)).size > 1;
                 submission.subrents = submittedSubperiods.map(sp => sp.rent);
             }
             
