@@ -260,18 +260,37 @@ function downloadTableAsExcel(tableID, filename = 'table.xlsx', sheetname = 'She
 
     // Clone για να μην πειραχτεί το DOM
     const clone = table.cloneNode(true);
+    const arrayValuesMap = new Map(); // Αποθήκευση array values για αντικατάσταση μετά το table_to_book
 
-    // Αν υπάρχει data-value ή data-sort-value, να χρησιμοποιείται αυτό, αλλιώς, να χρησιμοποιείται το textContent
-    clone.querySelectorAll('td, th').forEach(cell => {
-      const dataValue = cell.getAttribute('data-value') ?? cell.getAttribute('data-sort-value');
-      if (dataValue !== null && dataValue !== "") {
-        cell.textContent = dataValue;
-      } else {
-        cell.textContent = cell.textContent;
-      }
+    // Επεξεργασία των cells
+    const rows = clone.querySelectorAll('tr');
+    rows.forEach((row, rowIndex) => {
+      const cells = row.querySelectorAll('td, th');
+      cells.forEach((cell, colIndex) => {
+        const dataValue = cell.getAttribute('data-value') ?? cell.getAttribute('data-sort-value');
+        const dataValueArray = cell.getAttribute('data-value-array');
+        
+        if (dataValueArray !== null && dataValueArray !== "") {
+          // Αποθήκευση για αντικατάσταση αργότερα
+          const value = dataValueArray.split(',').map(el=>el.trim());
+          const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
+          arrayValuesMap.set(cellAddress, value.join('\n'));
+          cell.textContent = ''; // Δεν χρειάζεται περιεχόμενο, θα το αντικαταστήσουμε μετά το table_to_book
+        } else if (dataValue !== null && dataValue !== "") {
+          cell.textContent = dataValue;
+        }
+      });
     });
 
     const wb = XLSX.utils.table_to_book(clone, { sheet: sheetname });
+    const ws = wb.Sheets[sheetname];
+    
+    // Αντικατάσταση των array values με line breaks
+    arrayValuesMap.forEach((value, cellAddress) => {
+      ws[cellAddress].v = value;
+      ws[cellAddress].t = 's';
+    });
+    
     XLSX.writeFile(wb, filename);
 }
 

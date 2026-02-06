@@ -10,6 +10,10 @@ let greekdate = (inputDate) => {
     return date.toLocaleDateString('el-GR', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
+let properNumber = (num) => {
+    return Math.round(parseFloat(num) * 100) / 100;
+};
+
 
 let descriptions = {
     ownershipStatus: (status) => {
@@ -119,4 +123,4 @@ let markLatestLeases = (leases) => {
     return leases;
 };
 
-export { presentTime, greekdate, descriptions, markLatestLeases };
+export { presentTime, greekdate, properNumber, descriptions, markLatestLeases };

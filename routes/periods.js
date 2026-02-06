@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Models from '../models/models.js';
 import { can } from '../controllers/roles.js';
-import { getSubperiods, calculateRentFields } from '../controllers/periods/periods.js';
+import { getSubperiods, calculateRentFields, aggregateSubperiodsByLease } from '../controllers/periods/periods.js';
 import { generatePeriod, justShowNextPeriod } from '../controllers/periods/generate.js';
 import log from '../controllers/logger.js';
 import TableData from '../controllers/queries.js';
@@ -535,51 +535,66 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
         });
 
         //# 3 Φέρε ολόκληρους τους πίνακες leases και parties για join με submittedSubperiods
-        const [/*allLeases, */allParties] = await Promise.all([
-            // TableData.Lease,
+        const [allLeases, allParties] = await Promise.all([
+            TableData.Lease,
             TableData.Party
         ]);
         
         // Δημιουργία maps για γρήγορη αναζήτηση
-        // const leaseMap = new Map(allLeases.map(l => [l.id, l]));
+        const leaseMap = new Map(allLeases.map(l => [l.id, l]));
         const partyMap = new Map(allParties.map(p => [p.id, p]));
         
         //# 4 Μετασχηματίζουμε τα δεδομένα για το view
         const canteensWithSubmissions = canteens.map(canteen => {
-            const submittedSubperiods = canteen.submissions?.[0]?.data ?? [];
-            // const leaseIds = submittedSubperiods.map(s => s.lease_id).filter(Boolean);
-            const partyIds = submittedSubperiods.map(s => s.party_id).filter(Boolean);
-
-            const submittedData = {
-                // leases: leaseIds.map(id => leaseMap.get(id)).filter(Boolean),
-                parties: partyIds.map(id => partyMap.get(id)).filter(Boolean),
-                partiesNames: partyIds.map(id => partyMap.get(id)?.name),
-                subrents: submittedSubperiods.map(subperiod => calculateRentFields([subperiod]).rent),
-                isTheSameParty: partyIds.length ? partyIds.every(id => id === partyIds[0]) : true,
-            };
-            // log.dev(submittedData);
+            const submission = canteen.submissions?.[0] || null;
+            const submittedSubperiods = submission?.data ?? [];
 
             const subperiods = getSubperiods(period, canteen.leases, false);
             subperiods.forEach(subperiod => {
                 subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
             });
             const subperiodPartyNames = subperiods.map(sp => sp.party.name);
+
+            if (submission) {
+            
+                submission.arrayOf = submittedSubperiods.length ? aggregateSubperiodsByLease(submittedSubperiods) : {};
+                // log.dev(submission.arrayOf);
+                // Στο arrayOf πρέπει να προστεθούν τα partyNames και PartyAfm μέσω του partyMap καθώς και το leaseEnd από το leaseMap
+                submission.arrayOf.partyNames = submission.arrayOf.partyIds.map(partyId => {
+                    const party = partyMap.get(partyId);
+                    return party ? party.name : 'Άγνωστο';
+                }) || [];
+                submission.arrayOf.leaseEnds = submission.arrayOf.leaseIds?.map(leaseId => {
+                    const lease = leaseMap.get(leaseId);
+                    return lease ? new Intl.DateTimeFormat('el-GR', { 
+                        day: 'numeric', 
+                        month: 'numeric', 
+                        year: 'numeric',
+                        timeZone: 'Europe/Athens' 
+                    }).format(new Date(lease.lease_end)) : 'Άγνωστο';
+                }) || [];
+                submission.arrayOf.partyAfms = submission.arrayOf.leaseIds?.map(leaseId => {
+                    const lease = leaseMap.get(leaseId);
+                    return lease ? partyMap.get(lease.party_id)?.afm || 'Άγνωστο' : 'Άγνωστο';
+                }) || [];
+                submission.isTheSameParty = submission.arrayOf.partyIds?.length <= 1;
+
+            }
             
             return {
                 id: canteen.id,
                 name: canteen.name,
                 active: canteen.active,
                 principal: period.status === 'closed' 
-                    ? (canteen.submissions?.[0]?.principal || null)
-                    : (canteen.submissions?.[0]?.principal ?? canteen.principal),
-                lease: canteen.leases?.[0] || null,     // τρέχον lease
-                party: canteen.leases?.[0]?.party || null,  // τρέχον party
-                hasSubmission: canteen.submissions && canteen.submissions.length > 0,
-                submission: canteen.submissions?.[0] || null,
+                    ? (submission?.principal || null)
+                    : (submission?.principal ?? canteen.principal),
+                // lease: canteen.leases?.[0] || null,     // τρέχον lease
+                // party: canteen.leases?.[0]?.party || null,  // τρέχον party
+                hasSubmission: canteen.submissions && canteen.submissions.length > 0,  // Αν δεν βάλεις >0, θα έρθει 1 αντί για true
+                submission,
+                submittedSubperiods,
                 subperiods,
                 subperiodPartyNames,
-                submittedSubperiods,
-                submittedData,
             };
         });
         // log.dev(canteensWithSubmissions);

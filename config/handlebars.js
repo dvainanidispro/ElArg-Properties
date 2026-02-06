@@ -38,6 +38,7 @@ const handlebarsConfig = {
         /* example {{join 'a' 'b' 'c'}} => a, b, c */
         join: (...items) => items.slice(0, -1).filter(Boolean).join(', '),
         uniqueJoin: (array, separator=', ') => {
+            if (!Array.isArray(array)) return '';
             const uniqueItems = [...new Set(array.filter(Boolean))];
             const escapedItems = uniqueItems.map(item => Handlebars.escapeExpression(item));
             return new Handlebars.SafeString(escapedItems.join(separator));     // για αποφυγή τριπλών αγκυλών
@@ -46,7 +47,7 @@ const handlebarsConfig = {
         joinEuro: (amounts, separator=', ') => {
             if (!Array.isArray(amounts)) return '';
             const formattedAmounts = amounts.map(amount => new Intl.NumberFormat('el-GR', {style: 'currency', currency: 'EUR'}).format(amount));
-            return formattedAmounts.join(separator);
+            return new Handlebars.SafeString(formattedAmounts.join(separator));
         },
         time: (date) => {
             if (!date) return '';

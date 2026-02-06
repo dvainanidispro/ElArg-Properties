@@ -12,6 +12,11 @@
             "**/adminator.js",
             "**/adminator.css",
             "**/fonts/**",
-        ]
+        ],
+        "search.exclude": {
+            "**/node_modules": true,
+            "**/adminator.js": true,
+            "**/adminator.css": true
+        }
     }
 }

@@ -1,5 +1,6 @@
 import Models from '../../models/models.js';
 // import log from '../logger.js';
+import { properNumber } from '../utils.js';
 
 /**
  * Μετατρέπει ένα Date object σε string μορφής YYYY-MM-DD
@@ -32,11 +33,13 @@ async function getActiveCanteenPeriod(onlyOpen = false) {
  * 
  * @param {object} period - Το period object με start_date και end_date
  * @param {object} lease - Το lease object με rent και rent_adjustments
- * @returns {array} Array από objects με start_date, end_date και rent για κάθε subperiod
+ * @returns {array} Array από objects με start_date, end_date, rent, lease_id και party_id για κάθε subperiod
  * 
  * @example
  * // Lease με rent=400 και adjustments
  * const lease = {
+ *   id: 1,
+ *   party_id: 10,
  *   rent: 400.00,
  *   rent_adjustments: [
  *     { start_date: "2024-04-01", end_date: "2024-06-30", rent: 450.00 },
@@ -49,11 +52,11 @@ async function getActiveCanteenPeriod(onlyOpen = false) {
  * const subperiods = subperiodsFor(period, lease);
  * // Αποτέλεσμα:
  * // [
- * //   { start_date: "2024-01-01", end_date: "2024-03-31", rent: 400.00 },
- * //   { start_date: "2024-04-01", end_date: "2024-06-30", rent: 450.00 },
- * //   { start_date: "2024-07-01", end_date: "2024-08-31", rent: 400.00 },
- * //   { start_date: "2024-09-01", end_date: "2024-11-30", rent: 500.00 },
- * //   { start_date: "2024-12-01", end_date: "2024-12-31", rent: 400.00 }
+ * //   { start_date: "2024-01-01", end_date: "2024-03-31", rent: 400.00, lease_id: 1, party_id: 10 },
+ * //   { start_date: "2024-04-01", end_date: "2024-06-30", rent: 450.00, lease_id: 1, party_id: 10 },
+ * //   { start_date: "2024-07-01", end_date: "2024-08-31", rent: 400.00, lease_id: 1, party_id: 10 },
+ * //   { start_date: "2024-09-01", end_date: "2024-11-30", rent: 500.00, lease_id: 1, party_id: 10 },
+ * //   { start_date: "2024-12-01", end_date: "2024-12-31", rent: 400.00, lease_id: 1, party_id: 10 }
  * // ]
  */
 function subperiodsFor(period, lease) {
@@ -237,4 +240,64 @@ function calculateRentFields(subperiodsData) {
     };
 }
 
-export { getActiveCanteenPeriod, subperiodsFor, getSubperiods, calculateRentFields };
+
+
+/**
+ * Ομαδοποιεί και συγκεντρώνει (aggregates) subperiods ανά lease.
+ * Για κάθε μοναδικό lease_id, υπολογίζει το συνολικό rent (με χρήση calculateRentFields) 
+ * και το συνολικό electricity cost.
+ * 
+ * @param {Array<Object>} subperiods - Array από subperiod objects που περιέχουν lease_id, rent, students, working_days και electricity_cost
+ * @returns {Object} Αντικείμενο με παράλληλα arrays (indexed by lease position):
+ *   - leaseIds: Array με τα μοναδικά lease IDs
+ *   - partyIds: Array με τα αντίστοιχα party IDs (λαμβάνεται από το πρώτο subperiod κάθε lease)
+ *   - subRents: Array με το συνολικό υπολογισμένο rent ανά lease (υπολογίζεται με calculateRentFields)
+ *   - subElectricityCosts: Array με το συνολικό electricity cost ανά lease
+ * 
+ * @example
+ * // Σημείωση: Το πεδίο 'rent' εμφανίζεται στο παράδειγμα για λόγους κατανόησης,
+ * // αλλά στην πραγματικότητα δεν υπάρχει ως πεδίο - υπολογίζεται από τη calculateRentFields
+ * const subperiods = [
+ *   { lease_id: 1, rent: 100, students: 50, working_days: 20, electricity_cost: 20 },
+ *   { lease_id: 1, rent: 150, students: 60, working_days: 22, electricity_cost: 30 },
+ *   { lease_id: 2, rent: 200, students: 70, working_days: 21, electricity_cost: 40 }
+ * ];
+ * const result = aggregateSubperiodsByLease(subperiods);
+ * // {
+ * //   leaseIds: [1, 2],
+ * //   partyIds: [10, 20],
+ * //   subRents: [ 250, 200 ],
+ * //   subElectricityCosts: [50, 40]
+ * // }
+ */
+function aggregateSubperiodsByLease(subperiods) {
+    const leaseIds = [...new Set(subperiods.map(sp => sp.lease_id))];
+
+    const partyIds = leaseIds.map(id => {
+        const leaseSubperiods = subperiods.filter(sp => sp.lease_id === id);
+        return leaseSubperiods[0].party_id ?? null;
+    });
+    
+    const subRents = leaseIds.map(id => {
+        const leaseSubperiods = subperiods.filter(sp => sp.lease_id === id);
+        return leaseSubperiods.reduce((sum, sp) => {
+            const calculatedRent = calculateRentFields([sp]).rent;
+            return sum + calculatedRent;
+        }, 0);
+    }).map(properNumber);
+    
+    const subElectricityCosts = leaseIds.map(id => {
+        const leaseSubperiods = subperiods.filter(sp => sp.lease_id === id);
+        return leaseSubperiods.reduce((sum, sp) => sum + sp.electricity_cost, 0);
+    }).map(properNumber);
+    
+    return { 
+        leaseIds, 
+        partyIds,
+        subRents, 
+        subElectricityCosts
+    };
+}
+
+
+export { getActiveCanteenPeriod, subperiodsFor, getSubperiods, calculateRentFields, aggregateSubperiodsByLease };

@@ -86,6 +86,7 @@
                                     <th class="d-none" >email Διευθυντή</th>
                                     <th class="">Μισθωτής</th>
                                     <th class="d-none">ΑΦΜ Μισθωτή</th>
+                                    <th class="d-none">Λήξη Μίσθωσης</th>
                                     <th class="sortable narrow-cell-m">Υποβολή <br>Στοιχείων</th>
                                     <th class="sortable narrow-cell-sm">Ημερομηνία <br>Υποβολής</th>
                                     <th class="sortable narrow-cell-sm d-none d-xxl-table-cell" data-sort-type="number" >Κόστος <br>Ρεύματος</th>
@@ -114,13 +115,14 @@
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}
-                                            {{uniqueJoin submittedData.partiesNames '<br>'}}
-                                        {{else}}
-                                            {{uniqueJoin this.subperiodPartyNames '<br>'}}
+                                            {{uniqueJoin this.submission.arrayOf.partyNames '<br>'}}
                                         {{/if}}
                                     </td>
                                     <td class="d-none">
-                                        {{this.party.afm}}
+                                        {{uniqueJoin this.submission.arrayOf.partyAfms '<br>'}}
+                                    </td>
+                                    <td class="d-none" >
+                                        {{uniqueJoin this.submission.arrayOf.leaseEnds '<br>'}}
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}
@@ -142,14 +144,14 @@
                                             <span class="text-muted">-</span>
                                         {{/if}}
                                     </td>
-                                    <td class="d-none d-xxl-table-cell" data-sort-value="{{this.submission.electricity_cost}}" >
-                                        {{euro this.submission.electricity_cost }}
+                                    <td class="d-none d-xxl-table-cell" data-sort-value="{{this.submission.electricity_cost}}" data-value-array="{{this.submission.arrayOf.subElectricityCosts}}">
+                                        {{joinEuro this.submission.arrayOf.subElectricityCosts '<br>'}}
                                     </td>
-                                    <td class="" data-sort-value="{{this.submission.rent}}">
-                                        {{euro this.submission.rent }}
-                                        {{#unless this.submittedData.isTheSameParty}} 
+                                    <td class="" data-sort-value="{{this.submission.rent}}" data-value-array="{{this.submission.arrayOf.subRents}}">
+                                        {{joinEuro this.submission.arrayOf.subRents '<br>'}}
+                                        {{!-- {{#unless this.submission.isTheSameParty}} 
                                         <span class="text-red" data-bs-toggle="tooltip" title="Το ποσό μοιράζεται σε πολλούς μισθωτές">*</span>
-                                        {{/unless}}
+                                        {{/unless}} --}}
                                     </td>
                                     <td>
                                         {{#if this.hasSubmission}}
