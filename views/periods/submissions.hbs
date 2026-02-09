@@ -116,6 +116,8 @@
                                     <td>
                                         {{#if this.hasSubmission}}
                                             {{uniqueJoin this.submission.arrayOf.partyNames '<br>'}}
+                                        {{else}}
+                                            {{uniqueJoin this.partyNames '<br>'}}
                                         {{/if}}
                                     </td>
                                     <td class="d-none">
@@ -138,11 +140,7 @@
                                         {{/if}}
                                     </td>
                                     <td data-sort-value="{{dateInput this.submission.updatedAt}}">
-                                        {{#if this.submission.updatedAt}}
-                                            {{date this.submission.updatedAt}}
-                                        {{else}}
-                                            <span class="text-muted">-</span>
-                                        {{/if}}
+                                        {{date this.submission.updatedAt}}
                                     </td>
                                     <td class="d-none d-xxl-table-cell" data-sort-value="{{this.submission.electricity_cost}}" data-value-array="{{this.submission.arrayOf.subElectricityCosts}}">
                                         {{joinEuro this.submission.arrayOf.subElectricityCosts '<br>'}}

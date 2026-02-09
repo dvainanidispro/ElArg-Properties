@@ -545,15 +545,11 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
             const submittedSubperiods = submission?.data ?? [];
 
             const subperiods = getSubperiods(period, canteen.leases, false);
-            subperiods.forEach(subperiod => {
-                subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
-            });
-            const subperiodPartyNames = subperiods.map(sp => sp.party.name);
 
             if (submission) {
             
+                // To arrayOf είναι ενα ανεικείμενο που περιέχει υπο-αντικείμενα leaseIds, partyIds, subRents, subElectricityCosts (ως arrays)
                 submission.arrayOf = submittedSubperiods.length ? aggregateSubperiodsByLease(submittedSubperiods) : {};
-                // log.dev(submission.arrayOf);
                 // Στο arrayOf πρέπει να προστεθούν τα partyNames και PartyAfm μέσω του partyMap καθώς και το leaseEnd από το leaseMap
                 submission.arrayOf.partyNames = submission.arrayOf.partyIds.map(partyId => {
                     const party = partyMap.get(partyId);
@@ -576,20 +572,17 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
 
             }
             
-            return {
+            return {  // αντικείμενο canteen
                 id: canteen.id,
                 name: canteen.name,
                 active: canteen.active,
                 principal: period.status === 'closed' 
                     ? (submission?.principal || null)
                     : (submission?.principal ?? canteen.principal),
-                // lease: canteen.leases?.[0] || null,     // τρέχον lease
-                // party: canteen.leases?.[0]?.party || null,  // τρέχον party
                 hasSubmission: canteen.submissions && canteen.submissions.length > 0,  // Αν δεν βάλεις >0, θα έρθει 1 αντί για true
                 submission,
-                submittedSubperiods,
                 subperiods,
-                subperiodPartyNames,
+                partyNames: subperiods.map(sp => partyMap.get(sp.party_id)?.name || 'Άγνωστο')
             };
         });
         // log.dev(canteensWithSubmissions);
