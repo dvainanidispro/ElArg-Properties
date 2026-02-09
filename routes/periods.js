@@ -4,7 +4,7 @@ import { can } from '../controllers/roles.js';
 import { getSubperiods, calculateRentFields, aggregateSubperiodsByLease } from '../controllers/periods/periods.js';
 import { generatePeriod, justShowNextPeriod } from '../controllers/periods/generate.js';
 import log from '../controllers/logger.js';
-import TableData from '../controllers/queries.js';
+import { TableMap } from '../models/cache.js';
 
 /**
  * Routes for managing periods (canteens only). Path: /canteens/periods
@@ -300,8 +300,7 @@ periods.get('/submissions/new', can('edit:content'), async (req, res) => {
         const subperiods = getSubperiods(period, canteen.leases);
 
         // Party και lease για εύκολη πρόσβαση στο view
-        const allParties = await TableData.Party;
-        const partyMap = new Map(allParties.map(p => [p.id, p]));
+        const partyMap = await TableMap.Party;
         subperiods.forEach(subperiod => {
             subperiod.party = subperiod.party_id ? partyMap.get(subperiod.party_id) : null;
         });
@@ -534,15 +533,11 @@ periods.get(['/:periodId/submissions','/:periodId/subperiods'], can('view:conten
             order: [['name', 'ASC']]
         });
 
-        //# 3 Φέρε ολόκληρους τους πίνακες leases και parties για join με submittedSubperiods
-        const [allLeases, allParties] = await Promise.all([
-            TableData.Lease,
-            TableData.Party
+        //# 3 Φέρε τα maps για leases και parties για join με submittedSubperiods
+        const [leaseMap, partyMap] = await Promise.all([
+            TableMap.Lease,
+            TableMap.Party
         ]);
-        
-        // Δημιουργία maps για γρήγορη αναζήτηση
-        const leaseMap = new Map(allLeases.map(l => [l.id, l]));
-        const partyMap = new Map(allParties.map(p => [p.id, p]));
         
         //# 4 Μετασχηματίζουμε τα δεδομένα για το view
         const canteensWithSubmissions = canteens.map(canteen => {
@@ -716,8 +711,7 @@ periods.get('/:periodId/submissions/:submissionId', can('view:content'), async (
             : (submission.principal ?? submission.canteen.principal);
         
         //# 4 Για κάθε συμπληρωμένη υποπερίοδο, φέρνουμε party και καθαρό μίσθωμα υποπεριόδου
-        const allParties = await TableData.Party;
-        const partyMap = new Map(allParties.map(p => [p.id, p]));
+        const partyMap = await TableMap.Party;
         
         const subperiods = (submission.data || []).map(subperiod => ({
             ...subperiod,

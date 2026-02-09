@@ -49,7 +49,7 @@ const singleDOMObjectHandler = {
     set(target, prop, value) {
         if (prop in target) {
             target[prop] = value;
-            return value;
+            return true;
         }
         return false;
     }
@@ -90,7 +90,7 @@ const arrayOfDOMObjectsHandler = (selector) => {
         set(target, prop, value) {
             if (prop in target) {
                 target[prop] = value;
-                return value;
+                return true;
             }
             return false;
         }
