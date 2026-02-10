@@ -13,10 +13,6 @@ const Party = db.define('party',
         email: DataTypes.STRING,
         contact: DataTypes.STRING,
         contracts: DataTypes.JSON,
-        // role: {
-        //     type: DataTypes.STRING,
-        //     defaultValue: 'tenant'
-        // },
     },
     {
         tableName: 'parties',

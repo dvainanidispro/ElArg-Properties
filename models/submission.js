@@ -57,6 +57,22 @@ const Submission = db.define('submission',
         tableName: 'submissions',
         timestamps: true,
         indexes: [
+            {
+                name: 'idx_submissions_period_property',
+                fields: ['period_id', 'property_id', 'property_type']
+            },
+            {
+                name: 'idx_submissions_period_property_principal',
+                fields: ['period_id', 'property_id', 'property_type', 'principal_id']
+            },
+            {
+                name: 'idx_submissions_period_type',
+                fields: ['period_id', 'property_type']
+            },
+            {
+                name: 'idx_submissions_property_type',
+                fields: ['property_id', 'property_type']
+            }
         ],
     },
 );
