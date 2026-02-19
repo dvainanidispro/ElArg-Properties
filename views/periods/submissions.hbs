@@ -97,7 +97,7 @@
                             <tbody>
                                 {{#each canteens}}
                                 <tr>
-                                    <td class="d-none">{{this.id}}</td>
+                                    <td class="d-none" data-excel-rows="{{this.submission.arrayOf.partyNames.length}}">{{this.id}}</td>
                                     <td class="fw-semibold">
                                         <a href="/canteens/canteens/{{this.id}}" class="text-primary text-decoration-none">
                                             {{this.name}}

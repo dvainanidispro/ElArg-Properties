@@ -275,6 +275,8 @@ function downloadTableAsExcel(tableID, filename = 'table.xlsx', sheetname = 'She
           const value = dataValueArray.split(',').map(el=>el.trim());
           const cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
           arrayValuesMap.set(cellAddress, value.join('\n'));
+          // To textContent, αν είχε '\n', θα ερμηνευόταν ως literal /n από την HTML. 
+          // Και η cell.innerHTML = value.join('<br>') δεν θα λειτουργούσε αξιόπιστα με το table_to_book.
           cell.textContent = ''; // Δεν χρειάζεται περιεχόμενο, θα το αντικαταστήσουμε μετά το table_to_book
         } else if (dataValue !== null && dataValue !== "") {
           cell.textContent = dataValue;

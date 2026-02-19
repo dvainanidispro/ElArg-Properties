@@ -112,6 +112,11 @@ const handlebarsConfig = {
                 return '';
             }
         },
+        /** Example: {{copyrightYears 2025}} */
+        copyrightYears: (startYear) => {
+            const currentYear = new Date().getFullYear();
+            return startYear === currentYear ? `${startYear}` : `${startYear}-${currentYear}`;
+        },
         /* example: {{#if (can 'edit:users')}} */
         can: function(permission) {
             // Το 'this' είναι το context (το αντικείμενο δεδομένων) που περνιέται στο handlebars
