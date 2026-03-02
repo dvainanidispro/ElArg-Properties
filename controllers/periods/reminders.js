@@ -90,7 +90,7 @@ async function sendRemindersForPendingSubmissions () {
         if (!periodIsOpen && period.canteens?.length) {
             canteensWithoutSubmission = canteensWithoutSubmission.filter(c => period.canteens.includes(c.id));
         }
-        log.info(canteensWithoutSubmission);
+        log.dev(canteensWithoutSubmission);
         
         if (canteensWithoutSubmission.length === 0) {
             log.info("Όλα τα κυλικεία έχουν υποβάλει στοιχεία. Δεν στάλθηκαν υπενθυμίσεις.");
