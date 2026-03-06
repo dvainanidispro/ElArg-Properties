@@ -29,15 +29,17 @@ const Period = db.define('period',
             // Δυνατές τιμές για status: 'planned', 'open', 'closed' 'inactive'
             get() {
                 // χρησιμοποιεί FAKE_DATE από .env (π.χ. "2025-12-31") αν υπάρχει, για testing
-                const today = process.env.FAKE_DATE ? new Date(process.env.FAKE_DATE) : new Date();
+                const now = process.env.FAKE_DATE ? new Date(process.env.FAKE_DATE) : new Date();
                 const endDate = new Date(this.end_date);
-                const submission_deadline = new Date(this.submission_deadline);
+                // Το "πραγματικό deadline" είναι το submission_deadline, στις 24:00 το βράδυ, δηλαδή την επόμενη μέρα.
+                const submission_deadline_plus1 = new Date(this.submission_deadline);
+                submission_deadline_plus1.setDate(submission_deadline_plus1.getDate() + 1);
                 if (this.active) {
-                    if (today < endDate) {
+                    if (now < endDate) {
                         return 'planned'; // προγραμματισμένη, δεν έχει φτάσει το end_date
-                    } else if (today >= endDate && today <= submission_deadline) {
-                        return 'open'; // ανοιχτή, μεταξύ end_date και submission_deadline
-                    } else if (today > submission_deadline) {
+                    } else if (now >= endDate && now < submission_deadline_plus1) {
+                        return 'open'; // ανοιχτή, μεταξύ end_date και submission_deadline (συμπεριλαμβάνει submission_deadline)
+                    } else if (now >= submission_deadline_plus1) {
                         return 'closed'; // κλειστή, έχει περάσει το submission_deadline
                     }
                 }
